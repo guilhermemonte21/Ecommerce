@@ -6,9 +6,9 @@ import java.util.Optional;
 import java.util.UUID;
 
 public interface ProdutoGateway {
-    void salvar(Produtos produtosEntity);
+    Produtos salvar(Produtos produtosEntity);
 
-    Optional<Produtos> GetById(UUID Id);
+    Produtos GetById(UUID Id);
 
     void Delete(Produtos produtosEntity);
 }

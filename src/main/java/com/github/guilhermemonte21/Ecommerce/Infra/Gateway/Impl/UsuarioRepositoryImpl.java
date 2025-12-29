@@ -19,19 +19,40 @@ public class UsuarioRepositoryImpl implements UsuarioGateway {
 
     @Override
     public Usuarios salvar(Usuarios usuarios) {
-        UsuariosEntity usuario = new UsuariosEntity(usuarios.getNome(),usuarios.getEmail(),usuarios.getCpf(), usuarios.getSenha());
+        UsuariosEntity usuario = new UsuariosEntity();
+        usuarios.getNome();
+        usuarios.getEmail();
+        usuarios.getCpf();
+        usuarios.getSenha();
+        usuarios.getRole();
 
         UsuariosEntity Save = JpaRepo.save(usuario);
 
-        return new Usuarios(Save.getNome(), Save.getEmail(), Save.getCpf(), Save.getSenha());
+        Usuarios usuarios1 = new Usuarios();
+        usuarios1.setId(Save.getId());
+        usuarios1.setNome(Save.getNome());
+        usuarios1.setEmail(Save.getEmail());
+        usuarios1.setCpf(Save.getCpf());
+        usuarios1.setSenha(Save.getSenha());
+        usuarios1.setAtivo(Save.getAtivo());
+        usuarios1.setRole(Save.getRole());
+
+        return usuarios1;
     }
 
     @Override
     public Usuarios getById(UUID id) {
-        UsuariosEntity UserById = JpaRepo.findById(id).orElseThrow(() -> new RuntimeException("Usuario não Encontrado"));
+        UsuariosEntity usuariosEntity = JpaRepo.findById(id).orElseThrow(() -> new RuntimeException("Usuario Não Encontrado"));
 
-        Usuarios usuario = new Usuarios(UserById.getNome(), UserById.getEmail(), UserById.getCpf(), UserById.getSenha());
+        Usuarios usuarios1 = new Usuarios();
+        usuarios1.setId(usuariosEntity.getId());
+        usuarios1.setNome(usuariosEntity.getNome());
+        usuarios1.setEmail(usuariosEntity.getEmail());
+        usuarios1.setCpf(usuariosEntity.getCpf());
+        usuarios1.setSenha(usuariosEntity.getSenha());
+        usuarios1.setAtivo(usuariosEntity.getAtivo());
+        usuarios1.setRole(usuariosEntity.getRole());
 
-        return usuario;
+        return usuarios1;
     }
 }

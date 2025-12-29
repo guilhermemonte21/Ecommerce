@@ -2,6 +2,7 @@ package com.github.guilhermemonte21.Ecommerce.Infra.Persistence.Entity.Data;
 
 import com.github.guilhermemonte21.Ecommerce.Infra.Persistence.Entity.Enum.StatusProdutos;
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -37,8 +38,5 @@ public class ProdutosEntity {
     @Column(name = "estoque_produto")
     private Long estoque;
 
-    @Enumerated(EnumType.STRING)
-    @Column(name = "status_produto")
-    private StatusProdutos status = StatusProdutos.Ativo;
 }
 

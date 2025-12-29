@@ -1,7 +1,9 @@
 package com.github.guilhermemonte21.Ecommerce.Domain.Model.Entity;
 
 import com.github.guilhermemonte21.Ecommerce.Domain.Model.Enum.StatusPedido;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 
@@ -13,6 +15,8 @@ import java.util.UUID;
 
 @Getter
 @Setter
+@NoArgsConstructor
+@AllArgsConstructor
 public class Pedidos {
     private UUID Id;
     private Usuarios Comprador;

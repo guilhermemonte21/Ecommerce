@@ -2,7 +2,9 @@ package com.github.guilhermemonte21.Ecommerce.Infra.Persistence.Entity.Data;
 
 import com.github.guilhermemonte21.Ecommerce.Infra.Persistence.Entity.Enum.StatusPedido;
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.math.BigDecimal;
@@ -15,6 +17,7 @@ import java.util.UUID;
 @Table(name = "pedidos")
 @Getter
 @Setter
+@NoArgsConstructor
 public class PedidosEntity {
 
     @Id
@@ -47,4 +50,12 @@ public class PedidosEntity {
 
     @Column(name = "criado_em")
     private OffsetDateTime criadoEm = OffsetDateTime.now();
+
+    public PedidosEntity(UsuariosEntity comprador, UsuariosEntity vendedor, List<ProdutosEntity> itens, BigDecimal preco, StatusPedido status) {
+        this.comprador = comprador;
+        this.vendedor = vendedor;
+        this.itens = itens;
+        this.preco = preco;
+        this.status = status;
+    }
 }

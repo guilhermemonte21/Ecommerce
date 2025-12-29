@@ -1,7 +1,7 @@
 package com.github.guilhermemonte21.Ecommerce.Infra.Persistence.Entity.Data;
 
-import com.github.guilhermemonte21.Ecommerce.Infra.Persistence.Entity.Enum.TipoUsuario;
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -13,6 +13,7 @@ import java.util.UUID;
 @Getter
 @Setter
 @NoArgsConstructor
+
 public class UsuariosEntity {
 
     @Id
@@ -35,18 +36,9 @@ public class UsuariosEntity {
     @Column(name = "ativo")
     private Boolean Ativo = true;
 
-    @Enumerated(EnumType.STRING)
+
     @Column(name = "role_usuario")
-    private TipoUsuario Role = TipoUsuario.Buyer;
+    private String Role ;
 
-
-    public UsuariosEntity(String Nome, String Email, String Cpf, String Senha) {
-        this.Nome = Nome;
-        this.Email = Email;
-        this.Cpf = Cpf;
-        this.Senha = Senha;
-        this.Ativo = true;
-        this.Role = TipoUsuario.Buyer;
-    }
 }
 

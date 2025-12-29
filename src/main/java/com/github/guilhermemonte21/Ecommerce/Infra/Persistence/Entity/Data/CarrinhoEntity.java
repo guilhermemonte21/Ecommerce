@@ -1,6 +1,7 @@
 package com.github.guilhermemonte21.Ecommerce.Infra.Persistence.Entity.Data;
 
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -40,5 +41,12 @@ public class CarrinhoEntity {
 
     @Column(name = "atualizado_em")
     private OffsetDateTime atualizadoEm;
+
+    public CarrinhoEntity(UsuariosEntity comprador, List<ProdutosEntity> itens, BigDecimal valorTotal, OffsetDateTime atualizadoEm) {
+        this.comprador = comprador;
+        this.itens = itens;
+        this.valorTotal = valorTotal;
+        this.atualizadoEm = OffsetDateTime.now();
+    }
 }
 
