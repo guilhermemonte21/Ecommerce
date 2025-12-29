@@ -1,4 +1,4 @@
-package com.github.guilhermemonte21.Ecommerce.Model.Enum;
+package com.github.guilhermemonte21.Ecommerce.Domain.Model.Enum;
 
 public enum StatusProdutos {
     Ativo,
