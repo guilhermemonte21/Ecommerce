@@ -7,7 +7,7 @@ import java.util.UUID;
 
 public interface PedidoGateway {
 
-    void save(Pedidos pedidosEntity);
+    Pedidos save(Pedidos pedidosEntity);
 
     Optional<Pedidos> getById(UUID Id);
 }

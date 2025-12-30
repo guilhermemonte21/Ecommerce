@@ -8,9 +8,9 @@ import java.util.Optional;
 import java.util.UUID;
 
 public interface CarrinhoGateway {
-    void save(Carrinho carrinhoEntity);
+    Carrinho save(Carrinho carrinhoEntity);
 
     Optional<Carrinho> getById(UUID Id);
 
-    List<Produtos> add(Produtos produtos);
+    List<Produtos> add(UUID Id, Produtos produtos);
 }
