@@ -8,10 +8,13 @@ import com.github.guilhermemonte21.Ecommerce.Infra.Persistence.Entity.Data.Produ
 import com.github.guilhermemonte21.Ecommerce.Infra.Persistence.Entity.Data.UsuariosEntity;
 import com.github.guilhermemonte21.Ecommerce.Infra.Persistence.Entity.JpaRepository.JpaProdutosRepository;
 import com.github.guilhermemonte21.Ecommerce.Infra.Persistence.Entity.JpaRepository.JpaUsuarioRepository;
+import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Repository;
 
 import java.util.Optional;
 import java.util.UUID;
 
+@Component
 public class ProdutoRepositoryImpl implements ProdutoGateway {
 
     private final JpaProdutosRepository JpaProdutosRepo;

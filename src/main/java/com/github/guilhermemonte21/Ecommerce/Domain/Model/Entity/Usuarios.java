@@ -13,11 +13,11 @@ import java.util.UUID;
 @NoArgsConstructor
 @AllArgsConstructor
 public class Usuarios {
-    private UUID Id;
-    private String Nome;
-    private String Email;
-    private String Cpf;
-    private String Senha;
+    private UUID id;
+    private String nome;
+    private String email;
+    private String cpf;
+    private String senha;
     private Boolean ativo = true;
     private String role;
 

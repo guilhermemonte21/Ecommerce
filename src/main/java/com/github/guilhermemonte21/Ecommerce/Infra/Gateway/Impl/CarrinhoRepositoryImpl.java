@@ -10,22 +10,28 @@ import com.github.guilhermemonte21.Ecommerce.Infra.Persistence.Entity.Data.Carri
 import com.github.guilhermemonte21.Ecommerce.Infra.Persistence.Entity.Data.PedidosEntity;
 import com.github.guilhermemonte21.Ecommerce.Infra.Persistence.Entity.Data.ProdutosEntity;
 import com.github.guilhermemonte21.Ecommerce.Infra.Persistence.Entity.JpaRepository.JpaCarrinhoRepository;
+import com.github.guilhermemonte21.Ecommerce.Infra.Persistence.Entity.JpaRepository.JpaProdutosRepository;
+import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Repository;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
+@Component
 public class CarrinhoRepositoryImpl implements CarrinhoGateway {
 
     private final JpaCarrinhoRepository jpaCarrinhoRepository;
     private final ProdutoMapper produtoMapper;
     private final CarrinhoMapper carrinhoMapper;
+    private final JpaProdutosRepository jpaProdutosRepository;
 
-    public CarrinhoRepositoryImpl(JpaCarrinhoRepository jpaCarrinhoRepository, ProdutoMapper produtoMapper, CarrinhoMapper carrinhoMapper) {
+    public CarrinhoRepositoryImpl(JpaCarrinhoRepository jpaCarrinhoRepository, ProdutoMapper produtoMapper, CarrinhoMapper carrinhoMapper, JpaProdutosRepository jpaProdutosRepository) {
         this.jpaCarrinhoRepository = jpaCarrinhoRepository;
         this.produtoMapper = produtoMapper;
         this.carrinhoMapper = carrinhoMapper;
+        this.jpaProdutosRepository = jpaProdutosRepository;
     }
 
     @Override
@@ -43,7 +49,7 @@ public class CarrinhoRepositoryImpl implements CarrinhoGateway {
     }
 
     @Override
-    public List<Produtos> add(UUID Id, Produtos produtos) {
+    public Carrinho add(UUID Id, Produtos produtos) {
         CarrinhoEntity CarrinhobyId = jpaCarrinhoRepository.findById(Id).orElseThrow(() -> new RuntimeException("Carrinho não Encontrado"));
 
 
@@ -51,6 +57,15 @@ public class CarrinhoRepositoryImpl implements CarrinhoGateway {
 
         Carrinho newCarrinho = carrinhoMapper.toDomain(CarrinhobyId);
 
-        return newCarrinho.getItens();
+        return newCarrinho;
+    }
+
+    @Override
+    public void DeleteItem(UUID Id, UUID id) {
+        CarrinhoEntity carrinho = jpaCarrinhoRepository.findById(Id).orElseThrow(() -> new RuntimeException("Carrinho não encontrado"));
+
+        carrinho.getItens().remove(jpaProdutosRepository.findById(id).orElseThrow(() -> new RuntimeException("Produto não está presente no Carrinho")));
+
+
     }
 }

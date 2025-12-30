@@ -2,6 +2,7 @@ package com.github.guilhermemonte21.Ecommerce.Domain.Model.Entity;
 
 
 
+import com.github.guilhermemonte21.Ecommerce.Infra.Persistence.Entity.Data.ProdutosEntity;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -12,6 +13,7 @@ import java.time.OffsetDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Getter
 @Setter
@@ -25,4 +27,10 @@ public class Carrinho {
     private OffsetDateTime AtualizadoEm;
 
 
+    public void atualizarValorTotal() {
+        this.ValorTotal = this.Itens.stream()
+                .map(Produtos::getPreco)
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
+
+    }
 }

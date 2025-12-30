@@ -11,6 +11,7 @@ public class UsuarioMapper {
         Usuarios NewUser = new Usuarios();
         NewUser.setId(entity.getId());
         NewUser.setCpf(entity.getCpf());
+        NewUser.setEmail(entity.getEmail());
         NewUser.setRole(entity.getRole());
         NewUser.setNome(entity.getNome());
         NewUser.setAtivo(entity.getAtivo());
@@ -20,10 +21,8 @@ public class UsuarioMapper {
 
     public UsuariosEntity toEntity(Usuarios usuarios){
         UsuariosEntity entity = new UsuariosEntity();
-        entity.setRole(usuarios.getRole());
         entity.setNome(usuarios.getNome());
         entity.setCpf(usuarios.getCpf());
-        entity.setAtivo(usuarios.getAtivo());
         entity.setSenha(usuarios.getSenha());
         entity.setEmail(usuarios.getEmail());
         return entity;

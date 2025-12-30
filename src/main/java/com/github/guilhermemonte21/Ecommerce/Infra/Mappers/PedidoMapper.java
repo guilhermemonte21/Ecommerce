@@ -2,9 +2,11 @@ package com.github.guilhermemonte21.Ecommerce.Infra.Mappers;
 
 import com.github.guilhermemonte21.Ecommerce.Domain.Model.Entity.Pedidos;
 import com.github.guilhermemonte21.Ecommerce.Infra.Persistence.Entity.Data.PedidosEntity;
+import org.springframework.stereotype.Component;
 
 import java.util.stream.Collectors;
 
+@Component
 public class PedidoMapper {
         private final ProdutoMapper produtoMapper;
         private final UsuarioMapper usuarioMapper;
