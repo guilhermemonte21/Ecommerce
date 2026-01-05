@@ -9,10 +9,10 @@ import java.util.UUID;
 
 
 public interface ProdutoGateway {
-    Produtos salvar(Produtos produtosEntity);
+    Produtos salvar(Produtos produtos);
 
     Optional<Produtos> GetById(UUID Id);
 
-    void Delete(Produtos produtosEntity);
+    void Delete(Produtos produtos);
 
 }

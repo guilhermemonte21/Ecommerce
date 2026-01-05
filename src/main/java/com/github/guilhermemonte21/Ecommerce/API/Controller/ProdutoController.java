@@ -31,8 +31,8 @@ public class ProdutoController {
         return ResponseEntity.ok().body(prod);
     }
 
-    @PutMapping
-    public ResponseEntity<Long> AtualizarEstoque(@RequestHeader("userId") UUID IdUser, @PathVariable UUID IdProduto,@RequestParam Long Quantity){
+    @PutMapping("/{id}")
+    public ResponseEntity<Long> AtualizarEstoque(@RequestHeader("userId") UUID IdUser, @PathVariable("id") UUID IdProduto,@RequestParam Long Quantity){
         Long EstoqueAtualizado = atualizarEstoque.AtualizarEstoque(IdUser, IdProduto, Quantity);
         return ResponseEntity.ok().body(EstoqueAtualizado);
     }

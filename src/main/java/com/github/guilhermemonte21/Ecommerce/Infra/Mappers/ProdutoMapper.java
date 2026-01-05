@@ -38,6 +38,7 @@ public class ProdutoMapper {
     public ProdutosEntity toEntity(Produtos domain) {
 
         ProdutosEntity entity = new ProdutosEntity();
+        entity.setId(domain.getId());
         entity.setNomeProduto(domain.getNomeProduto());
         entity.setPreco(domain.getPreco());
         entity.setEstoque(domain.getEstoque());
