@@ -41,12 +41,12 @@ public class ProdutoRepositoryImpl implements ProdutoGateway {
     @Override
     public Optional<Produtos> GetById(UUID Id) {
         Optional<Produtos> entity = JpaProdutosRepo.findById(Id).map(mapper::toDomain);
-               return entity;
+        return entity;
     }
 
     @Override
     public void Delete(Produtos produtos) {
-        ProdutosEntity produtosEntity = JpaProdutosRepo.findById(produtos.getId()).orElseThrow(() -> new RuntimeException("Produto não encontrado"));
+        ProdutosEntity produtosEntity = mapper.toEntity(produtos);
         JpaProdutosRepo.delete(produtosEntity);
     }
 }

@@ -3,6 +3,7 @@ package com.github.guilhermemonte21.Ecommerce.Domain.Model.Entity;
 
 
 import com.github.guilhermemonte21.Ecommerce.Infra.Persistence.Entity.Data.ProdutosEntity;
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -21,6 +22,8 @@ import java.util.stream.Collectors;
 @AllArgsConstructor
 public class Carrinho {
     private UUID Id;
+
+    @NotNull
     private Usuarios Comprador;
     private List<Produtos> Itens = new ArrayList<>();
     private BigDecimal ValorTotal;

@@ -14,5 +14,5 @@ public interface CarrinhoGateway {
 
     Carrinho add(UUID Id, UUID IdProdutos);
 
-    void DeleteItem(UUID Id, UUID id);
+    void DeleteItem(Carrinho carrinho, UUID id);
 }

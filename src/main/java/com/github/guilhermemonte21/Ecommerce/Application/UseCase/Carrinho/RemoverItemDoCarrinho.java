@@ -1,6 +1,7 @@
 package com.github.guilhermemonte21.Ecommerce.Application.UseCase.Carrinho;
 
 import com.github.guilhermemonte21.Ecommerce.Application.Gateway.CarrinhoGateway;
+import com.github.guilhermemonte21.Ecommerce.Domain.Model.Entity.Carrinho;
 import org.springframework.stereotype.Service;
 
 import java.util.UUID;
@@ -13,7 +14,9 @@ public class RemoverItemDoCarrinho {
         this.gateway = gateway;
     }
 
-    public void RemoverItem(UUID Id, UUID id){
-        gateway.DeleteItem(Id,id);
+    public void RemoverItem(UUID IdCarrinho, UUID idProduto){
+        Carrinho carrinho = gateway.getById(IdCarrinho).orElseThrow(() -> new RuntimeException("Carrinho não Encontrado"));
+        carrinho.atualizarValorTotal();
+        gateway.DeleteItem(carrinho,idProduto);
     }
 }

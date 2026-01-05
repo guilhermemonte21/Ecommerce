@@ -43,11 +43,6 @@ public class CarrinhoEntity {
     @Column(name = "atualizado_em")
     private OffsetDateTime atualizadoEm;
 
-    public CarrinhoEntity(UsuariosEntity comprador, List<ProdutosEntity> itens, OffsetDateTime atualizadoEm) {
-        this.comprador = comprador;
-        this.itens = itens;
-        this.atualizadoEm = OffsetDateTime.now();
-    }
 
 
 }

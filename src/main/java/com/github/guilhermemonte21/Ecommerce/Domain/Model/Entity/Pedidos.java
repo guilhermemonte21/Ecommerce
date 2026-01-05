@@ -25,4 +25,10 @@ public class Pedidos {
     private BigDecimal Preco;
     private StatusPedido Status = StatusPedido.CRIADO;
     private OffsetDateTime CriadoEm = OffsetDateTime.now();
+
+    public void CompradorNaoVendedor(){
+        if (this.Comprador == this.Vendedor){
+            throw new RuntimeException("Não pode comprar o proprio produto");
+        }
+    }
 }
