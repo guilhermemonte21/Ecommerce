@@ -15,7 +15,9 @@ public class AddItemAoCarrinho {
         this.gateway = gateway;
     }
 
-    public Carrinho AdicionarAoCarrinho(UUID id, Produtos produtos){
-        return gateway.add(id, produtos);
+    public Carrinho AdicionarAoCarrinho(UUID id, UUID IdProduto){
+        Carrinho carrinhoComItem =  gateway.add(id, IdProduto);
+        carrinhoComItem.atualizarValorTotal();
+        return carrinhoComItem;
     }
 }

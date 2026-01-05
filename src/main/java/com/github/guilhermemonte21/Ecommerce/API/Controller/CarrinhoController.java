@@ -38,14 +38,14 @@ public class CarrinhoController {
     }
 
     @PostMapping("/Add")
-    public ResponseEntity<Carrinho> addItem(UUID Id, Produtos produtos){
-        Carrinho newCarrinho = add.AdicionarAoCarrinho(Id, produtos);
+    public ResponseEntity<Carrinho> addItem(UUID Id, UUID IdProduto){
+        Carrinho newCarrinho = add.AdicionarAoCarrinho(Id, IdProduto);
 
         return ResponseEntity.ok(newCarrinho);
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Optional<Carrinho>> getById(@PathVariable UUID Id){
+    public ResponseEntity<Optional<Carrinho>> getById(@PathVariable("id") UUID Id){
         Optional<Carrinho> carrinhobyId = getById.FindCarrinhoById(Id);
         if (!carrinhobyId.isEmpty()){
            return ResponseEntity.status(HttpStatus.FOUND).body(carrinhobyId);

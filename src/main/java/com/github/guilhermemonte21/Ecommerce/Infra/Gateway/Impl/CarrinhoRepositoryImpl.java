@@ -49,11 +49,11 @@ public class CarrinhoRepositoryImpl implements CarrinhoGateway {
     }
 
     @Override
-    public Carrinho add(UUID Id, Produtos produtos) {
+    public Carrinho add(UUID Id, UUID IdProduto) {
         CarrinhoEntity CarrinhobyId = jpaCarrinhoRepository.findById(Id).orElseThrow(() -> new RuntimeException("Carrinho não Encontrado"));
 
-
-        CarrinhobyId.getItens().add(produtoMapper.toEntity(produtos));
+        ProdutosEntity produtos = jpaProdutosRepository.findById(IdProduto).orElseThrow(() -> new RuntimeException("Produto não Encontrado"));
+        CarrinhobyId.getItens().add(produtos);
 
         Carrinho newCarrinho = carrinhoMapper.toDomain(CarrinhobyId);
 
