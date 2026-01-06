@@ -31,4 +31,18 @@ public class Pedidos {
             throw new RuntimeException("Não pode comprar o proprio produto");
         }
     }
+
+    public void ChangeToPago(){
+        this.Status = StatusPedido.PAGO;
+    }
+    public void ChangeToCancelado(){
+        this.Status = StatusPedido.CANCELADO;
+    }
+    public void ChangeToEnviado(){
+        this.Status = StatusPedido.ENVIADO;
+    }
+    public void ChangeToEntregue(){
+        this.Status = StatusPedido.ENTREGUE;
+    }
+
 }

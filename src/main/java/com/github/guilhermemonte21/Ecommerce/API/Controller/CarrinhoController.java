@@ -4,6 +4,7 @@ import com.github.guilhermemonte21.Ecommerce.Application.DTO.Carrinho.CreateCarr
 import com.github.guilhermemonte21.Ecommerce.Application.UseCase.Carrinho.AddItemAoCarrinho.IAddItemAoCarrinho;
 import com.github.guilhermemonte21.Ecommerce.Application.UseCase.Carrinho.CriarCarrinho.ICriarCarrinho;
 import com.github.guilhermemonte21.Ecommerce.Application.UseCase.Carrinho.GetCarrinhoById.IGetCarrinhoById;
+import com.github.guilhermemonte21.Ecommerce.Application.UseCase.Carrinho.LimparCarrinho.ILimparCarrinho;
 import com.github.guilhermemonte21.Ecommerce.Application.UseCase.Carrinho.RemoverItemDoCarrinho.IRemoverItemDoCarrinho;
 import com.github.guilhermemonte21.Ecommerce.Domain.Model.Entity.Carrinho;
 import jakarta.validation.Valid;
@@ -21,12 +22,14 @@ public class CarrinhoController {
     private final ICriarCarrinho create;
     private final IGetCarrinhoById getById;
     private final IRemoverItemDoCarrinho remove;
+    private final ILimparCarrinho limparCarrinho;
 
-    public CarrinhoController(IAddItemAoCarrinho add, ICriarCarrinho create, IGetCarrinhoById getById, IRemoverItemDoCarrinho remove) {
+    public CarrinhoController(IAddItemAoCarrinho add, ICriarCarrinho create, IGetCarrinhoById getById, IRemoverItemDoCarrinho remove, ILimparCarrinho limparCarrinho) {
         this.add = add;
         this.create = create;
         this.getById = getById;
         this.remove = remove;
+        this.limparCarrinho = limparCarrinho;
     }
 
     @PostMapping("/Create")
@@ -47,15 +50,21 @@ public class CarrinhoController {
     public ResponseEntity<Optional<Carrinho>> getById(@PathVariable("id") UUID Id){
         Optional<Carrinho> carrinhobyId = getById.FindCarrinhoById(Id);
         if (!carrinhobyId.isEmpty()){
-           return ResponseEntity.status(HttpStatus.FOUND).body(carrinhobyId);
+           return ResponseEntity.status(HttpStatus.OK).body(carrinhobyId);
         }
         else {
             return ResponseEntity.notFound().build();
         }
     }
-    @DeleteMapping("/{id}/{Id}")
+    @PutMapping("/{id}/{Id}")
     public ResponseEntity<Void> DeleteItem(@PathVariable("id") UUID Id,@PathVariable("Id") UUID id){
         remove.RemoverItem(Id, id);
+        return ResponseEntity.noContent().build();
+    }
+
+    @PutMapping("/{IdProduto}")
+    public ResponseEntity<Void> LimparCarrinho(@RequestHeader UUID IdUser,@PathVariable("IdProduto") UUID IdCarrinho){
+        limparCarrinho.LimparCarrinho(IdUser, IdCarrinho);
         return ResponseEntity.noContent().build();
     }
 

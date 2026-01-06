@@ -41,4 +41,7 @@ public class Carrinho {
     public void AtualizadoAgora(){
         this.AtualizadoEm = OffsetDateTime.now();
     }
+    public void Limpar(){
+        this.getItens().clear();
+    }
 }

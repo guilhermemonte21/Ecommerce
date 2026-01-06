@@ -64,8 +64,23 @@ public class CarrinhoRepositoryImpl implements CarrinhoGateway {
     public void DeleteItem(Carrinho carrinho, UUID id) {
        CarrinhoEntity carrinhoEntity = carrinhoMapper.toEntity(carrinho);
        ProdutosEntity produtosEntity = jpaProdutosRepository.findById(id).orElseThrow(() -> new RuntimeException("Produto não está presente no Carrinho"));
+
+
         carrinhoEntity.getItens().remove(produtosEntity);
 
+        jpaCarrinhoRepository.save(carrinhoEntity);
 
+
+    }
+
+    @Override
+    public void LimparCarrinho(Carrinho cart) {
+
+        cart.Limpar();
+        cart.atualizarValorTotal();
+        cart.AtualizadoAgora();
+        CarrinhoEntity carrinho = carrinhoMapper.toEntity(cart);
+
+        jpaCarrinhoRepository.save(carrinho);
     }
 }
