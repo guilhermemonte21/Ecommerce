@@ -1,10 +1,10 @@
 package com.github.guilhermemonte21.Ecommerce.API.Controller;
 
 import com.github.guilhermemonte21.Ecommerce.Application.DTO.Carrinho.CreateCarrinhoRequest;
-import com.github.guilhermemonte21.Ecommerce.Application.UseCase.Carrinho.AddItemAoCarrinho.AddItemAoCarrinho;
-import com.github.guilhermemonte21.Ecommerce.Application.UseCase.Carrinho.CriarCarrinho.CriarCarrinho;
-import com.github.guilhermemonte21.Ecommerce.Application.UseCase.Carrinho.GetCarrinhoById.GetCarrinhoById;
-import com.github.guilhermemonte21.Ecommerce.Application.UseCase.Carrinho.RemoverItemDoCarrinho.RemoverItemDoCarrinho;
+import com.github.guilhermemonte21.Ecommerce.Application.UseCase.Carrinho.AddItemAoCarrinho.IAddItemAoCarrinho;
+import com.github.guilhermemonte21.Ecommerce.Application.UseCase.Carrinho.CriarCarrinho.ICriarCarrinho;
+import com.github.guilhermemonte21.Ecommerce.Application.UseCase.Carrinho.GetCarrinhoById.IGetCarrinhoById;
+import com.github.guilhermemonte21.Ecommerce.Application.UseCase.Carrinho.RemoverItemDoCarrinho.IRemoverItemDoCarrinho;
 import com.github.guilhermemonte21.Ecommerce.Domain.Model.Entity.Carrinho;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
@@ -17,12 +17,12 @@ import java.util.UUID;
 @RestController
 @RequestMapping("/Carrinho")
 public class CarrinhoController {
-    private final AddItemAoCarrinho add;
-    private final CriarCarrinho create;
-    private final GetCarrinhoById getById;
-    private final RemoverItemDoCarrinho remove;
+    private final IAddItemAoCarrinho add;
+    private final ICriarCarrinho create;
+    private final IGetCarrinhoById getById;
+    private final IRemoverItemDoCarrinho remove;
 
-    public CarrinhoController(AddItemAoCarrinho add, CriarCarrinho create, GetCarrinhoById getById, RemoverItemDoCarrinho remove) {
+    public CarrinhoController(IAddItemAoCarrinho add, ICriarCarrinho create, IGetCarrinhoById getById, IRemoverItemDoCarrinho remove) {
         this.add = add;
         this.create = create;
         this.getById = getById;

@@ -1,11 +1,13 @@
 package com.github.guilhermemonte21.Ecommerce.Infra.Persistence.Entity.Data;
 
 import com.github.guilhermemonte21.Ecommerce.Domain.Model.Entity.Produtos;
+import jakarta.annotation.Nullable;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.engine.internal.Cascade;
 
 import java.math.BigDecimal;
 import java.time.OffsetDateTime;
@@ -29,7 +31,7 @@ public class CarrinhoEntity {
     @JoinColumn(name = "comprador_id", nullable = false, unique = true)
     private UsuariosEntity comprador;
 
-    @ManyToMany
+    @OneToMany(cascade = CascadeType.ALL)
     @JoinTable(
             name = "carrinho_produtos",
             joinColumns = @JoinColumn(name = "carrinho_id"),

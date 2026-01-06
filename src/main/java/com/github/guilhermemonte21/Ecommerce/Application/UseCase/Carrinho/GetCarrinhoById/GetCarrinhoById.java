@@ -8,7 +8,7 @@ import java.util.Optional;
 import java.util.UUID;
 
 @Service
-public class GetCarrinhoById {
+public class GetCarrinhoById implements IGetCarrinhoById{
     private CarrinhoGateway gateway;
 
     public GetCarrinhoById(CarrinhoGateway gateway) {

@@ -2,6 +2,7 @@ package com.github.guilhermemonte21.Ecommerce.Application.DTO.Carrinho;
 
 import com.github.guilhermemonte21.Ecommerce.Domain.Model.Entity.Produtos;
 import com.github.guilhermemonte21.Ecommerce.Domain.Model.Entity.Usuarios;
+import jakarta.annotation.Nullable;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
@@ -21,5 +22,6 @@ public class CreateCarrinhoRequest {
     @NotNull
     private UUID comprador;
 
+    @Nullable
     private List<UUID> produtosIds;
 }

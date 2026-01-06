@@ -19,6 +19,7 @@ public class CriarCarrinho implements ICriarCarrinho{
     public Carrinho Criar(CreateCarrinhoRequest carrinho){
         Carrinho carrinho1 = mapper.toDomain(carrinho);
         carrinho1.atualizarValorTotal();
+        carrinho1.AtualizadoAgora();
         return gateway.save(carrinho1);
     }
 }

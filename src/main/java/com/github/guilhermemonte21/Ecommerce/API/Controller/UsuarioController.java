@@ -1,6 +1,6 @@
 package com.github.guilhermemonte21.Ecommerce.API.Controller;
 
-import com.github.guilhermemonte21.Ecommerce.Application.UseCase.Usuarios.CreateUser.CreateUser;
+import com.github.guilhermemonte21.Ecommerce.Application.UseCase.Usuarios.CreateUser.ICreateUser;
 import com.github.guilhermemonte21.Ecommerce.Domain.Model.Entity.Usuarios;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -12,9 +12,9 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/Usuario")
 public class UsuarioController {
-    private final CreateUser createUser;
+    private final ICreateUser createUser;
 
-    public UsuarioController(CreateUser createUser) {
+    public UsuarioController(ICreateUser createUser) {
         this.createUser = createUser;
     }
 

@@ -3,6 +3,7 @@ package com.github.guilhermemonte21.Ecommerce.Domain.Model.Entity;
 
 
 import com.github.guilhermemonte21.Ecommerce.Infra.Persistence.Entity.Data.ProdutosEntity;
+import jakarta.annotation.Nullable;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -25,6 +26,7 @@ public class Carrinho {
 
     @NotNull
     private Usuarios Comprador;
+    @Nullable
     private List<Produtos> Itens = new ArrayList<>();
     private BigDecimal ValorTotal;
     private OffsetDateTime AtualizadoEm;
@@ -35,5 +37,8 @@ public class Carrinho {
                 .map(Produtos::getPreco)
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
 
+    }
+    public void AtualizadoAgora(){
+        this.AtualizadoEm = OffsetDateTime.now();
     }
 }

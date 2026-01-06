@@ -18,6 +18,7 @@ public class RemoverItemDoCarrinho implements IRemoverItemDoCarrinho{
     public void RemoverItem(UUID IdCarrinho, UUID idProduto){
         Carrinho carrinho = gateway.getById(IdCarrinho).orElseThrow(() -> new RuntimeException("Carrinho não Encontrado"));
         carrinho.atualizarValorTotal();
+        carrinho.AtualizadoAgora();
         gateway.DeleteItem(carrinho,idProduto);
     }
 }
