@@ -1,12 +1,11 @@
 package com.github.guilhermemonte21.Ecommerce.API.Controller;
 
 import com.github.guilhermemonte21.Ecommerce.Application.DTO.Carrinho.CreateCarrinhoRequest;
-import com.github.guilhermemonte21.Ecommerce.Application.UseCase.Carrinho.AddItemAoCarrinho;
-import com.github.guilhermemonte21.Ecommerce.Application.UseCase.Carrinho.CriarCarrinho;
-import com.github.guilhermemonte21.Ecommerce.Application.UseCase.Carrinho.GetCarrinhoById;
-import com.github.guilhermemonte21.Ecommerce.Application.UseCase.Carrinho.RemoverItemDoCarrinho;
+import com.github.guilhermemonte21.Ecommerce.Application.UseCase.Carrinho.AddItemAoCarrinho.AddItemAoCarrinho;
+import com.github.guilhermemonte21.Ecommerce.Application.UseCase.Carrinho.CriarCarrinho.CriarCarrinho;
+import com.github.guilhermemonte21.Ecommerce.Application.UseCase.Carrinho.GetCarrinhoById.GetCarrinhoById;
+import com.github.guilhermemonte21.Ecommerce.Application.UseCase.Carrinho.RemoverItemDoCarrinho.RemoverItemDoCarrinho;
 import com.github.guilhermemonte21.Ecommerce.Domain.Model.Entity.Carrinho;
-import com.github.guilhermemonte21.Ecommerce.Domain.Model.Entity.Produtos;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

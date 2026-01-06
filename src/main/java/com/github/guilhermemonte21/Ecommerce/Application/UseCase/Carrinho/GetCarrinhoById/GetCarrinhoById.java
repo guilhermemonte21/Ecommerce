@@ -1,4 +1,4 @@
-package com.github.guilhermemonte21.Ecommerce.Application.UseCase.Carrinho;
+package com.github.guilhermemonte21.Ecommerce.Application.UseCase.Carrinho.GetCarrinhoById;
 
 import com.github.guilhermemonte21.Ecommerce.Application.Gateway.CarrinhoGateway;
 import com.github.guilhermemonte21.Ecommerce.Domain.Model.Entity.Carrinho;
@@ -15,6 +15,7 @@ public class GetCarrinhoById {
         this.gateway = gateway;
     }
 
+    @Override
     public Optional<Carrinho> FindCarrinhoById(UUID Id){
         return gateway.getById(Id);
 

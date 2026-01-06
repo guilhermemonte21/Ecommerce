@@ -1,4 +1,4 @@
-package com.github.guilhermemonte21.Ecommerce.Application.UseCase.Produtos;
+package com.github.guilhermemonte21.Ecommerce.Application.UseCase.Produtos.DeletarProduto;
 
 import com.github.guilhermemonte21.Ecommerce.Application.Gateway.ProdutoGateway;
 import com.github.guilhermemonte21.Ecommerce.Domain.Model.Entity.Produtos;
@@ -8,13 +8,14 @@ import java.util.Optional;
 import java.util.UUID;
 
 @Service
-public class DeletarProduto {
+public class DeletarProduto implements IDeletarProduto{
     private final ProdutoGateway gateway;
 
     public DeletarProduto(ProdutoGateway gateway) {
         this.gateway = gateway;
     }
 
+    @Override
     public void Deletar(UUID IdUser, UUID id){
         Optional<Produtos> produtoById = gateway.GetById(id);
         if (produtoById.isEmpty()){
