@@ -15,8 +15,8 @@ public class AddItemAoCarrinho implements IAddItemAoCarrinho{
     }
 
     @Override
-    public Carrinho AdicionarAoCarrinho(UUID id, UUID IdProduto){
-        Carrinho carrinhoComItem =  gateway.add(id, IdProduto);
+    public Carrinho AdicionarAoCarrinho(UUID id, UUID IdProduto, Long quantidade){
+        Carrinho carrinhoComItem =  gateway.add(id, IdProduto, quantidade);
         carrinhoComItem.atualizarValorTotal();
         carrinhoComItem.AtualizadoAgora();
         return carrinhoComItem;

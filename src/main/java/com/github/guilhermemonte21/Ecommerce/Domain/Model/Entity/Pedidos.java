@@ -20,17 +20,16 @@ import java.util.UUID;
 public class Pedidos {
     private UUID Id;
     private Usuarios Comprador;
-    private Usuarios Vendedor;
     private List<Produtos> Itens = new ArrayList<>();
     private BigDecimal Preco;
     private StatusPedido Status = StatusPedido.CRIADO;
     private OffsetDateTime CriadoEm = OffsetDateTime.now();
 
-    public void CompradorNaoVendedor(){
-        if (this.Comprador == this.Vendedor){
-            throw new RuntimeException("Não pode comprar o proprio produto");
-        }
-    }
+//    public void CompradorNaoVendedor(){
+//        if (this.Comprador == this.Itens.get().getVendedor().getId()){
+//            throw new RuntimeException("Não pode comprar o proprio produto");
+//        }
+//    }
 
     public void ChangeToPago(){
         this.Status = StatusPedido.PAGO;

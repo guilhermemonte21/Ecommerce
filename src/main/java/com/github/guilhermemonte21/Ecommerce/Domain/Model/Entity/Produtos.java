@@ -1,5 +1,6 @@
 package com.github.guilhermemonte21.Ecommerce.Domain.Model.Entity;
 
+import com.github.guilhermemonte21.Ecommerce.Domain.Model.Enum.StatusPedido;
 import com.github.guilhermemonte21.Ecommerce.Domain.Model.Enum.StatusProdutos;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -37,6 +38,12 @@ public class Produtos {
             this.Estoque = 0L;
         }
         this.Estoque += quantity;
+    }
+
+    public void EstoquePosCompra(Pedidos pedido){
+        if (pedido.getStatus().equals(StatusPedido.PAGO) ){
+            Estoque -= 1;
+        }
     }
 
 }

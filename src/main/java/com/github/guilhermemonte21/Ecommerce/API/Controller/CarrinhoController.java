@@ -39,9 +39,9 @@ public class CarrinhoController {
         return ResponseEntity.status(HttpStatus.CREATED).body(newCarrinho);
     }
 
-    @PostMapping("/Add")
-    public ResponseEntity<Carrinho> addItem(UUID Id, UUID IdProduto){
-        Carrinho newCarrinho = add.AdicionarAoCarrinho(Id, IdProduto);
+    @PostMapping("/Add/{idCarrinho}")
+    public ResponseEntity<Carrinho> addItem(@PathVariable("idCarrinho") UUID Id,  UUID IdProduto,@RequestBody Long quantity){
+        Carrinho newCarrinho = add.AdicionarAoCarrinho(Id, IdProduto, quantity);
 
         return ResponseEntity.ok(newCarrinho);
     }

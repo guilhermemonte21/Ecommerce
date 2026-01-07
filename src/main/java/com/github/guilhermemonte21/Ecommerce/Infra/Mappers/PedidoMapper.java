@@ -24,7 +24,7 @@ public class PedidoMapper {
         newPedido.setItens(entity.getItens().stream().map(c ->
                 produtoMapper.toDomain(c)).collect(Collectors.toList()));
         newPedido.setComprador(usuarioMapper.toDomain(entity.getComprador()));
-        newPedido.setVendedor(usuarioMapper.toDomain(entity.getVendedor()));
+
         return newPedido;
     }
 
@@ -36,7 +36,6 @@ public class PedidoMapper {
         newPedido.setItens(entity.getItens().stream().map(c ->
                 produtoMapper.toEntity(c)).collect(Collectors.toList()));
         newPedido.setComprador(usuarioMapper.toEntity(entity.getComprador()));
-        newPedido.setVendedor(usuarioMapper.toEntity(entity.getVendedor()));
         return newPedido;
     }
 }
