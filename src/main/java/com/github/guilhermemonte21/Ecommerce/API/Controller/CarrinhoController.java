@@ -35,7 +35,7 @@ public class CarrinhoController {
     @PostMapping("/Create")
     public ResponseEntity<Carrinho> create(@RequestBody @Valid CreateCarrinhoRequest carrinho){
         Carrinho newCarrinho = create.Criar(carrinho);
-        System.out.println(carrinho.getProdutosIds());
+
         return ResponseEntity.status(HttpStatus.CREATED).body(newCarrinho);
     }
 

@@ -31,7 +31,8 @@ public class CarrinhoEntity {
     @JoinColumn(name = "comprador_id", nullable = false, unique = true)
     private UsuariosEntity comprador;
 
-    @OneToMany(cascade = CascadeType.ALL)
+
+    @ManyToMany
     @JoinTable(
             name = "carrinho_produtos",
             joinColumns = @JoinColumn(name = "carrinho_id"),

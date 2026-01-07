@@ -21,4 +21,8 @@ public class Usuarios {
     private Boolean ativo = true;
     private String role;
 
+    public void ChangeToNotActive(){
+        this.ativo = false;
+    }
+
 }

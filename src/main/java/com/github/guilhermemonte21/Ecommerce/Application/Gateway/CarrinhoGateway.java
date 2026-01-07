@@ -12,7 +12,7 @@ public interface CarrinhoGateway {
 
     Optional<Carrinho> getById(UUID Id);
 
-    Carrinho add(UUID Id, UUID IdProdutos, Long quantity);
+    Carrinho add(UUID Id, Produtos produto, Long quantity);
 
     void DeleteItem(Carrinho carrinho, UUID id);
 
