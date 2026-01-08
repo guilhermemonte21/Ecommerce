@@ -1,0 +1,39 @@
+package com.github.guilhermemonte21.Ecommerce.Domain.Model.Entity;
+
+import com.github.guilhermemonte21.Ecommerce.Infra.Persistence.Entity.Data.PedidosEntity;
+import com.github.guilhermemonte21.Ecommerce.Infra.Persistence.Entity.Data.ProdutosEntity;
+import com.github.guilhermemonte21.Ecommerce.Infra.Persistence.Entity.Data.UsuariosEntity;
+import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.UUID;
+
+
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
+public class PedidosSeller {
+        private UUID id;
+
+
+        private Pedidos pedido;
+
+
+        private Usuarios seller;
+
+
+        private Produtos produtos ;
+
+
+        private String status= "Criado" ;
+
+        private BigDecimal valorTotal;
+}
+

@@ -8,9 +8,12 @@ import com.github.guilhermemonte21.Ecommerce.Infra.Persistence.Entity.JpaReposit
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
+
+import static java.util.stream.Collectors.toList;
 
 @Component
 public class PedidoRepositoryImpl implements PedidoGateway {
@@ -35,5 +38,13 @@ public class PedidoRepositoryImpl implements PedidoGateway {
         Optional<Pedidos> PedidosById = jpaPedidosRepository.findById(Id).map(pedidosMapper::toDomain);
 
         return PedidosById;
+    }
+
+    public List<Pedidos> getPedidosByComprador(UUID IdComprador){
+        List<PedidosEntity> pedidoById = jpaPedidosRepository.getPedidosByComprador(IdComprador);
+
+       List<Pedidos> pedidos =  pedidoById.stream().map(pedidosMapper::toDomain).toList();
+
+        return pedidos;
     }
 }

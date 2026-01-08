@@ -2,7 +2,6 @@ package com.github.guilhermemonte21.Ecommerce.Infra.Persistence.Entity.Data;
 
 import com.github.guilhermemonte21.Ecommerce.Infra.Persistence.Entity.Enum.StatusPedido;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -29,17 +28,14 @@ public class PedidosEntity {
     @JoinColumn(name = "comprador_id", nullable = false)
     private UsuariosEntity comprador;
 
-    @ManyToOne
-    @JoinColumn(name = "vendedor_id", nullable = false)
-    private UsuariosEntity vendedor;
 
-    @ManyToMany
-    @JoinTable(
-            name = "pedido_produtos",
-            joinColumns = @JoinColumn(name = "pedido_id"),
-            inverseJoinColumns = @JoinColumn(name = "produto_id")
+
+    @OneToMany(
+            mappedBy = "pedido",
+            cascade = CascadeType.ALL,
+            orphanRemoval = true
     )
-    private List<ProdutosEntity> itens = new ArrayList<>();
+    private List<PedidoSellerEntity> pedidos = new ArrayList<>();
 
     @Column(name = "preco_pedido")
     private BigDecimal preco;
@@ -51,10 +47,9 @@ public class PedidosEntity {
     @Column(name = "criado_em")
     private OffsetDateTime criadoEm = OffsetDateTime.now();
 
-    public PedidosEntity(UsuariosEntity comprador, UsuariosEntity vendedor, List<ProdutosEntity> itens, BigDecimal preco, StatusPedido status) {
+    public PedidosEntity(UsuariosEntity comprador, List<PedidoSellerEntity> pedidos, BigDecimal preco, StatusPedido status) {
         this.comprador = comprador;
-        this.vendedor = vendedor;
-        this.itens = itens;
+        this.pedidos = pedidos;
         this.preco = preco;
         this.status = status;
     }

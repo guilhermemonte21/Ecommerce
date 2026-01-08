@@ -10,10 +10,12 @@ import java.util.stream.Collectors;
 public class PedidoMapper {
         private final ProdutoMapper produtoMapper;
         private final UsuarioMapper usuarioMapper;
+        private final PedidoSellerMapper pedidoSellerMapper;
 
-    public PedidoMapper(ProdutoMapper produtoMapper, UsuarioMapper usuarioMapper) {
+    public PedidoMapper(ProdutoMapper produtoMapper, UsuarioMapper usuarioMapper, PedidoSellerMapper pedidoSellerMapper) {
         this.produtoMapper = produtoMapper;
         this.usuarioMapper = usuarioMapper;
+        this.pedidoSellerMapper = pedidoSellerMapper;
     }
 
     public Pedidos toDomain(PedidosEntity entity){
@@ -21,8 +23,8 @@ public class PedidoMapper {
         newPedido.setId(entity.getId());
         newPedido.setPreco(entity.getPreco());
         newPedido.setCriadoEm(entity.getCriadoEm());
-        newPedido.setItens(entity.getItens().stream().map(c ->
-                produtoMapper.toDomain(c)).collect(Collectors.toList()));
+        newPedido.setItens(entity.getPedidos().stream().map(c ->
+                pedidoSellerMapper.toDomain(c)).collect(Collectors.toList()));
         newPedido.setComprador(usuarioMapper.toDomain(entity.getComprador()));
 
         return newPedido;
@@ -33,8 +35,8 @@ public class PedidoMapper {
         newPedido.setId(entity.getId());
         newPedido.setPreco(entity.getPreco());
         newPedido.setCriadoEm(entity.getCriadoEm());
-        newPedido.setItens(entity.getItens().stream().map(c ->
-                produtoMapper.toEntity(c)).collect(Collectors.toList()));
+        newPedido.setPedidos(entity.getItens().stream().map(c ->
+                pedidoSellerMapper.toEntity(c)).collect(Collectors.toList()));
         newPedido.setComprador(usuarioMapper.toEntity(entity.getComprador()));
         return newPedido;
     }
