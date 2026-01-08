@@ -3,5 +3,5 @@ package com.github.guilhermemonte21.Ecommerce.Application.UseCase.Carrinho.Limpa
 import java.util.UUID;
 
 public interface ILimparCarrinho {
-    void LimparCarrinho(UUID IdUser, UUID IdProduto);
+    void LimparCarrinho(UUID IdCarrinho);
 }

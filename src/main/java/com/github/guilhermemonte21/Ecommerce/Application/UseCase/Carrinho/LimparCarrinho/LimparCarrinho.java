@@ -16,12 +16,10 @@ public class LimparCarrinho implements ILimparCarrinho{
     }
 
     @Override
-    public void LimparCarrinho(UUID IdUser, UUID IdCarrinho) {
+    public void LimparCarrinho( UUID IdCarrinho) {
         Carrinho carrinho = gateway.getById(IdCarrinho)
                 .orElseThrow(() -> new RuntimeException("Carrinho não encontrado"));
-        if (!IdUser.equals(carrinho.getComprador().getId())){
-            throw new RuntimeException("Você não é o dono do carrinho");
-        }
+
         gateway.LimparCarrinho(carrinho);
     }
 }

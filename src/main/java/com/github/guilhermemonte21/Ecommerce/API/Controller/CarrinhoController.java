@@ -56,15 +56,15 @@ public class CarrinhoController {
             return ResponseEntity.notFound().build();
         }
     }
-    @PutMapping("/{id}/{Id}")
+    @DeleteMapping("/{id}/{Id}")
     public ResponseEntity<Void> DeleteItem(@PathVariable("id") UUID Id,@PathVariable("Id") UUID id){
         remove.RemoverItem(Id, id);
         return ResponseEntity.noContent().build();
     }
 
-    @PutMapping("/{IdProduto}")
-    public ResponseEntity<Void> LimparCarrinho(@RequestHeader UUID IdUser,@PathVariable("IdProduto") UUID IdCarrinho){
-        limparCarrinho.LimparCarrinho(IdUser, IdCarrinho);
+    @DeleteMapping("/{IdCarrinho}")
+    public ResponseEntity<Void> LimparCarrinho(@PathVariable("IdCarrinho") UUID IdCarrinho){
+        limparCarrinho.LimparCarrinho(IdCarrinho);
         return ResponseEntity.noContent().build();
     }
 
