@@ -4,7 +4,6 @@ import com.github.guilhermemonte21.Ecommerce.Application.Gateway.CarrinhoGateway
 import com.github.guilhermemonte21.Ecommerce.Application.Gateway.ProdutoGateway;
 import com.github.guilhermemonte21.Ecommerce.Domain.Model.Entity.Carrinho;
 import com.github.guilhermemonte21.Ecommerce.Domain.Model.Entity.Produtos;
-import com.github.guilhermemonte21.Ecommerce.Infra.Persistence.Entity.JpaRepository.JpaCarrinhoRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.UUID;

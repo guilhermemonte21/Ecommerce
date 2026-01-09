@@ -1,21 +1,16 @@
 package com.github.guilhermemonte21.Ecommerce.Infra.Gateway.Impl;
 
 import com.github.guilhermemonte21.Ecommerce.Domain.Model.Entity.Carrinho;
-import com.github.guilhermemonte21.Ecommerce.Domain.Model.Entity.Pedidos;
 import com.github.guilhermemonte21.Ecommerce.Domain.Model.Entity.Produtos;
 import com.github.guilhermemonte21.Ecommerce.Application.Gateway.CarrinhoGateway;
 import com.github.guilhermemonte21.Ecommerce.Infra.Mappers.CarrinhoMapper;
 import com.github.guilhermemonte21.Ecommerce.Infra.Mappers.ProdutoMapper;
 import com.github.guilhermemonte21.Ecommerce.Infra.Persistence.Entity.Data.CarrinhoEntity;
-import com.github.guilhermemonte21.Ecommerce.Infra.Persistence.Entity.Data.PedidosEntity;
 import com.github.guilhermemonte21.Ecommerce.Infra.Persistence.Entity.Data.ProdutosEntity;
-import com.github.guilhermemonte21.Ecommerce.Infra.Persistence.Entity.JpaRepository.JpaCarrinhoRepository;
-import com.github.guilhermemonte21.Ecommerce.Infra.Persistence.Entity.JpaRepository.JpaProdutosRepository;
+import com.github.guilhermemonte21.Ecommerce.Infra.Persistence.JpaRepository.JpaCarrinhoRepository;
+import com.github.guilhermemonte21.Ecommerce.Infra.Persistence.JpaRepository.JpaProdutosRepository;
 import org.springframework.stereotype.Component;
-import org.springframework.stereotype.Repository;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 

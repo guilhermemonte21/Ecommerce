@@ -1,4 +1,4 @@
-package com.github.guilhermemonte21.Ecommerce.Infra.Persistence.Entity.JpaRepository;
+package com.github.guilhermemonte21.Ecommerce.Infra.Persistence.JpaRepository;
 
 import com.github.guilhermemonte21.Ecommerce.Infra.Persistence.Entity.Data.ProdutosEntity;
 

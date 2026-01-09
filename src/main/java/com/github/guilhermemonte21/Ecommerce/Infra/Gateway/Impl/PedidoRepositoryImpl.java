@@ -1,33 +1,37 @@
 package com.github.guilhermemonte21.Ecommerce.Infra.Gateway.Impl;
 
+import com.github.guilhermemonte21.Ecommerce.Domain.Model.Entity.PedidoDoVendedor;
 import com.github.guilhermemonte21.Ecommerce.Domain.Model.Entity.Pedidos;
 import com.github.guilhermemonte21.Ecommerce.Application.Gateway.PedidoGateway;
+import com.github.guilhermemonte21.Ecommerce.Infra.Mappers.PedidoDoVendedorMapper;
 import com.github.guilhermemonte21.Ecommerce.Infra.Mappers.PedidoMapper;
+import com.github.guilhermemonte21.Ecommerce.Infra.Persistence.Entity.Data.PedidoDoVendedorEntity;
 import com.github.guilhermemonte21.Ecommerce.Infra.Persistence.Entity.Data.PedidosEntity;
-import com.github.guilhermemonte21.Ecommerce.Infra.Persistence.Entity.JpaRepository.JpaPedidosRepository;
+import com.github.guilhermemonte21.Ecommerce.Infra.Persistence.JpaRepository.JpaPedidosRepository;
 import org.springframework.stereotype.Component;
-import org.springframework.stereotype.Repository;
 
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
-import java.util.stream.Collectors;
-
-import static java.util.stream.Collectors.toList;
 
 @Component
 public class PedidoRepositoryImpl implements PedidoGateway {
     private final JpaPedidosRepository jpaPedidosRepository;
     private final PedidoMapper pedidosMapper;
+    private final PedidoDoVendedorMapper pedidoDoVendedorMapper;
 
-    public PedidoRepositoryImpl(JpaPedidosRepository jpaPedidosRepository, PedidoMapper pedidosMapper) {
+    public PedidoRepositoryImpl(JpaPedidosRepository jpaPedidosRepository, PedidoMapper pedidosMapper, PedidoDoVendedorMapper pedidoDoVendedorMapper) {
         this.jpaPedidosRepository = jpaPedidosRepository;
         this.pedidosMapper = pedidosMapper;
+        this.pedidoDoVendedorMapper = pedidoDoVendedorMapper;
     }
 
     @Override
     public Pedidos save(Pedidos pedidosEntity) {
         PedidosEntity newPedido = pedidosMapper.toEntity(pedidosEntity);
+        List<PedidoDoVendedorEntity> list = pedidosEntity.getItens().stream().map(pedidoDoVendedorMapper::toEntity).toList();
+
+        newPedido.setPedidos(list);
         PedidosEntity salvo = jpaPedidosRepository.save(newPedido);
         Pedidos pedidos = pedidosMapper.toDomain(salvo);
         return pedidos;

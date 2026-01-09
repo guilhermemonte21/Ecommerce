@@ -21,6 +21,7 @@ public class UsuarioMapper {
 
     public UsuariosEntity toEntity(Usuarios usuarios){
         UsuariosEntity entity = new UsuariosEntity();
+        entity.setId(usuarios.getId());
         entity.setNome(usuarios.getNome());
         entity.setCpf(usuarios.getCpf());
         entity.setSenha(usuarios.getSenha());

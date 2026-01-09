@@ -2,14 +2,11 @@ package com.github.guilhermemonte21.Ecommerce.Infra.Gateway.Impl;
 
 import com.github.guilhermemonte21.Ecommerce.Domain.Model.Entity.Produtos;
 import com.github.guilhermemonte21.Ecommerce.Application.Gateway.ProdutoGateway;
-import com.github.guilhermemonte21.Ecommerce.Domain.Model.Entity.Usuarios;
 import com.github.guilhermemonte21.Ecommerce.Infra.Mappers.ProdutoMapper;
 import com.github.guilhermemonte21.Ecommerce.Infra.Persistence.Entity.Data.ProdutosEntity;
-import com.github.guilhermemonte21.Ecommerce.Infra.Persistence.Entity.Data.UsuariosEntity;
-import com.github.guilhermemonte21.Ecommerce.Infra.Persistence.Entity.JpaRepository.JpaProdutosRepository;
-import com.github.guilhermemonte21.Ecommerce.Infra.Persistence.Entity.JpaRepository.JpaUsuarioRepository;
+import com.github.guilhermemonte21.Ecommerce.Infra.Persistence.JpaRepository.JpaProdutosRepository;
+import com.github.guilhermemonte21.Ecommerce.Infra.Persistence.JpaRepository.JpaUsuarioRepository;
 import org.springframework.stereotype.Component;
-import org.springframework.stereotype.Repository;
 
 import java.util.Optional;
 import java.util.UUID;

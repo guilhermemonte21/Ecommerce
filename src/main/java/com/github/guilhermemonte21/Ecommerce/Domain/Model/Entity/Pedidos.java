@@ -1,6 +1,7 @@
 package com.github.guilhermemonte21.Ecommerce.Domain.Model.Entity;
 
 import com.github.guilhermemonte21.Ecommerce.Domain.Model.Enum.StatusPedido;
+import com.github.guilhermemonte21.Ecommerce.Infra.Persistence.Entity.Data.ProdutosEntity;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -20,7 +21,7 @@ import java.util.UUID;
 public class Pedidos {
     private UUID Id;
     private Usuarios Comprador;
-    private List<PedidosSeller> Itens = new ArrayList<>();
+    private List<PedidoDoVendedor> Itens = new ArrayList<>();
     private BigDecimal Preco;
     private StatusPedido Status = StatusPedido.CRIADO;
     private OffsetDateTime CriadoEm = OffsetDateTime.now();

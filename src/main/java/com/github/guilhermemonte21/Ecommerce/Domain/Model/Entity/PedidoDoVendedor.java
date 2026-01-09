@@ -14,26 +14,22 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
-
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class PedidosSeller {
-        private UUID id;
+public class PedidoDoVendedor {
 
+    private UUID id;
 
-        private Pedidos pedido;
+    private Usuarios Vendedor;
 
+    private Pedidos Pedido;
 
-        private Usuarios seller;
+    private List<Produtos> produtos = new ArrayList<>();
 
+    private BigDecimal Valor;
 
-        private Produtos produtos ;
+    private String Status;
 
-
-        private String status= "Criado" ;
-
-        private BigDecimal valorTotal;
 }
-

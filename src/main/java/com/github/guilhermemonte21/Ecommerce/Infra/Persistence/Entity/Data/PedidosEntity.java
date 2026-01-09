@@ -29,13 +29,12 @@ public class PedidosEntity {
     private UsuariosEntity comprador;
 
 
-
     @OneToMany(
-            mappedBy = "pedido",
+            mappedBy = "Pedido",
             cascade = CascadeType.ALL,
             orphanRemoval = true
     )
-    private List<PedidoSellerEntity> pedidos = new ArrayList<>();
+    private List<PedidoDoVendedorEntity> pedidos = new ArrayList<>();
 
     @Column(name = "preco_pedido")
     private BigDecimal preco;
@@ -47,10 +46,5 @@ public class PedidosEntity {
     @Column(name = "criado_em")
     private OffsetDateTime criadoEm = OffsetDateTime.now();
 
-    public PedidosEntity(UsuariosEntity comprador, List<PedidoSellerEntity> pedidos, BigDecimal preco, StatusPedido status) {
-        this.comprador = comprador;
-        this.pedidos = pedidos;
-        this.preco = preco;
-        this.status = status;
-    }
+
 }

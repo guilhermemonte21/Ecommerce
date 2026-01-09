@@ -1,13 +1,12 @@
 package com.github.guilhermemonte21.Ecommerce.Infra.Mappers;
 
 import com.github.guilhermemonte21.Ecommerce.Domain.Model.Entity.Carrinho;
-import com.github.guilhermemonte21.Ecommerce.Domain.Model.Entity.Usuarios;
 import com.github.guilhermemonte21.Ecommerce.Infra.Gateway.Impl.UsuarioRepositoryImpl;
 import com.github.guilhermemonte21.Ecommerce.Infra.Persistence.Entity.Data.CarrinhoEntity;
 import com.github.guilhermemonte21.Ecommerce.Infra.Persistence.Entity.Data.ProdutosEntity;
 import com.github.guilhermemonte21.Ecommerce.Infra.Persistence.Entity.Data.UsuariosEntity;
-import com.github.guilhermemonte21.Ecommerce.Infra.Persistence.Entity.JpaRepository.JpaProdutosRepository;
-import com.github.guilhermemonte21.Ecommerce.Infra.Persistence.Entity.JpaRepository.JpaUsuarioRepository;
+import com.github.guilhermemonte21.Ecommerce.Infra.Persistence.JpaRepository.JpaProdutosRepository;
+import com.github.guilhermemonte21.Ecommerce.Infra.Persistence.JpaRepository.JpaUsuarioRepository;
 import org.springframework.stereotype.Component;
 
 import java.time.OffsetDateTime;

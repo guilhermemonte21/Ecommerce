@@ -4,7 +4,7 @@ import com.github.guilhermemonte21.Ecommerce.Domain.Model.Entity.Usuarios;
 import com.github.guilhermemonte21.Ecommerce.Application.Gateway.UsuarioGateway;
 import com.github.guilhermemonte21.Ecommerce.Infra.Mappers.UsuarioMapper;
 import com.github.guilhermemonte21.Ecommerce.Infra.Persistence.Entity.Data.UsuariosEntity;
-import com.github.guilhermemonte21.Ecommerce.Infra.Persistence.Entity.JpaRepository.JpaUsuarioRepository;
+import com.github.guilhermemonte21.Ecommerce.Infra.Persistence.JpaRepository.JpaUsuarioRepository;
 import org.springframework.stereotype.Component;
 
 import java.util.Optional;
