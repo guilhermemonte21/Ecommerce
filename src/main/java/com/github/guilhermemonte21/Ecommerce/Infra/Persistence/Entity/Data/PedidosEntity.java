@@ -30,9 +30,10 @@ public class PedidosEntity {
 
 
     @OneToMany(
-            mappedBy = "Pedido",
+            mappedBy = "pedido",
             cascade = CascadeType.ALL,
-            orphanRemoval = true
+            orphanRemoval = true,
+            fetch = FetchType.EAGER
     )
     private List<PedidoDoVendedorEntity> pedidos = new ArrayList<>();
 

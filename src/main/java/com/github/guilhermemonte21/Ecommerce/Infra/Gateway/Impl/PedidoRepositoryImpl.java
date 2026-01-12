@@ -10,6 +10,7 @@ import com.github.guilhermemonte21.Ecommerce.Infra.Persistence.Entity.Data.Pedid
 import com.github.guilhermemonte21.Ecommerce.Infra.Persistence.JpaRepository.JpaPedidosRepository;
 import org.springframework.stereotype.Component;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -29,9 +30,7 @@ public class PedidoRepositoryImpl implements PedidoGateway {
     @Override
     public Pedidos save(Pedidos pedidosEntity) {
         PedidosEntity newPedido = pedidosMapper.toEntity(pedidosEntity);
-        List<PedidoDoVendedorEntity> list = pedidosEntity.getItens().stream().map(pedidoDoVendedorMapper::toEntity).toList();
 
-        newPedido.setPedidos(list);
         PedidosEntity salvo = jpaPedidosRepository.save(newPedido);
         Pedidos pedidos = pedidosMapper.toDomain(salvo);
         return pedidos;

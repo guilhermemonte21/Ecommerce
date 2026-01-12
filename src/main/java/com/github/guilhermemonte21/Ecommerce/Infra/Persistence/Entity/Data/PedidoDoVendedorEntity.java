@@ -29,7 +29,7 @@ public class PedidoDoVendedorEntity {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_Pedido")
-    private PedidosEntity Pedido;
+    private PedidosEntity pedido;
 
     @ManyToMany
     @JoinTable(

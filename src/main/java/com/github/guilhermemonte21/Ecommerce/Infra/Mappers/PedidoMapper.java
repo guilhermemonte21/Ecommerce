@@ -1,18 +1,23 @@
 package com.github.guilhermemonte21.Ecommerce.Infra.Mappers;
 
+import com.github.guilhermemonte21.Ecommerce.Domain.Model.Entity.PedidoDoVendedor;
 import com.github.guilhermemonte21.Ecommerce.Domain.Model.Entity.Pedidos;
 import com.github.guilhermemonte21.Ecommerce.Infra.Persistence.Entity.Data.PedidosEntity;
 import org.springframework.stereotype.Component;
 
+import java.util.ArrayList;
 import java.util.stream.Collectors;
+
+import static java.util.stream.Collectors.toList;
 
 @Component
 public class PedidoMapper {
         private final UsuarioMapper usuarioMapper;
+        private final PedidoDoVendedorMapper pedidoDoVendedorMapper;
 
-
-    public PedidoMapper(UsuarioMapper usuarioMapper) {
+    public PedidoMapper(UsuarioMapper usuarioMapper, PedidoDoVendedorMapper pedidoDoVendedorMapper) {
         this.usuarioMapper = usuarioMapper;
+        this.pedidoDoVendedorMapper = pedidoDoVendedorMapper;
     }
 
     public Pedidos toDomain(PedidosEntity entity){
@@ -21,6 +26,7 @@ public class PedidoMapper {
         newPedido.setPreco(entity.getPreco());
         newPedido.setCriadoEm(entity.getCriadoEm());
         newPedido.setComprador(usuarioMapper.toDomain(entity.getComprador()));
+        newPedido.setItens(new ArrayList<>(entity.getPedidos().stream().map(pedidoDoVendedorMapper::toDomain).toList()));
         return newPedido;
     }
 
@@ -31,6 +37,7 @@ public class PedidoMapper {
         newPedido.setPreco(entity.getPreco());
         newPedido.setCriadoEm(entity.getCriadoEm());
         newPedido.setComprador(usuarioMapper.toEntity(entity.getComprador()));
+        newPedido.setPedidos(new ArrayList<>(entity.getItens().stream().map(pedidoDoVendedorMapper::toEntity).toList()));
         return newPedido;
     }
 }
