@@ -1,7 +1,7 @@
 package com.github.guilhermemonte21.Ecommerce.Application.Mappers;
 
-import com.github.guilhermemonte21.Ecommerce.Application.DTO.Carrinho.CreateCarrinhoRequest;
-import com.github.guilhermemonte21.Ecommerce.Application.Gateway.CarrinhoGateway;
+import com.github.guilhermemonte21.Ecommerce.Application.DTO.Carrinho.CreateCarrinhoDTO.CreateCarrinhoRequest;
+import com.github.guilhermemonte21.Ecommerce.Application.DTO.Carrinho.CarrinhoResponse;
 import com.github.guilhermemonte21.Ecommerce.Application.Gateway.ProdutoGateway;
 import com.github.guilhermemonte21.Ecommerce.Application.Gateway.UsuarioGateway;
 import com.github.guilhermemonte21.Ecommerce.Domain.Model.Entity.Carrinho;
@@ -22,7 +22,7 @@ public class CarrinhoMapperApl {
         this.usuGateway = usuGateway;
     }
 
-    public Carrinho toDomain(CreateCarrinhoRequest carrinhoRequest){
+    public Carrinho CreateResquesttoDomain(CreateCarrinhoRequest carrinhoRequest){
         Carrinho carrinho = new Carrinho();
         carrinho.setComprador(usuGateway.getById(carrinhoRequest.getComprador()).orElseThrow(() -> new RuntimeException("Comprador não encontrado")));
         List<Produtos> prods = carrinhoRequest.getProdutosIds()
@@ -33,5 +33,15 @@ public class CarrinhoMapperApl {
 
         carrinho.setItens(prods);
        return carrinho;
+    }
+    public CarrinhoResponse DomainToResponse(Carrinho carrinho){
+        CarrinhoResponse Dto = new CarrinhoResponse(
+                carrinho.getId(),
+                carrinho.getItens().stream().map(c-> c.getNomeProduto()).toList(),
+                carrinho.getComprador().getNome(),
+                carrinho.getValorTotal(),
+                carrinho.getAtualizadoEm()
+        );
+        return Dto;
     }
 }

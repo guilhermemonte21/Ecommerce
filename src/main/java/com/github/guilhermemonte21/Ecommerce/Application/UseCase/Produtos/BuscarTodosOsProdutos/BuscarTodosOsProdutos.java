@@ -1,4 +1,4 @@
-package com.github.guilhermemonte21.Ecommerce.Application.UseCase.Produtos.GetProdutoById;
+package com.github.guilhermemonte21.Ecommerce.Application.UseCase.Produtos.BuscarTodosOsProdutos;
 
 import com.github.guilhermemonte21.Ecommerce.Application.DTO.Produtos.ProdutoResponse;
 import com.github.guilhermemonte21.Ecommerce.Application.Gateway.ProdutoGateway;
@@ -6,24 +6,21 @@ import com.github.guilhermemonte21.Ecommerce.Application.Mappers.ProdutoMapperAp
 import com.github.guilhermemonte21.Ecommerce.Domain.Model.Entity.Produtos;
 import org.springframework.stereotype.Service;
 
-import java.util.Optional;
-import java.util.UUID;
+import java.util.List;
 
 @Service
-public class GetProdutoById implements IGetProdutoById{
+public class BuscarTodosOsProdutos implements IBuscarTodosOsProdutos{
     private final ProdutoGateway gateway;
     private final ProdutoMapperApl mapperApl;
 
-    public GetProdutoById(ProdutoGateway gateway, ProdutoMapperApl mapperApl) {
+    public BuscarTodosOsProdutos(ProdutoGateway gateway, ProdutoMapperApl mapperApl) {
         this.gateway = gateway;
         this.mapperApl = mapperApl;
     }
 
     @Override
-    public ProdutoResponse GetProdutoById(UUID id){
-        Produtos produtos = gateway.GetById(id).orElseThrow(() -> new RuntimeException("Produto não encontrado"));
-        return mapperApl.ToResponse(produtos);
-
-
+    public List<ProdutoResponse> findAll() {
+        List<Produtos> finded =  gateway.findAll();
+        return finded.stream().map(mapperApl::ToResponse).toList();
     }
 }

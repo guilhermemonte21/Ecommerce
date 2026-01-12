@@ -8,6 +8,7 @@ import com.github.guilhermemonte21.Ecommerce.Infra.Persistence.JpaRepository.Jpa
 import com.github.guilhermemonte21.Ecommerce.Infra.Persistence.JpaRepository.JpaUsuarioRepository;
 import org.springframework.stereotype.Component;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -45,6 +46,13 @@ public class ProdutoRepositoryImpl implements ProdutoGateway {
     public void Delete(Produtos produtos) {
         ProdutosEntity produtosEntity = mapper.toEntity(produtos);
         JpaProdutosRepo.delete(produtosEntity);
+    }
+
+    @Override
+    public List<Produtos> findAll() {
+        List<ProdutosEntity> entityList = JpaProdutosRepo.findAll();
+        List<Produtos> domainList = entityList.stream().map(mapper::toDomain).toList();
+        return domainList;
     }
 
 

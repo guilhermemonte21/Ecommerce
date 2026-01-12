@@ -1,6 +1,7 @@
 package com.github.guilhermemonte21.Ecommerce.Application.UseCase.Carrinho.CriarCarrinho;
 
-import com.github.guilhermemonte21.Ecommerce.Application.DTO.Carrinho.CreateCarrinhoRequest;
+import com.github.guilhermemonte21.Ecommerce.Application.DTO.Carrinho.CreateCarrinhoDTO.CreateCarrinhoRequest;
+import com.github.guilhermemonte21.Ecommerce.Application.DTO.Carrinho.CarrinhoResponse;
 import com.github.guilhermemonte21.Ecommerce.Application.Gateway.CarrinhoGateway;
 import com.github.guilhermemonte21.Ecommerce.Application.Mappers.CarrinhoMapperApl;
 import com.github.guilhermemonte21.Ecommerce.Domain.Model.Entity.Carrinho;
@@ -16,10 +17,11 @@ public class CriarCarrinho implements ICriarCarrinho{
         this.mapper = mapper;
     }
 
-    public Carrinho Criar(CreateCarrinhoRequest carrinho){
-        Carrinho carrinho1 = mapper.toDomain(carrinho);
+    public CarrinhoResponse Criar(CreateCarrinhoRequest carrinho){
+        Carrinho carrinho1 = mapper.CreateResquesttoDomain(carrinho);
         carrinho1.atualizarValorTotal();
         carrinho1.AtualizadoAgora();
-        return gateway.save(carrinho1);
+        Carrinho salvo = gateway.save(carrinho1);
+        return mapper.DomainToResponse(salvo);
     }
 }

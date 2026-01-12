@@ -1,6 +1,7 @@
 package com.github.guilhermemonte21.Ecommerce.API.Controller;
 
-import com.github.guilhermemonte21.Ecommerce.Application.DTO.Carrinho.CreateCarrinhoRequest;
+import com.github.guilhermemonte21.Ecommerce.Application.DTO.Carrinho.CreateCarrinhoDTO.CreateCarrinhoRequest;
+import com.github.guilhermemonte21.Ecommerce.Application.DTO.Carrinho.CarrinhoResponse;
 import com.github.guilhermemonte21.Ecommerce.Application.UseCase.Carrinho.AddItemAoCarrinho.IAddItemAoCarrinho;
 import com.github.guilhermemonte21.Ecommerce.Application.UseCase.Carrinho.CriarCarrinho.ICriarCarrinho;
 import com.github.guilhermemonte21.Ecommerce.Application.UseCase.Carrinho.GetCarrinhoById.IGetCarrinhoById;
@@ -33,28 +34,25 @@ public class CarrinhoController {
     }
 
     @PostMapping("/Create")
-    public ResponseEntity<Carrinho> create(@RequestBody @Valid CreateCarrinhoRequest carrinho){
-        Carrinho newCarrinho = create.Criar(carrinho);
+    public ResponseEntity<CarrinhoResponse> create(@RequestBody @Valid CreateCarrinhoRequest carrinho){
+        CarrinhoResponse newCarrinho = create.Criar(carrinho);
 
         return ResponseEntity.status(HttpStatus.CREATED).body(newCarrinho);
     }
 
     @PostMapping("/Add/{idCarrinho}")
-    public ResponseEntity<Carrinho> addItem(@PathVariable("idCarrinho") UUID Id,  UUID IdProduto,@RequestBody Long quantity){
-        Carrinho newCarrinho = add.AdicionarAoCarrinho(Id, IdProduto, quantity);
+    public ResponseEntity<CarrinhoResponse> addItem(@PathVariable("idCarrinho") UUID Id,  UUID IdProduto,@RequestBody Long quantity){
+        CarrinhoResponse newCarrinho = add.AdicionarAoCarrinho(Id, IdProduto, quantity);
 
         return ResponseEntity.ok(newCarrinho);
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Optional<Carrinho>> getById(@PathVariable("id") UUID Id){
-        Optional<Carrinho> carrinhobyId = getById.FindCarrinhoById(Id);
-        if (!carrinhobyId.isEmpty()){
+    public ResponseEntity<CarrinhoResponse> getById(@PathVariable("id") UUID Id){
+        CarrinhoResponse carrinhobyId = getById.FindCarrinhoById(Id);
+
            return ResponseEntity.status(HttpStatus.OK).body(carrinhobyId);
-        }
-        else {
-            return ResponseEntity.notFound().build();
-        }
+
     }
     @DeleteMapping("/{id}/{Id}")
     public ResponseEntity<Void> DeleteItem(@PathVariable("id") UUID Id,@PathVariable("Id") UUID id){
