@@ -17,7 +17,9 @@ public class CreateUser implements ICreateUser{
 
     @Override
     public Usuarios CreateUser(Usuarios newUser){
-
+        if (gateway.findByEmail(newUser.getEmail()) != null){
+            throw new RuntimeException("Usuario já existe");
+        }
         newUser.setSenha(encoder.encode(newUser.getSenha()));
 
         return gateway.salvar(newUser);

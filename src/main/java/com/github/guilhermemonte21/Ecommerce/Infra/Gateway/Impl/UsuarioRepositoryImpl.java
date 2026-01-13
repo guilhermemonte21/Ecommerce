@@ -48,7 +48,7 @@ public class UsuarioRepositoryImpl implements UsuarioGateway {
         }
         return "Logado";
     }
-
+    @Override
     public Usuarios findByEmail(String email){
         Usuarios user = mapper.toDomain(JpaRepo.findByEmail(email));
 
