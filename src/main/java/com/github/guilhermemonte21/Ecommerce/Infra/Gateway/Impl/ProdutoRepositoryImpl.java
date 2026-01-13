@@ -1,6 +1,6 @@
 package com.github.guilhermemonte21.Ecommerce.Infra.Gateway.Impl;
 
-import com.github.guilhermemonte21.Ecommerce.Domain.Model.Entity.Produtos;
+import com.github.guilhermemonte21.Ecommerce.Domain.Entity.Produtos;
 import com.github.guilhermemonte21.Ecommerce.Application.Gateway.ProdutoGateway;
 import com.github.guilhermemonte21.Ecommerce.Infra.Mappers.ProdutoMapper;
 import com.github.guilhermemonte21.Ecommerce.Infra.Persistence.Entity.Data.ProdutosEntity;

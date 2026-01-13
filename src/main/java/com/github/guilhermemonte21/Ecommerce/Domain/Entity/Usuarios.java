@@ -1,4 +1,4 @@
-package com.github.guilhermemonte21.Ecommerce.Domain.Model.Entity;
+package com.github.guilhermemonte21.Ecommerce.Domain.Entity;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

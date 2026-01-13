@@ -2,8 +2,7 @@ package com.github.guilhermemonte21.Ecommerce.Application.UseCase.Usuarios.GetUs
 
 import com.github.guilhermemonte21.Ecommerce.Application.Exceptions.UsuarioNotFoundException;
 import com.github.guilhermemonte21.Ecommerce.Application.Gateway.UsuarioGateway;
-import com.github.guilhermemonte21.Ecommerce.Domain.Model.Entity.Usuarios;
-import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import com.github.guilhermemonte21.Ecommerce.Domain.Entity.Usuarios;
 import org.springframework.stereotype.Service;
 
 import java.util.UUID;

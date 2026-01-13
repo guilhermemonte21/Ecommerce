@@ -1,7 +1,8 @@
 package com.github.guilhermemonte21.Ecommerce.Infra.Gateway.Impl;
 
-import com.github.guilhermemonte21.Ecommerce.Domain.Model.Entity.Carrinho;
-import com.github.guilhermemonte21.Ecommerce.Domain.Model.Entity.Produtos;
+import com.github.guilhermemonte21.Ecommerce.Application.Exceptions.CarrinhoNotFoundException;
+import com.github.guilhermemonte21.Ecommerce.Domain.Entity.Carrinho;
+import com.github.guilhermemonte21.Ecommerce.Domain.Entity.Produtos;
 import com.github.guilhermemonte21.Ecommerce.Application.Gateway.CarrinhoGateway;
 import com.github.guilhermemonte21.Ecommerce.Infra.Mappers.CarrinhoMapper;
 import com.github.guilhermemonte21.Ecommerce.Infra.Mappers.ProdutoMapper;
@@ -45,7 +46,7 @@ public class CarrinhoRepositoryImpl implements CarrinhoGateway {
 
     @Override
     public Carrinho add(UUID Id, Produtos produtos, Long quantity) {
-        CarrinhoEntity CarrinhobyId = jpaCarrinhoRepository.findById(Id).orElseThrow(() -> new RuntimeException("Carrinho não Encontrado"));
+        CarrinhoEntity CarrinhobyId = jpaCarrinhoRepository.findById(Id).orElseThrow(() -> new CarrinhoNotFoundException(Id));
 
         ProdutosEntity entity = produtoMapper.toEntity(produtos);
 

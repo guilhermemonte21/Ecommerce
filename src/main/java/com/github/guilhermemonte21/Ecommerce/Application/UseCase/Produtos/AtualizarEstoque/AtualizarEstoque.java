@@ -3,10 +3,10 @@ package com.github.guilhermemonte21.Ecommerce.Application.UseCase.Produtos.Atual
 import com.github.guilhermemonte21.Ecommerce.Application.Exceptions.ProdutoNotFoundException;
 import com.github.guilhermemonte21.Ecommerce.Application.Exceptions.QuantidadeInvalidaException;
 import com.github.guilhermemonte21.Ecommerce.Application.Gateway.ProdutoGateway;
-import com.github.guilhermemonte21.Ecommerce.Domain.Model.Entity.Produtos;
-import org.springframework.http.HttpStatus;
+import com.github.guilhermemonte21.Ecommerce.Application.Gateway.UsuarioAutenticadoGateway;
+import com.github.guilhermemonte21.Ecommerce.Domain.Entity.UsuarioAutenticado;
+import com.github.guilhermemonte21.Ecommerce.Domain.Entity.Produtos;
 import org.springframework.stereotype.Service;
-import org.springframework.web.server.ResponseStatusException;
 
 import java.util.UUID;
 
@@ -14,9 +14,11 @@ import java.util.UUID;
 public class AtualizarEstoque implements IAtualizarEstoque{
 
     private final ProdutoGateway gateway;
+    private final UsuarioAutenticadoGateway AuthGateway;
 
-    public AtualizarEstoque(ProdutoGateway gateway) {
+    public AtualizarEstoque(ProdutoGateway gateway, UsuarioAutenticadoGateway authGateway) {
         this.gateway = gateway;
+        AuthGateway = authGateway;
     }
 
     @Override
@@ -24,6 +26,10 @@ public class AtualizarEstoque implements IAtualizarEstoque{
 
         Produtos produto = gateway.GetById(idProduto)
                 .orElseThrow(() -> new ProdutoNotFoundException(idProduto));
+        UsuarioAutenticado user = AuthGateway.get();
+        if(!user.getId().equals(produto.getVendedor().getId())){
+            throw new RuntimeException("Acesso Negado");
+        }
 
         if (quantity < 0){
             throw new QuantidadeInvalidaException();

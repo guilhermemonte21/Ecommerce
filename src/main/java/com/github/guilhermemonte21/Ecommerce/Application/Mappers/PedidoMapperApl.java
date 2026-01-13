@@ -1,7 +1,7 @@
 package com.github.guilhermemonte21.Ecommerce.Application.Mappers;
 
 import com.github.guilhermemonte21.Ecommerce.Application.DTO.Pedidos.PedidoResponse;
-import com.github.guilhermemonte21.Ecommerce.Domain.Model.Entity.Pedidos;
+import com.github.guilhermemonte21.Ecommerce.Domain.Entity.Pedidos;
 import org.springframework.stereotype.Component;
 
 @Component

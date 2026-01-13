@@ -1,15 +1,9 @@
 package com.github.guilhermemonte21.Ecommerce.Infra.Mappers;
 
-import com.github.guilhermemonte21.Ecommerce.Application.Gateway.PedidoGateway;
-import com.github.guilhermemonte21.Ecommerce.Domain.Model.Entity.PedidoDoVendedor;
-import com.github.guilhermemonte21.Ecommerce.Domain.Model.Entity.Pedidos;
-import com.github.guilhermemonte21.Ecommerce.Domain.Model.Entity.Produtos;
+import com.github.guilhermemonte21.Ecommerce.Domain.Entity.PedidoDoVendedor;
 import com.github.guilhermemonte21.Ecommerce.Infra.Persistence.Entity.Data.PedidoDoVendedorEntity;
 import com.github.guilhermemonte21.Ecommerce.Infra.Persistence.Entity.Data.PedidosEntity;
-import com.github.guilhermemonte21.Ecommerce.Infra.Persistence.Entity.Data.ProdutosEntity;
-import com.github.guilhermemonte21.Ecommerce.Infra.Persistence.Entity.Data.UsuariosEntity;
 import com.github.guilhermemonte21.Ecommerce.Infra.Persistence.JpaRepository.JpaPedidosRepository;
-import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
 
 @Component

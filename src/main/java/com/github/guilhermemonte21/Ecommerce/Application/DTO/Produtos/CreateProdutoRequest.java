@@ -1,10 +1,8 @@
 package com.github.guilhermemonte21.Ecommerce.Application.DTO.Produtos;
 
-import com.github.guilhermemonte21.Ecommerce.Domain.Model.Entity.Usuarios;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Positive;
 
 import java.math.BigDecimal;
 import java.util.UUID;
@@ -13,9 +11,15 @@ import java.util.UUID;
 public record CreateProdutoRequest(
 
      UUID id,
+     @NotBlank
      String nomeProduto,
+     @NotNull
      UUID vendedor,
+     @NotBlank
      String descricao,
+     @NotNull
      BigDecimal preco,
+    @NotNull
+    @Positive
     Long estoque
 ){}

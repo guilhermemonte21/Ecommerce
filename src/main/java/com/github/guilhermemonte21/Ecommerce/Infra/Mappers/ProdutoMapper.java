@@ -1,7 +1,7 @@
 package com.github.guilhermemonte21.Ecommerce.Infra.Mappers;
 
 import com.github.guilhermemonte21.Ecommerce.Application.Exceptions.UsuarioNotFoundException;
-import com.github.guilhermemonte21.Ecommerce.Domain.Model.Entity.Produtos;
+import com.github.guilhermemonte21.Ecommerce.Domain.Entity.Produtos;
 import com.github.guilhermemonte21.Ecommerce.Infra.Gateway.Impl.UsuarioRepositoryImpl;
 import com.github.guilhermemonte21.Ecommerce.Infra.Persistence.Entity.Data.ProdutosEntity;
 import com.github.guilhermemonte21.Ecommerce.Infra.Persistence.Entity.Data.UsuariosEntity;

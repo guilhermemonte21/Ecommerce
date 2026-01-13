@@ -2,7 +2,6 @@ package com.github.guilhermemonte21.Ecommerce.Application.UseCase.Produtos.Atual
 
 import com.github.guilhermemonte21.Ecommerce.Application.DTO.Produtos.CreateProdutoRequest;
 import com.github.guilhermemonte21.Ecommerce.Application.DTO.Produtos.ProdutoResponse;
-import com.github.guilhermemonte21.Ecommerce.Domain.Model.Entity.Produtos;
 
 import java.util.UUID;
 

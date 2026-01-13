@@ -1,8 +1,7 @@
-package com.github.guilhermemonte21.Ecommerce.Domain.Model.Entity;
+package com.github.guilhermemonte21.Ecommerce.Domain.Entity;
 
 
 
-import com.github.guilhermemonte21.Ecommerce.Infra.Persistence.Entity.Data.ProdutosEntity;
 import jakarta.annotation.Nullable;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
@@ -15,7 +14,6 @@ import java.time.OffsetDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 @Getter
 @Setter

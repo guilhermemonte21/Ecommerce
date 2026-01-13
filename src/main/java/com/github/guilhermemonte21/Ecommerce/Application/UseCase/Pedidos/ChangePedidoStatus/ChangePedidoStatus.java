@@ -2,10 +2,9 @@ package com.github.guilhermemonte21.Ecommerce.Application.UseCase.Pedidos.Change
 
 import com.github.guilhermemonte21.Ecommerce.Application.Exceptions.PedidoNotFoundException;
 import com.github.guilhermemonte21.Ecommerce.Application.Gateway.PedidoGateway;
-import com.github.guilhermemonte21.Ecommerce.Domain.Model.Entity.Pedidos;
-import com.github.guilhermemonte21.Ecommerce.Domain.Model.Enum.StatusPedido;
+import com.github.guilhermemonte21.Ecommerce.Domain.Entity.Pedidos;
+import com.github.guilhermemonte21.Ecommerce.Domain.Enum.StatusPedido;
 
-import java.util.Optional;
 import java.util.UUID;
 
 public class ChangePedidoStatus implements IChangePedidoStatus{

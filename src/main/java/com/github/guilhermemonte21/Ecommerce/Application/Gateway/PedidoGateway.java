@@ -1,6 +1,6 @@
 package com.github.guilhermemonte21.Ecommerce.Application.Gateway;
 
-import com.github.guilhermemonte21.Ecommerce.Domain.Model.Entity.Pedidos;
+import com.github.guilhermemonte21.Ecommerce.Domain.Entity.Pedidos;
 
 import java.util.List;
 import java.util.Optional;

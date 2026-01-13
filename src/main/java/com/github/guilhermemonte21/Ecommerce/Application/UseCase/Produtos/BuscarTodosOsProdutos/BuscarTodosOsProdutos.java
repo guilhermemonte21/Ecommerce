@@ -3,7 +3,7 @@ package com.github.guilhermemonte21.Ecommerce.Application.UseCase.Produtos.Busca
 import com.github.guilhermemonte21.Ecommerce.Application.DTO.Produtos.ProdutoResponse;
 import com.github.guilhermemonte21.Ecommerce.Application.Gateway.ProdutoGateway;
 import com.github.guilhermemonte21.Ecommerce.Application.Mappers.ProdutoMapperApl;
-import com.github.guilhermemonte21.Ecommerce.Domain.Model.Entity.Produtos;
+import com.github.guilhermemonte21.Ecommerce.Domain.Entity.Produtos;
 import org.springframework.stereotype.Service;
 
 import java.util.List;

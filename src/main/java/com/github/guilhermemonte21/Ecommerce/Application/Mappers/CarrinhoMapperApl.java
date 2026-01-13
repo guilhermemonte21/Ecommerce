@@ -3,10 +3,11 @@ package com.github.guilhermemonte21.Ecommerce.Application.Mappers;
 import com.github.guilhermemonte21.Ecommerce.Application.DTO.Carrinho.CreateCarrinhoDTO.CreateCarrinhoRequest;
 import com.github.guilhermemonte21.Ecommerce.Application.DTO.Carrinho.CarrinhoResponse;
 import com.github.guilhermemonte21.Ecommerce.Application.Exceptions.ProdutoNotFoundException;
+import com.github.guilhermemonte21.Ecommerce.Application.Exceptions.UsuarioNotFoundException;
 import com.github.guilhermemonte21.Ecommerce.Application.Gateway.ProdutoGateway;
 import com.github.guilhermemonte21.Ecommerce.Application.Gateway.UsuarioGateway;
-import com.github.guilhermemonte21.Ecommerce.Domain.Model.Entity.Carrinho;
-import com.github.guilhermemonte21.Ecommerce.Domain.Model.Entity.Produtos;
+import com.github.guilhermemonte21.Ecommerce.Domain.Entity.Carrinho;
+import com.github.guilhermemonte21.Ecommerce.Domain.Entity.Produtos;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -25,7 +26,7 @@ public class CarrinhoMapperApl {
 
     public Carrinho CreateResquesttoDomain(CreateCarrinhoRequest carrinhoRequest){
         Carrinho carrinho = new Carrinho();
-        carrinho.setComprador(usuGateway.getById(carrinhoRequest.getComprador()).orElseThrow(() -> new RuntimeException("Comprador não encontrado")));
+        carrinho.setComprador(usuGateway.getById(carrinhoRequest.getComprador()).orElseThrow(() -> new UsuarioNotFoundException(carrinhoRequest.getComprador())));
         List<Produtos> prods = carrinhoRequest.getProdutosIds()
                 .stream()
                 .map(c -> prodGateway.GetById(c)

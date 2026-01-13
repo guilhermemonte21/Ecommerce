@@ -4,7 +4,10 @@ import com.github.guilhermemonte21.Ecommerce.Application.Exceptions.CarrinhoNotF
 import com.github.guilhermemonte21.Ecommerce.Application.Gateway.CarrinhoGateway;
 import com.github.guilhermemonte21.Ecommerce.Application.Gateway.PedidoGateway;
 import com.github.guilhermemonte21.Ecommerce.Application.Mappers.PedidoMapperApl;
-import com.github.guilhermemonte21.Ecommerce.Domain.Model.Entity.*;
+import com.github.guilhermemonte21.Ecommerce.Domain.Entity.Carrinho;
+import com.github.guilhermemonte21.Ecommerce.Domain.Entity.PedidoDoVendedor;
+import com.github.guilhermemonte21.Ecommerce.Domain.Entity.Pedidos;
+import com.github.guilhermemonte21.Ecommerce.Domain.Entity.Produtos;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import java.math.BigDecimal;

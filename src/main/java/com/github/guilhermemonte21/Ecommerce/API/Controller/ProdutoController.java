@@ -7,9 +7,7 @@ import com.github.guilhermemonte21.Ecommerce.Application.UseCase.Produtos.Atuali
 import com.github.guilhermemonte21.Ecommerce.Application.UseCase.Produtos.BuscarTodosOsProdutos.IBuscarTodosOsProdutos;
 import com.github.guilhermemonte21.Ecommerce.Application.UseCase.Produtos.GetProdutoById.IGetProdutoById;
 import com.github.guilhermemonte21.Ecommerce.Application.UseCase.Produtos.RegistrarProduto.IRegistrarProduto;
-import com.github.guilhermemonte21.Ecommerce.Domain.Model.Entity.Produtos;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 

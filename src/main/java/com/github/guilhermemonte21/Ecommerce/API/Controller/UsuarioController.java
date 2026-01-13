@@ -1,7 +1,7 @@
 package com.github.guilhermemonte21.Ecommerce.API.Controller;
 
 import com.github.guilhermemonte21.Ecommerce.Application.UseCase.Usuarios.CreateUser.ICreateUser;
-import com.github.guilhermemonte21.Ecommerce.Domain.Model.Entity.Usuarios;
+import com.github.guilhermemonte21.Ecommerce.Domain.Entity.Usuarios;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;

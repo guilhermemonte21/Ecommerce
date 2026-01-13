@@ -1,6 +1,6 @@
 package com.github.guilhermemonte21.Ecommerce.Infra.Mappers;
 
-import com.github.guilhermemonte21.Ecommerce.Domain.Model.Entity.Usuarios;
+import com.github.guilhermemonte21.Ecommerce.Domain.Entity.Usuarios;
 import com.github.guilhermemonte21.Ecommerce.Infra.Persistence.Entity.Data.UsuariosEntity;
 import org.springframework.stereotype.Component;
 

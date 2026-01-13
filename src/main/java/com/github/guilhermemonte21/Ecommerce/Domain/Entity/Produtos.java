@@ -1,7 +1,6 @@
-package com.github.guilhermemonte21.Ecommerce.Domain.Model.Entity;
+package com.github.guilhermemonte21.Ecommerce.Domain.Entity;
 
-import com.github.guilhermemonte21.Ecommerce.Domain.Model.Enum.StatusPedido;
-import com.github.guilhermemonte21.Ecommerce.Domain.Model.Enum.StatusProdutos;
+import com.github.guilhermemonte21.Ecommerce.Domain.Enum.StatusPedido;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;

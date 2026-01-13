@@ -1,16 +1,13 @@
 package com.github.guilhermemonte21.Ecommerce.Infra.Gateway.Impl;
 
-import com.github.guilhermemonte21.Ecommerce.Domain.Model.Entity.PedidoDoVendedor;
-import com.github.guilhermemonte21.Ecommerce.Domain.Model.Entity.Pedidos;
+import com.github.guilhermemonte21.Ecommerce.Domain.Entity.Pedidos;
 import com.github.guilhermemonte21.Ecommerce.Application.Gateway.PedidoGateway;
 import com.github.guilhermemonte21.Ecommerce.Infra.Mappers.PedidoDoVendedorMapper;
 import com.github.guilhermemonte21.Ecommerce.Infra.Mappers.PedidoMapper;
-import com.github.guilhermemonte21.Ecommerce.Infra.Persistence.Entity.Data.PedidoDoVendedorEntity;
 import com.github.guilhermemonte21.Ecommerce.Infra.Persistence.Entity.Data.PedidosEntity;
 import com.github.guilhermemonte21.Ecommerce.Infra.Persistence.JpaRepository.JpaPedidosRepository;
 import org.springframework.stereotype.Component;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;

@@ -2,7 +2,7 @@ package com.github.guilhermemonte21.Ecommerce.Infra.Mappers;
 
 import com.github.guilhermemonte21.Ecommerce.Application.Exceptions.ProdutoNotFoundException;
 import com.github.guilhermemonte21.Ecommerce.Application.Exceptions.UsuarioNotFoundException;
-import com.github.guilhermemonte21.Ecommerce.Domain.Model.Entity.Carrinho;
+import com.github.guilhermemonte21.Ecommerce.Domain.Entity.Carrinho;
 import com.github.guilhermemonte21.Ecommerce.Infra.Gateway.Impl.UsuarioRepositoryImpl;
 import com.github.guilhermemonte21.Ecommerce.Infra.Persistence.Entity.Data.CarrinhoEntity;
 import com.github.guilhermemonte21.Ecommerce.Infra.Persistence.Entity.Data.ProdutosEntity;

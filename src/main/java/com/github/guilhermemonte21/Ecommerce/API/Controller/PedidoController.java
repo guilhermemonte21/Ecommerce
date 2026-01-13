@@ -1,13 +1,10 @@
 package com.github.guilhermemonte21.Ecommerce.API.Controller;
 
 import com.github.guilhermemonte21.Ecommerce.Application.DTO.Pedidos.PedidoResponse;
-import com.github.guilhermemonte21.Ecommerce.Application.UseCase.Pedidos.CriarPedido.CriarPedido;
 import com.github.guilhermemonte21.Ecommerce.Application.UseCase.Pedidos.CriarPedido.ICriarPedido;
 import com.github.guilhermemonte21.Ecommerce.Application.UseCase.Pedidos.GetItensByPedido.IGetItensByPedido;
-import com.github.guilhermemonte21.Ecommerce.Domain.Model.Entity.PedidoDoVendedor;
-import com.github.guilhermemonte21.Ecommerce.Domain.Model.Entity.Pedidos;
+import com.github.guilhermemonte21.Ecommerce.Domain.Entity.PedidoDoVendedor;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 

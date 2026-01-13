@@ -1,6 +1,5 @@
 package com.github.guilhermemonte21.Ecommerce.Infra.Persistence.Entity.Data;
 
-import com.github.guilhermemonte21.Ecommerce.Domain.Model.Entity.Pedidos;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

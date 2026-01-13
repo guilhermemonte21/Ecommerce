@@ -1,7 +1,6 @@
-package com.github.guilhermemonte21.Ecommerce.Domain.Model.Entity;
+package com.github.guilhermemonte21.Ecommerce.Domain.Entity;
 
-import com.github.guilhermemonte21.Ecommerce.Domain.Model.Enum.StatusPedido;
-import com.github.guilhermemonte21.Ecommerce.Infra.Persistence.Entity.Data.ProdutosEntity;
+import com.github.guilhermemonte21.Ecommerce.Domain.Enum.StatusPedido;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

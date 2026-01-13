@@ -4,9 +4,11 @@ import com.github.guilhermemonte21.Ecommerce.Application.DTO.Carrinho.CarrinhoRe
 import com.github.guilhermemonte21.Ecommerce.Application.Exceptions.ProdutoNotFoundException;
 import com.github.guilhermemonte21.Ecommerce.Application.Gateway.CarrinhoGateway;
 import com.github.guilhermemonte21.Ecommerce.Application.Gateway.ProdutoGateway;
+import com.github.guilhermemonte21.Ecommerce.Application.Gateway.UsuarioAutenticadoGateway;
 import com.github.guilhermemonte21.Ecommerce.Application.Mappers.CarrinhoMapperApl;
-import com.github.guilhermemonte21.Ecommerce.Domain.Model.Entity.Carrinho;
-import com.github.guilhermemonte21.Ecommerce.Domain.Model.Entity.Produtos;
+import com.github.guilhermemonte21.Ecommerce.Domain.Entity.UsuarioAutenticado;
+import com.github.guilhermemonte21.Ecommerce.Domain.Entity.Carrinho;
+import com.github.guilhermemonte21.Ecommerce.Domain.Entity.Produtos;
 import org.springframework.stereotype.Service;
 
 import java.util.UUID;
@@ -16,20 +18,27 @@ public class AddItemAoCarrinho implements IAddItemAoCarrinho{
     private final CarrinhoGateway gateway;
     private final ProdutoGateway Produtogateway;
     private final CarrinhoMapperApl mapperApl;
+    private final UsuarioAutenticadoGateway AuthGateway;
 
-    public AddItemAoCarrinho(CarrinhoGateway gateway, ProdutoGateway produtogateway, CarrinhoMapperApl mapperApl) {
+    public AddItemAoCarrinho(CarrinhoGateway gateway, ProdutoGateway produtogateway, CarrinhoMapperApl mapperApl, UsuarioAutenticadoGateway authGateway) {
         this.gateway = gateway;
         Produtogateway = produtogateway;
         this.mapperApl = mapperApl;
+        AuthGateway = authGateway;
     }
 
     @Override
     public CarrinhoResponse AdicionarAoCarrinho(UUID idCarrinho, UUID IdProduto, Long quantidade){
+        UsuarioAutenticado user = AuthGateway.get();
         Produtos produto = Produtogateway.GetById(IdProduto).orElseThrow(() -> new ProdutoNotFoundException(IdProduto));
         if(quantidade > produto.getEstoque()){
-            throw new RuntimeException("Estoque Insuficiente");
+            throw new IllegalArgumentException("Estoque Insuficiente");
         }
+
         Carrinho carrinhoComItem =  gateway.add(idCarrinho, produto, quantidade);
+        if (!user.getId().equals(carrinhoComItem.getComprador().getId())){
+            throw new RuntimeException("Acesso negado");
+        }
         carrinhoComItem.atualizarValorTotal();
         carrinhoComItem.AtualizadoAgora();
         Carrinho cart = gateway.save(carrinhoComItem);

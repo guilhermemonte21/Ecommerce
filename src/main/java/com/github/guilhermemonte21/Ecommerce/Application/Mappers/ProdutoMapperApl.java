@@ -3,10 +3,8 @@ package com.github.guilhermemonte21.Ecommerce.Application.Mappers;
 import com.github.guilhermemonte21.Ecommerce.Application.DTO.Produtos.CreateProdutoRequest;
 import com.github.guilhermemonte21.Ecommerce.Application.DTO.Produtos.ProdutoResponse;
 import com.github.guilhermemonte21.Ecommerce.Application.Exceptions.UsuarioNotFoundException;
-import com.github.guilhermemonte21.Ecommerce.Application.Gateway.ProdutoGateway;
 import com.github.guilhermemonte21.Ecommerce.Application.Gateway.UsuarioGateway;
-import com.github.guilhermemonte21.Ecommerce.Domain.Model.Entity.Produtos;
-import com.github.guilhermemonte21.Ecommerce.Domain.Model.Entity.Usuarios;
+import com.github.guilhermemonte21.Ecommerce.Domain.Entity.Produtos;
 import org.springframework.stereotype.Component;
 
 @Component

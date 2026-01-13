@@ -4,7 +4,7 @@ import com.github.guilhermemonte21.Ecommerce.Application.DTO.Carrinho.CreateCarr
 import com.github.guilhermemonte21.Ecommerce.Application.DTO.Carrinho.CarrinhoResponse;
 import com.github.guilhermemonte21.Ecommerce.Application.Gateway.CarrinhoGateway;
 import com.github.guilhermemonte21.Ecommerce.Application.Mappers.CarrinhoMapperApl;
-import com.github.guilhermemonte21.Ecommerce.Domain.Model.Entity.Carrinho;
+import com.github.guilhermemonte21.Ecommerce.Domain.Entity.Carrinho;
 import org.springframework.stereotype.Service;
 
 @Service

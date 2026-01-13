@@ -1,7 +1,7 @@
 package com.github.guilhermemonte21.Ecommerce.Infra.Gateway.Impl;
 
 import com.github.guilhermemonte21.Ecommerce.Application.Gateway.PedidoDoVendedorGateway;
-import com.github.guilhermemonte21.Ecommerce.Domain.Model.Entity.PedidoDoVendedor;
+import com.github.guilhermemonte21.Ecommerce.Domain.Entity.PedidoDoVendedor;
 import com.github.guilhermemonte21.Ecommerce.Infra.Mappers.PedidoDoVendedorMapper;
 import com.github.guilhermemonte21.Ecommerce.Infra.Persistence.Entity.Data.PedidoDoVendedorEntity;
 import com.github.guilhermemonte21.Ecommerce.Infra.Persistence.JpaRepository.JpaPedidoDoVendedorRepo;
