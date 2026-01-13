@@ -2,6 +2,7 @@ package com.github.guilhermemonte21.Ecommerce.Application.Mappers;
 
 import com.github.guilhermemonte21.Ecommerce.Application.DTO.Carrinho.CreateCarrinhoDTO.CreateCarrinhoRequest;
 import com.github.guilhermemonte21.Ecommerce.Application.DTO.Carrinho.CarrinhoResponse;
+import com.github.guilhermemonte21.Ecommerce.Application.Exceptions.ProdutoNotFoundException;
 import com.github.guilhermemonte21.Ecommerce.Application.Gateway.ProdutoGateway;
 import com.github.guilhermemonte21.Ecommerce.Application.Gateway.UsuarioGateway;
 import com.github.guilhermemonte21.Ecommerce.Domain.Model.Entity.Carrinho;
@@ -28,7 +29,7 @@ public class CarrinhoMapperApl {
         List<Produtos> prods = carrinhoRequest.getProdutosIds()
                 .stream()
                 .map(c -> prodGateway.GetById(c)
-                        .orElseThrow(() -> new RuntimeException("Produtos não encontrados")))
+                        .orElseThrow(() -> new ProdutoNotFoundException(c)))
                 .collect(Collectors.toList());
 
         carrinho.setItens(prods);

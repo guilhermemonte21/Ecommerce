@@ -1,5 +1,6 @@
 package com.github.guilhermemonte21.Ecommerce.Application.UseCase.Pedidos.GetItensByPedido;
 
+import com.github.guilhermemonte21.Ecommerce.Application.Exceptions.PedidoNotFoundException;
 import com.github.guilhermemonte21.Ecommerce.Application.Gateway.PedidoGateway;
 import com.github.guilhermemonte21.Ecommerce.Domain.Model.Entity.PedidoDoVendedor;
 import com.github.guilhermemonte21.Ecommerce.Domain.Model.Entity.Pedidos;
@@ -18,7 +19,7 @@ public class GetItensByPedido implements IGetItensByPedido{
 
     @Override
     public List<PedidoDoVendedor> get(UUID IdPedido) {
-        Pedidos pedido = pedidoGateway.getById(IdPedido).orElseThrow(() -> new RuntimeException("Pedido não encontrado"));
+        Pedidos pedido = pedidoGateway.getById(IdPedido).orElseThrow(() -> new PedidoNotFoundException(IdPedido));
 
         return pedido.getItens();
     }

@@ -9,16 +9,13 @@ import lombok.Setter;
 import java.math.BigDecimal;
 import java.util.UUID;
 
-@Getter
-@Setter
-@AllArgsConstructor
-@NoArgsConstructor
-public class CreateProdutoRequest {
 
-    private UUID id;
-    private String nomeProduto;
-    private UUID vendedor;
-    private String descricao;
-    private BigDecimal preco;
-    private Long estoque;
-}
+public record CreateProdutoRequest(
+
+     UUID id,
+     String nomeProduto,
+     UUID vendedor,
+     String descricao,
+     BigDecimal preco,
+    Long estoque
+){}

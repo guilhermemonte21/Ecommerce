@@ -1,6 +1,9 @@
 package com.github.guilhermemonte21.Ecommerce.Application.UseCase.Pedidos.CriarPedido;
+import com.github.guilhermemonte21.Ecommerce.Application.DTO.Pedidos.PedidoResponse;
+import com.github.guilhermemonte21.Ecommerce.Application.Exceptions.CarrinhoNotFoundException;
 import com.github.guilhermemonte21.Ecommerce.Application.Gateway.CarrinhoGateway;
 import com.github.guilhermemonte21.Ecommerce.Application.Gateway.PedidoGateway;
+import com.github.guilhermemonte21.Ecommerce.Application.Mappers.PedidoMapperApl;
 import com.github.guilhermemonte21.Ecommerce.Domain.Model.Entity.*;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -13,16 +16,17 @@ public class CriarPedido implements ICriarPedido{
 
     private final PedidoGateway Pedidogateway;
     private final CarrinhoGateway CarrinhoGateway;
+    private final PedidoMapperApl mapperApl;
 
-    public CriarPedido(PedidoGateway pedidogateway, CarrinhoGateway carrinhoGateway) {
+    public CriarPedido(PedidoGateway pedidogateway, CarrinhoGateway carrinhoGateway, PedidoMapperApl mapperApl) {
         Pedidogateway = pedidogateway;
         CarrinhoGateway = carrinhoGateway;
+        this.mapperApl = mapperApl;
     }
-
     @Transactional
     @Override
-    public Pedidos CriarPedido(UUID CarrinhoId) {
-        Carrinho cart = CarrinhoGateway.getById(CarrinhoId).orElseThrow();
+    public PedidoResponse CriarPedido(UUID CarrinhoId) {
+        Carrinho cart = CarrinhoGateway.getById(CarrinhoId).orElseThrow(() -> new CarrinhoNotFoundException(CarrinhoId));
         Pedidos Pedido = new Pedidos();
         Pedido.setComprador(cart.getComprador());
         Pedidos salvo = Pedidogateway.save(Pedido);
@@ -44,6 +48,11 @@ public class CriarPedido implements ICriarPedido{
 
         Pedidos CompleteOrder = Pedidogateway.save(salvo);
 
-        return CompleteOrder;
+        PedidoResponse Dto = mapperApl.toResponse(CompleteOrder);
+        return Dto;
     }
+
+
+
+
 }

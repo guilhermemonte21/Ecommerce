@@ -18,10 +18,9 @@ public class UsuarioController {
         this.createUser = createUser;
     }
 
-    @PostMapping
+    @PostMapping("/usuarios")
     public ResponseEntity<Usuarios> Criar(@RequestBody Usuarios usuarios){
         Usuarios usuarios1 = createUser.CreateUser(usuarios);
-
         return ResponseEntity.status(HttpStatus.CREATED).body(usuarios1);
     }
 }

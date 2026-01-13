@@ -1,6 +1,7 @@
 package com.github.guilhermemonte21.Ecommerce.Application.UseCase.Produtos.GetProdutoById;
 
 import com.github.guilhermemonte21.Ecommerce.Application.DTO.Produtos.ProdutoResponse;
+import com.github.guilhermemonte21.Ecommerce.Application.Exceptions.ProdutoNotFoundException;
 import com.github.guilhermemonte21.Ecommerce.Application.Gateway.ProdutoGateway;
 import com.github.guilhermemonte21.Ecommerce.Application.Mappers.ProdutoMapperApl;
 import com.github.guilhermemonte21.Ecommerce.Domain.Model.Entity.Produtos;
@@ -21,7 +22,7 @@ public class GetProdutoById implements IGetProdutoById{
 
     @Override
     public ProdutoResponse GetProdutoById(UUID id){
-        Produtos produtos = gateway.GetById(id).orElseThrow(() -> new RuntimeException("Produto não encontrado"));
+        Produtos produtos = gateway.GetById(id).orElseThrow(() -> new ProdutoNotFoundException(id));
         return mapperApl.ToResponse(produtos);
 
 

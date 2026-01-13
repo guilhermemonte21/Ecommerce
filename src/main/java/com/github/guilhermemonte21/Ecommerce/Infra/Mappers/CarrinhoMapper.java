@@ -1,5 +1,7 @@
 package com.github.guilhermemonte21.Ecommerce.Infra.Mappers;
 
+import com.github.guilhermemonte21.Ecommerce.Application.Exceptions.ProdutoNotFoundException;
+import com.github.guilhermemonte21.Ecommerce.Application.Exceptions.UsuarioNotFoundException;
 import com.github.guilhermemonte21.Ecommerce.Domain.Model.Entity.Carrinho;
 import com.github.guilhermemonte21.Ecommerce.Infra.Gateway.Impl.UsuarioRepositoryImpl;
 import com.github.guilhermemonte21.Ecommerce.Infra.Persistence.Entity.Data.CarrinhoEntity;
@@ -34,7 +36,7 @@ public class CarrinhoMapper {
 
         carrinho.setId(entity.getId());
         carrinho.setComprador(jpaUsuarioRepository.findById(entity.getComprador().getId())
-                .map(userMapper::toDomain).orElseThrow(() -> new RuntimeException("Comprador não encontrado"))
+                .map(userMapper::toDomain).orElseThrow(() -> new UsuarioNotFoundException(entity.getComprador().getId()))
         );
         carrinho.setItens(entity.getItens().stream().map(c ->
                 produtoMapper.toDomain(c)).collect(Collectors.toList()));
@@ -49,13 +51,13 @@ public class CarrinhoMapper {
         carrinho.setId(entity.getId());
         UsuariosEntity user = jpaUsuarioRepository
                 .findById(entity.getComprador().getId())
-                .orElseThrow(() -> new RuntimeException("Comprador não Encontrado"));
+                .orElseThrow(() -> new UsuarioNotFoundException(entity.getComprador().getId()));
 
         carrinho.setComprador(user);
 
         List<ProdutosEntity> produtos = entity.getItens().stream()
                 .map(p -> produtosRepository.findById(p.getId())
-                        .orElseThrow(() -> new RuntimeException("Produto não encontrado")))
+                        .orElseThrow(() -> new ProdutoNotFoundException(p.getId())))
                 .collect(Collectors.toList());
 
         carrinho.setItens(produtos);

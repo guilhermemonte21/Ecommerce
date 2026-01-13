@@ -1,6 +1,7 @@
 package com.github.guilhermemonte21.Ecommerce.Application.UseCase.Carrinho.AddItemAoCarrinho;
 
 import com.github.guilhermemonte21.Ecommerce.Application.DTO.Carrinho.CarrinhoResponse;
+import com.github.guilhermemonte21.Ecommerce.Application.Exceptions.ProdutoNotFoundException;
 import com.github.guilhermemonte21.Ecommerce.Application.Gateway.CarrinhoGateway;
 import com.github.guilhermemonte21.Ecommerce.Application.Gateway.ProdutoGateway;
 import com.github.guilhermemonte21.Ecommerce.Application.Mappers.CarrinhoMapperApl;
@@ -24,7 +25,7 @@ public class AddItemAoCarrinho implements IAddItemAoCarrinho{
 
     @Override
     public CarrinhoResponse AdicionarAoCarrinho(UUID idCarrinho, UUID IdProduto, Long quantidade){
-        Produtos produto = Produtogateway.GetById(IdProduto).orElseThrow(() -> new RuntimeException("Produto não encontrado"));
+        Produtos produto = Produtogateway.GetById(IdProduto).orElseThrow(() -> new ProdutoNotFoundException(IdProduto));
         if(quantidade > produto.getEstoque()){
             throw new RuntimeException("Estoque Insuficiente");
         }

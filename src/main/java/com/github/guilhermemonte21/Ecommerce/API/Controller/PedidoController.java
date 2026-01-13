@@ -1,5 +1,6 @@
 package com.github.guilhermemonte21.Ecommerce.API.Controller;
 
+import com.github.guilhermemonte21.Ecommerce.Application.DTO.Pedidos.PedidoResponse;
 import com.github.guilhermemonte21.Ecommerce.Application.UseCase.Pedidos.CriarPedido.CriarPedido;
 import com.github.guilhermemonte21.Ecommerce.Application.UseCase.Pedidos.CriarPedido.ICriarPedido;
 import com.github.guilhermemonte21.Ecommerce.Application.UseCase.Pedidos.GetItensByPedido.IGetItensByPedido;
@@ -25,9 +26,9 @@ public class PedidoController {
     }
 
     @PostMapping("CriarPedido/{idCarrinho}")
-    public ResponseEntity<Pedidos> CriarPedido(@PathVariable("idCarrinho") UUID IdCarrinho){
-        Pedidos newPedido = criarPedido.CriarPedido(IdCarrinho);
-        return ResponseEntity.status(HttpStatusCode.valueOf(201)).body(newPedido);
+    public ResponseEntity<PedidoResponse> CriarPedido(@PathVariable("idCarrinho") UUID IdCarrinho){
+        PedidoResponse newPedido = criarPedido.CriarPedido(IdCarrinho);
+        return ResponseEntity.status(HttpStatus.CREATED).body(newPedido);
     }
 
     @GetMapping("/{IdPedido}/itens")

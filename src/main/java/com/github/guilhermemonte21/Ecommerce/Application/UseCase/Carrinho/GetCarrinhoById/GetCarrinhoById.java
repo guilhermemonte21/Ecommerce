@@ -1,6 +1,7 @@
 package com.github.guilhermemonte21.Ecommerce.Application.UseCase.Carrinho.GetCarrinhoById;
 
 import com.github.guilhermemonte21.Ecommerce.Application.DTO.Carrinho.CarrinhoResponse;
+import com.github.guilhermemonte21.Ecommerce.Application.Exceptions.CarrinhoNotFoundException;
 import com.github.guilhermemonte21.Ecommerce.Application.Gateway.CarrinhoGateway;
 import com.github.guilhermemonte21.Ecommerce.Application.Mappers.CarrinhoMapperApl;
 import com.github.guilhermemonte21.Ecommerce.Domain.Model.Entity.Carrinho;
@@ -22,7 +23,7 @@ public class GetCarrinhoById implements IGetCarrinhoById{
 
     @Override
     public CarrinhoResponse FindCarrinhoById(UUID Id){
-        Carrinho carrinho = gateway.getById(Id).orElseThrow(() -> new RuntimeException("Carrinho não encontrado"));
+        Carrinho carrinho = gateway.getById(Id).orElseThrow(() -> new CarrinhoNotFoundException(Id));
         return mapper.DomainToResponse(carrinho);
 
 

@@ -2,6 +2,8 @@ package com.github.guilhermemonte21.Ecommerce.Application.UseCase.Produtos.Atual
 
 import com.github.guilhermemonte21.Ecommerce.Application.DTO.Produtos.CreateProdutoRequest;
 import com.github.guilhermemonte21.Ecommerce.Application.DTO.Produtos.ProdutoResponse;
+import com.github.guilhermemonte21.Ecommerce.Application.Exceptions.ProdutoNotFoundException;
+import com.github.guilhermemonte21.Ecommerce.Application.Exceptions.UsuarioNotFoundException;
 import com.github.guilhermemonte21.Ecommerce.Application.Gateway.ProdutoGateway;
 import com.github.guilhermemonte21.Ecommerce.Application.Gateway.UsuarioGateway;
 import com.github.guilhermemonte21.Ecommerce.Application.Mappers.ProdutoMapperApl;
@@ -28,15 +30,15 @@ public class AtualizarProduto implements IAtualizarProduto{
     public ProdutoResponse Atualizar(UUID IdProduto, CreateProdutoRequest produtos){
 
        Produtos ProdById = gateway.GetById(IdProduto)
-                .orElseThrow(() -> new RuntimeException("Produto não encontrado"));
+                .orElseThrow(() -> new ProdutoNotFoundException(IdProduto));
 
       Produtos produtos1 = new Produtos(
               ProdById.getId(),
-              produtos.getNomeProduto(),
-              usuarioGateway.getById(produtos.getVendedor()).orElseThrow(() -> new RuntimeException("Produto não encontrado")),
-              produtos.getDescricao(),
-              produtos.getPreco(),
-              produtos.getEstoque()
+              produtos.nomeProduto(),
+              usuarioGateway.getById(produtos.vendedor()).orElseThrow(() -> new UsuarioNotFoundException(produtos.vendedor())),
+              produtos.descricao(),
+              produtos.preco(),
+              produtos.estoque()
       );
       Produtos salvo =  gateway.salvar(ProdById);
       return mapperApl.ToResponse(salvo);

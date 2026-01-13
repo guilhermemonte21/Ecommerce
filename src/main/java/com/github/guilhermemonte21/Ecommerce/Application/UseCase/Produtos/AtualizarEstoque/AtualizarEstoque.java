@@ -1,5 +1,7 @@
 package com.github.guilhermemonte21.Ecommerce.Application.UseCase.Produtos.AtualizarEstoque;
 
+import com.github.guilhermemonte21.Ecommerce.Application.Exceptions.ProdutoNotFoundException;
+import com.github.guilhermemonte21.Ecommerce.Application.Exceptions.QuantidadeInvalidaException;
 import com.github.guilhermemonte21.Ecommerce.Application.Gateway.ProdutoGateway;
 import com.github.guilhermemonte21.Ecommerce.Domain.Model.Entity.Produtos;
 import org.springframework.http.HttpStatus;
@@ -18,17 +20,13 @@ public class AtualizarEstoque implements IAtualizarEstoque{
     }
 
     @Override
-    public Long AtualizarEstoque(UUID idUser, UUID idProduto, Long quantity) {
+    public Long AtualizarEstoque(UUID idProduto, Long quantity) {
 
         Produtos produto = gateway.GetById(idProduto)
-                .orElseThrow(() -> new RuntimeException("Produto não encontrado"));
+                .orElseThrow(() -> new ProdutoNotFoundException(idProduto));
 
-        if (!produto.getVendedor().getId().equals(idUser)) {
-            throw new ResponseStatusException(HttpStatus.FORBIDDEN,
-                    "Usuário não é o vendedor do produto");
-        }
         if (quantity < 0){
-            throw new RuntimeException("Quantidade Invalida");
+            throw new QuantidadeInvalidaException();
         }
 
         produto.AtualizarEstoque(quantity);

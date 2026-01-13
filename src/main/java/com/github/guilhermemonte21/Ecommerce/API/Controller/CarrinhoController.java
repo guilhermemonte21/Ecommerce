@@ -2,6 +2,7 @@ package com.github.guilhermemonte21.Ecommerce.API.Controller;
 
 import com.github.guilhermemonte21.Ecommerce.Application.DTO.Carrinho.CreateCarrinhoDTO.CreateCarrinhoRequest;
 import com.github.guilhermemonte21.Ecommerce.Application.DTO.Carrinho.CarrinhoResponse;
+import com.github.guilhermemonte21.Ecommerce.Application.Exceptions.CarrinhoNotFoundException;
 import com.github.guilhermemonte21.Ecommerce.Application.UseCase.Carrinho.AddItemAoCarrinho.IAddItemAoCarrinho;
 import com.github.guilhermemonte21.Ecommerce.Application.UseCase.Carrinho.CriarCarrinho.ICriarCarrinho;
 import com.github.guilhermemonte21.Ecommerce.Application.UseCase.Carrinho.GetCarrinhoById.IGetCarrinhoById;
@@ -42,10 +43,11 @@ public class CarrinhoController {
 
     @PostMapping("/Add/{idCarrinho}")
     public ResponseEntity<CarrinhoResponse> addItem(@PathVariable("idCarrinho") UUID Id,  UUID IdProduto,@RequestBody Long quantity){
-        CarrinhoResponse newCarrinho = add.AdicionarAoCarrinho(Id, IdProduto, quantity);
+           CarrinhoResponse newCarrinho = add.AdicionarAoCarrinho(Id, IdProduto, quantity);
 
-        return ResponseEntity.ok(newCarrinho);
-    }
+
+           return ResponseEntity.ok(newCarrinho);
+           }
 
     @GetMapping("/{id}")
     public ResponseEntity<CarrinhoResponse> getById(@PathVariable("id") UUID Id){

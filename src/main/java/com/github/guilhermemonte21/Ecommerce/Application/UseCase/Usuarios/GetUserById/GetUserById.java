@@ -1,5 +1,6 @@
 package com.github.guilhermemonte21.Ecommerce.Application.UseCase.Usuarios.GetUserById;
 
+import com.github.guilhermemonte21.Ecommerce.Application.Exceptions.UsuarioNotFoundException;
 import com.github.guilhermemonte21.Ecommerce.Application.Gateway.UsuarioGateway;
 import com.github.guilhermemonte21.Ecommerce.Domain.Model.Entity.Usuarios;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
@@ -18,6 +19,6 @@ public class GetUserById implements IGetUserById{
 
     @Override
     public Usuarios getUser(UUID Id) {
-       return gateway.getById(Id).orElseThrow(() -> new RuntimeException("Usuario não encontrado"));
+       return gateway.getById(Id).orElseThrow(() -> new UsuarioNotFoundException(Id));
     }
 }

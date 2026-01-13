@@ -1,5 +1,7 @@
 package com.github.guilhermemonte21.Ecommerce.Application.UseCase.Pedidos.GetPedidosByComprador;
 
+import com.github.guilhermemonte21.Ecommerce.Application.Exceptions.PedidoNotFoundException;
+import com.github.guilhermemonte21.Ecommerce.Application.Exceptions.UsuarioNotFoundException;
 import com.github.guilhermemonte21.Ecommerce.Application.Gateway.PedidoGateway;
 import com.github.guilhermemonte21.Ecommerce.Domain.Model.Entity.Pedidos;
 
@@ -19,7 +21,7 @@ public class getPedidosByComprador implements IGetPedidosByComprador{
         List<Pedidos> pedidos = gateway.getPedidosByComprador(IdComprador);
 
         if (pedidos.isEmpty()){
-            throw new RuntimeException("Esse Cliente não fez pedidos ainda");
+            throw new UsuarioNotFoundException(IdComprador);
         }
 
         return pedidos;

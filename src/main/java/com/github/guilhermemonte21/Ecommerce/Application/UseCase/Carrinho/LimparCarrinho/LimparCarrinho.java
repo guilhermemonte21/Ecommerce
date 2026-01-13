@@ -1,5 +1,6 @@
 package com.github.guilhermemonte21.Ecommerce.Application.UseCase.Carrinho.LimparCarrinho;
 
+import com.github.guilhermemonte21.Ecommerce.Application.Exceptions.CarrinhoNotFoundException;
 import com.github.guilhermemonte21.Ecommerce.Application.Gateway.CarrinhoGateway;
 import com.github.guilhermemonte21.Ecommerce.Domain.Model.Entity.Carrinho;
 import com.github.guilhermemonte21.Ecommerce.Domain.Model.Entity.Produtos;
@@ -18,7 +19,7 @@ public class LimparCarrinho implements ILimparCarrinho{
     @Override
     public void LimparCarrinho( UUID IdCarrinho) {
         Carrinho carrinho = gateway.getById(IdCarrinho)
-                .orElseThrow(() -> new RuntimeException("Carrinho não encontrado"));
+                .orElseThrow(() -> new CarrinhoNotFoundException(IdCarrinho));
 
         gateway.LimparCarrinho(carrinho);
     }

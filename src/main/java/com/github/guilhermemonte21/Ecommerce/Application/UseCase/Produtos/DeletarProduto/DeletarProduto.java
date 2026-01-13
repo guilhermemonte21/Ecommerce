@@ -1,5 +1,6 @@
 package com.github.guilhermemonte21.Ecommerce.Application.UseCase.Produtos.DeletarProduto;
 
+import com.github.guilhermemonte21.Ecommerce.Application.Exceptions.ProdutoNotFoundException;
 import com.github.guilhermemonte21.Ecommerce.Application.Gateway.ProdutoGateway;
 import com.github.guilhermemonte21.Ecommerce.Domain.Model.Entity.Produtos;
 import org.springframework.stereotype.Service;
@@ -17,13 +18,9 @@ public class DeletarProduto implements IDeletarProduto{
 
     @Override
     public void Deletar(UUID IdUser, UUID id){
-        Optional<Produtos> produtoById = gateway.GetById(id);
-        if (produtoById.isEmpty()){
-            throw new RuntimeException("Produto Não encontrado");
-        }
-        if (!IdUser.equals(produtoById.get().getVendedor().getId())){
-            throw new RuntimeException("Você não é dono do produto");
-        }
-        gateway.Delete(produtoById.get());
+        Produtos produtoById = gateway.GetById(id).orElseThrow(() -> new ProdutoNotFoundException(id));
+
+
+        gateway.Delete(produtoById);
     }
 }

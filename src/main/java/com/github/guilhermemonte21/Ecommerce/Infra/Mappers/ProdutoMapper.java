@@ -1,5 +1,6 @@
 package com.github.guilhermemonte21.Ecommerce.Infra.Mappers;
 
+import com.github.guilhermemonte21.Ecommerce.Application.Exceptions.UsuarioNotFoundException;
 import com.github.guilhermemonte21.Ecommerce.Domain.Model.Entity.Produtos;
 import com.github.guilhermemonte21.Ecommerce.Infra.Gateway.Impl.UsuarioRepositoryImpl;
 import com.github.guilhermemonte21.Ecommerce.Infra.Persistence.Entity.Data.ProdutosEntity;
@@ -44,7 +45,7 @@ public class ProdutoMapper {
 
         UsuariosEntity vendedor = jpaUsuarioRepository
                 .findById(domain.getVendedor().getId())
-                .orElseThrow(() -> new RuntimeException("Vendedor não encontrado"));
+                .orElseThrow(() -> new UsuarioNotFoundException(domain.getVendedor().getId()));
 
         entity.setVendedor(vendedor);
         return entity;

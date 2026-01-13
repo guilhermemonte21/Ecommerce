@@ -36,12 +36,13 @@ public class ProdutoController {
     @PostMapping
     public ResponseEntity<ProdutoResponse> criar(@RequestBody CreateProdutoRequest produtos){
         ProdutoResponse prod = registrarProduto.Create(produtos);
-        return ResponseEntity.status(HttpStatusCode.valueOf(201)).body(prod);
+
+        return ResponseEntity.status(HttpStatus.CREATED).body(prod);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Long> AtualizarEstoque(@RequestHeader("userId") UUID IdUser, @PathVariable("id") UUID IdProduto,@RequestParam Long Quantity){
-        Long EstoqueAtualizado = atualizarEstoque.AtualizarEstoque(IdUser, IdProduto, Quantity);
+    public ResponseEntity<Long> AtualizarEstoque( @PathVariable("id") UUID IdProduto,@RequestParam Long Quantity){
+        Long EstoqueAtualizado = atualizarEstoque.AtualizarEstoque( IdProduto, Quantity);
         return ResponseEntity.ok().body(EstoqueAtualizado);
     }
     @GetMapping("FindAll")
