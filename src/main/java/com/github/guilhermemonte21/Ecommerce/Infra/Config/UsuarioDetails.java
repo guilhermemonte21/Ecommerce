@@ -37,7 +37,7 @@ public class UsuarioDetails implements UserDetails {
 
     @Override
     public String getUsername() {
-        return user.getEmail(); // ou UUID, mas seja consistente
+        return user.getEmail();
     }
 
     @Override public boolean isAccountNonExpired() { return true; }

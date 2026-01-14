@@ -34,6 +34,7 @@ public class CarrinhoMapperApl {
                         .orElseThrow(() -> new ProdutoNotFoundException(c)))
                 .collect(Collectors.toList());
 
+
         carrinho.setItens(prods);
        return carrinho;
     }

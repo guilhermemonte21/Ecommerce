@@ -2,6 +2,7 @@ package com.github.guilhermemonte21.Ecommerce.Application.UseCase.Carrinho.Limpa
 
 import com.github.guilhermemonte21.Ecommerce.Application.Exceptions.AcessoNegadoException;
 import com.github.guilhermemonte21.Ecommerce.Application.Exceptions.CarrinhoNotFoundException;
+import com.github.guilhermemonte21.Ecommerce.Application.Exceptions.UsuarioInativoException;
 import com.github.guilhermemonte21.Ecommerce.Application.Gateway.CarrinhoGateway;
 import com.github.guilhermemonte21.Ecommerce.Application.Gateway.UsuarioAutenticadoGateway;
 import com.github.guilhermemonte21.Ecommerce.Domain.Entity.UsuarioAutenticado;
@@ -28,6 +29,9 @@ public class LimparCarrinho implements ILimparCarrinho{
         UsuarioAutenticado user = AuthGateway.get();
         if(!user.getUser().getId().equals(carrinho.getComprador().getId())){
             throw new AcessoNegadoException();
+        }
+        if (user.getUser().getAtivo() == false){
+            throw new UsuarioInativoException();
         }
 
         gateway.LimparCarrinho(carrinho);

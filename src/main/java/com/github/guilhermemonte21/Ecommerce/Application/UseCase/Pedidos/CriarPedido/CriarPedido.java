@@ -1,13 +1,12 @@
 package com.github.guilhermemonte21.Ecommerce.Application.UseCase.Pedidos.CriarPedido;
 import com.github.guilhermemonte21.Ecommerce.Application.DTO.Pedidos.PedidoResponse;
 import com.github.guilhermemonte21.Ecommerce.Application.Exceptions.CarrinhoNotFoundException;
+import com.github.guilhermemonte21.Ecommerce.Application.Exceptions.UsuarioInativoException;
 import com.github.guilhermemonte21.Ecommerce.Application.Gateway.CarrinhoGateway;
 import com.github.guilhermemonte21.Ecommerce.Application.Gateway.PedidoGateway;
+import com.github.guilhermemonte21.Ecommerce.Application.Gateway.UsuarioAutenticadoGateway;
 import com.github.guilhermemonte21.Ecommerce.Application.Mappers.PedidoMapperApl;
-import com.github.guilhermemonte21.Ecommerce.Domain.Entity.Carrinho;
-import com.github.guilhermemonte21.Ecommerce.Domain.Entity.PedidoDoVendedor;
-import com.github.guilhermemonte21.Ecommerce.Domain.Entity.Pedidos;
-import com.github.guilhermemonte21.Ecommerce.Domain.Entity.Produtos;
+import com.github.guilhermemonte21.Ecommerce.Domain.Entity.*;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import java.math.BigDecimal;
@@ -20,18 +19,25 @@ public class CriarPedido implements ICriarPedido{
     private final PedidoGateway Pedidogateway;
     private final CarrinhoGateway CarrinhoGateway;
     private final PedidoMapperApl mapperApl;
+    private final UsuarioAutenticadoGateway AuthGateway;
 
-    public CriarPedido(PedidoGateway pedidogateway, CarrinhoGateway carrinhoGateway, PedidoMapperApl mapperApl) {
+    public CriarPedido(PedidoGateway pedidogateway, CarrinhoGateway carrinhoGateway, PedidoMapperApl mapperApl, UsuarioAutenticadoGateway authGateway) {
         Pedidogateway = pedidogateway;
         CarrinhoGateway = carrinhoGateway;
         this.mapperApl = mapperApl;
+        AuthGateway = authGateway;
     }
+
     @Transactional
     @Override
     public PedidoResponse CriarPedido(UUID CarrinhoId) {
+        UsuarioAutenticado user = AuthGateway.get();
+        if (user.getUser().getAtivo() == false){
+            throw new UsuarioInativoException();
+        }
         Carrinho cart = CarrinhoGateway.getById(CarrinhoId).orElseThrow(() -> new CarrinhoNotFoundException(CarrinhoId));
         Pedidos Pedido = new Pedidos();
-        Pedido.setComprador(cart.getComprador());
+        Pedido.setComprador(user.getUser());
         Pedidos salvo = Pedidogateway.save(Pedido);
 
         for (Produtos produtos : cart.getItens()){

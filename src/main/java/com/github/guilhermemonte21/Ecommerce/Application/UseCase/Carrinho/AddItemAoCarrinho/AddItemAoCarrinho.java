@@ -18,27 +18,28 @@ public class AddItemAoCarrinho implements IAddItemAoCarrinho{
     private final CarrinhoGateway gateway;
     private final ProdutoGateway Produtogateway;
     private final CarrinhoMapperApl mapperApl;
-   // private final UsuarioAutenticadoGateway AuthGateway;
+    private final UsuarioAutenticadoGateway AuthGateway;
 
 
-    public AddItemAoCarrinho(CarrinhoGateway gateway, ProdutoGateway produtogateway, CarrinhoMapperApl mapperApl) {
+    public AddItemAoCarrinho(CarrinhoGateway gateway, ProdutoGateway produtogateway, CarrinhoMapperApl mapperApl, UsuarioAutenticadoGateway authGateway) {
         this.gateway = gateway;
-        Produtogateway = produtogateway;
+        this.Produtogateway = produtogateway;
         this.mapperApl = mapperApl;
+        this.AuthGateway = authGateway;
     }
 
     @Override
     public CarrinhoResponse AdicionarAoCarrinho(UUID idCarrinho, UUID IdProduto, Long quantidade){
-        //UUID user = AuthGateway.get();
+        UsuarioAutenticado user = AuthGateway.get();
         Produtos produto = Produtogateway.GetById(IdProduto).orElseThrow(() -> new ProdutoNotFoundException(IdProduto));
         if(quantidade > produto.getEstoque()){
             throw new IllegalArgumentException("Estoque Insuficiente");
         }
 
         Carrinho carrinhoComItem =  gateway.add(idCarrinho, produto, quantidade);
-        //if (!user.equals(carrinhoComItem.getComprador().getId())){
-           // throw new RuntimeException("Acesso negado");
-        //}
+        if (!user.getUser().getId().equals(carrinhoComItem.getComprador().getId())){
+            throw new RuntimeException("Acesso negado");
+        }
         carrinhoComItem.atualizarValorTotal();
         carrinhoComItem.AtualizadoAgora();
         Carrinho cart = gateway.save(carrinhoComItem);

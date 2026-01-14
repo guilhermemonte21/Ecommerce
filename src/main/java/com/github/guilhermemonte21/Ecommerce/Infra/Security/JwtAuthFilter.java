@@ -52,7 +52,7 @@ public class JwtAuthFilter extends OncePerRequestFilter {
 
                 UsernamePasswordAuthenticationToken authentication =
                         new UsernamePasswordAuthenticationToken(
-                                userDetails,              // ✅ SEMPRE UserDetails
+                                userDetails,
                                 null,
                                 userDetails.getAuthorities()
                         );

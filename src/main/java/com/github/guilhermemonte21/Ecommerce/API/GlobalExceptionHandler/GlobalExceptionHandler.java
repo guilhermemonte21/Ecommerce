@@ -34,4 +34,12 @@ public class GlobalExceptionHandler {
     public ResponseEntity<String> handleIllegalArgument(IllegalArgumentException ex) {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ex.getMessage());
     }
+    @ExceptionHandler(AcessoNegadoException.class)
+    public ResponseEntity<String> handleAcessoNegado(AcessoNegadoException ex) {
+        return ResponseEntity.status(HttpStatus.FORBIDDEN).body(ex.getMessage());
+    }
+    @ExceptionHandler(UsuarioInativoException.class)
+    public ResponseEntity<String> handleInactiveUser(UsuarioInativoException ex) {
+        return ResponseEntity.status(HttpStatus.FORBIDDEN).body(ex.getMessage());
+    }
 }

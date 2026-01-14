@@ -2,6 +2,7 @@ package com.github.guilhermemonte21.Ecommerce.Application.UseCase.Produtos.Delet
 
 import com.github.guilhermemonte21.Ecommerce.Application.Exceptions.AcessoNegadoException;
 import com.github.guilhermemonte21.Ecommerce.Application.Exceptions.ProdutoNotFoundException;
+import com.github.guilhermemonte21.Ecommerce.Application.Exceptions.UsuarioInativoException;
 import com.github.guilhermemonte21.Ecommerce.Application.Gateway.ProdutoGateway;
 import com.github.guilhermemonte21.Ecommerce.Application.Gateway.UsuarioAutenticadoGateway;
 import com.github.guilhermemonte21.Ecommerce.Domain.Entity.UsuarioAutenticado;
@@ -27,6 +28,9 @@ public class DeletarProduto implements IDeletarProduto{
         UsuarioAutenticado user = AuthGateway.get();
         if(!user.getUser().getId().equals(produtoById.getVendedor().getId())){
             throw new AcessoNegadoException();
+        }
+        if (user.getUser().getAtivo() == false){
+            throw new UsuarioInativoException();
         }
 
         gateway.Delete(produtoById);

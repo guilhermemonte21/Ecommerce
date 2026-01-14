@@ -1,6 +1,7 @@
 package com.github.guilhermemonte21.Ecommerce.Application.UseCase.Pedidos.GetPedidosByComprador;
 
 import com.github.guilhermemonte21.Ecommerce.Application.Exceptions.AcessoNegadoException;
+import com.github.guilhermemonte21.Ecommerce.Application.Exceptions.UsuarioInativoException;
 import com.github.guilhermemonte21.Ecommerce.Application.Exceptions.UsuarioNotFoundException;
 import com.github.guilhermemonte21.Ecommerce.Application.Gateway.PedidoGateway;
 import com.github.guilhermemonte21.Ecommerce.Application.Gateway.UsuarioAutenticadoGateway;
@@ -27,6 +28,9 @@ public class getPedidosByComprador implements IGetPedidosByComprador{
         UsuarioAutenticado user = AuthGateway.get();
         if(!user.getUser().getId().equals(IdComprador)){
             throw new AcessoNegadoException();
+        }
+        if (user.getUser().getAtivo() == false){
+            throw new UsuarioInativoException();
         }
 
         if (pedidos.isEmpty()){

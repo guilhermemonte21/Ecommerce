@@ -32,6 +32,9 @@ public class GetCarrinhoById implements IGetCarrinhoById{
         if(!user.getUser().getId().equals(carrinho.getComprador().getId())){
             throw new AcessoNegadoException();
         }
+        if (user.getUser().getAtivo() == false){
+            throw new RuntimeException("Cliente esta inativo");
+        }
         return mapper.DomainToResponse(carrinho);
 
 

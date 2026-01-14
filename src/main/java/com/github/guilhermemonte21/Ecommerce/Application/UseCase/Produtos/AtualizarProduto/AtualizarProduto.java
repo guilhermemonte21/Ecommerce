@@ -4,6 +4,7 @@ import com.github.guilhermemonte21.Ecommerce.Application.DTO.Produtos.CreateProd
 import com.github.guilhermemonte21.Ecommerce.Application.DTO.Produtos.ProdutoResponse;
 import com.github.guilhermemonte21.Ecommerce.Application.Exceptions.AcessoNegadoException;
 import com.github.guilhermemonte21.Ecommerce.Application.Exceptions.ProdutoNotFoundException;
+import com.github.guilhermemonte21.Ecommerce.Application.Exceptions.UsuarioInativoException;
 import com.github.guilhermemonte21.Ecommerce.Application.Exceptions.UsuarioNotFoundException;
 import com.github.guilhermemonte21.Ecommerce.Application.Gateway.ProdutoGateway;
 import com.github.guilhermemonte21.Ecommerce.Application.Gateway.UsuarioAutenticadoGateway;
@@ -38,6 +39,9 @@ public class AtualizarProduto implements IAtualizarProduto{
         UsuarioAutenticado user = AuthGateway.get();
         if(!user.getUser().getId().equals(ProdById.getVendedor().getId())){
             throw new AcessoNegadoException();
+        }
+        if (user.getUser().getAtivo() == false){
+            throw new UsuarioInativoException();
         }
 
       Produtos produtos1 = new Produtos(

@@ -26,7 +26,7 @@ public class Login implements ILogin{
 
 
             boolean senhaCorreta = encoder.matches(Senha, usuario.getSenha());
-            //System.out.println("Senha correta?" + senhaCorreta); // log de teste senha
+
             return senhaCorreta;
     }
 }

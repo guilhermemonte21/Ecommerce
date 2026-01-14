@@ -2,6 +2,7 @@ package com.github.guilhermemonte21.Ecommerce.Application.UseCase.Produtos.Regis
 
 import com.github.guilhermemonte21.Ecommerce.Application.DTO.Produtos.CreateProdutoRequest;
 import com.github.guilhermemonte21.Ecommerce.Application.DTO.Produtos.ProdutoResponse;
+import com.github.guilhermemonte21.Ecommerce.Application.Exceptions.UsuarioInativoException;
 import com.github.guilhermemonte21.Ecommerce.Application.Gateway.ProdutoGateway;
 import com.github.guilhermemonte21.Ecommerce.Application.Gateway.UsuarioAutenticadoGateway;
 import com.github.guilhermemonte21.Ecommerce.Application.Mappers.ProdutoMapperApl;
@@ -27,6 +28,9 @@ public class RegistrarProduto implements IRegistrarProduto{
     @Override
     public ProdutoResponse Create(CreateProdutoRequest produtos){
         UsuarioAutenticado user = AuthGateway.get();
+        if (user.getUser().getAtivo() == false){
+            throw new UsuarioInativoException();
+        }
 
         Produtos newProd = produtoMapper.toDomain(produtos, user.getUser().getId());
 

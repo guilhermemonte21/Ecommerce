@@ -27,7 +27,7 @@ public class UsuarioDetailsService implements UserDetailsService {
         UsuariosEntity user = repository.findByEmail(email);
 
 
-        return new UsuarioDetails(user); // ← ISSO É CRÍTICO
+        return new UsuarioDetails(user);
     }
 }
 

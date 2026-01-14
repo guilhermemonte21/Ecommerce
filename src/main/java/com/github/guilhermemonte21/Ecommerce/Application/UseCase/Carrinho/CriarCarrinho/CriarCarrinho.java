@@ -2,10 +2,12 @@ package com.github.guilhermemonte21.Ecommerce.Application.UseCase.Carrinho.Criar
 
 import com.github.guilhermemonte21.Ecommerce.Application.DTO.Carrinho.CreateCarrinhoDTO.CreateCarrinhoRequest;
 import com.github.guilhermemonte21.Ecommerce.Application.DTO.Carrinho.CarrinhoResponse;
+import com.github.guilhermemonte21.Ecommerce.Application.Exceptions.UsuarioInativoException;
 import com.github.guilhermemonte21.Ecommerce.Application.Gateway.CarrinhoGateway;
 import com.github.guilhermemonte21.Ecommerce.Application.Gateway.UsuarioAutenticadoGateway;
 import com.github.guilhermemonte21.Ecommerce.Application.Mappers.CarrinhoMapperApl;
 import com.github.guilhermemonte21.Ecommerce.Domain.Entity.Carrinho;
+import com.github.guilhermemonte21.Ecommerce.Domain.Entity.Produtos;
 import com.github.guilhermemonte21.Ecommerce.Domain.Entity.UsuarioAutenticado;
 import org.springframework.stereotype.Service;
 
@@ -25,9 +27,19 @@ public class CriarCarrinho implements ICriarCarrinho{
 
     public CarrinhoResponse Criar(CreateCarrinhoRequest carrinho){
         UsuarioAutenticado user = AuthGateway.get();
+        if (user.getUser().getAtivo() == false){
+            throw new UsuarioInativoException();
+        }
         Carrinho carrinho1 = mapper.CreateResquesttoDomain(carrinho, user.getUser().getId());
+        for(Produtos p : carrinho1.getItens()) {
+
+            if (p.getEstoque() <= 0){
+                throw new RuntimeException("Estoque do item:" + p.getNomeProduto() + "Insuficiente");
+            }
+        }
         carrinho1.atualizarValorTotal();
         carrinho1.AtualizadoAgora();
+
         Carrinho salvo = gateway.save(carrinho1);
         return mapper.DomainToResponse(salvo);
     }

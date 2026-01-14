@@ -2,6 +2,7 @@ package com.github.guilhermemonte21.Ecommerce.Application.UseCase.Pedidos.GetIte
 
 import com.github.guilhermemonte21.Ecommerce.Application.Exceptions.AcessoNegadoException;
 import com.github.guilhermemonte21.Ecommerce.Application.Exceptions.PedidoNotFoundException;
+import com.github.guilhermemonte21.Ecommerce.Application.Exceptions.UsuarioInativoException;
 import com.github.guilhermemonte21.Ecommerce.Application.Gateway.PedidoGateway;
 import com.github.guilhermemonte21.Ecommerce.Application.Gateway.UsuarioAutenticadoGateway;
 import com.github.guilhermemonte21.Ecommerce.Domain.Entity.UsuarioAutenticado;
@@ -29,6 +30,9 @@ public class GetItensByPedido implements IGetItensByPedido{
         UsuarioAutenticado user = AuthGateway.get();
         if(!user.getUser().getId().equals(pedido.getComprador().getId())){
             throw new AcessoNegadoException();
+        }
+        if (user.getUser().getAtivo() == false){
+            throw new UsuarioInativoException();
         }
         return pedido.getItens();
     }
