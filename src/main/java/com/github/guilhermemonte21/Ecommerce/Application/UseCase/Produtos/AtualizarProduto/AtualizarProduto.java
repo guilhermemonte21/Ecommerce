@@ -2,6 +2,7 @@ package com.github.guilhermemonte21.Ecommerce.Application.UseCase.Produtos.Atual
 
 import com.github.guilhermemonte21.Ecommerce.Application.DTO.Produtos.CreateProdutoRequest;
 import com.github.guilhermemonte21.Ecommerce.Application.DTO.Produtos.ProdutoResponse;
+import com.github.guilhermemonte21.Ecommerce.Application.Exceptions.AcessoNegadoException;
 import com.github.guilhermemonte21.Ecommerce.Application.Exceptions.ProdutoNotFoundException;
 import com.github.guilhermemonte21.Ecommerce.Application.Exceptions.UsuarioNotFoundException;
 import com.github.guilhermemonte21.Ecommerce.Application.Gateway.ProdutoGateway;
@@ -10,6 +11,7 @@ import com.github.guilhermemonte21.Ecommerce.Application.Gateway.UsuarioGateway;
 import com.github.guilhermemonte21.Ecommerce.Application.Mappers.ProdutoMapperApl;
 import com.github.guilhermemonte21.Ecommerce.Domain.Entity.UsuarioAutenticado;
 import com.github.guilhermemonte21.Ecommerce.Domain.Entity.Produtos;
+import com.github.guilhermemonte21.Ecommerce.Domain.Entity.Usuarios;
 import org.springframework.stereotype.Service;
 
 import java.util.UUID;
@@ -31,17 +33,16 @@ public class AtualizarProduto implements IAtualizarProduto{
     @Override
     public ProdutoResponse Atualizar(UUID IdProduto, CreateProdutoRequest produtos){
 
-       Produtos ProdById = gateway.GetById(IdProduto)
-                .orElseThrow(() -> new ProdutoNotFoundException(IdProduto));
+      Produtos ProdById = gateway.GetById(IdProduto)
+               .orElseThrow(() -> new ProdutoNotFoundException(IdProduto));
         UsuarioAutenticado user = AuthGateway.get();
-        if(!user.getId().equals(ProdById.getVendedor().getId())){
-            throw new RuntimeException("Acesso Negado");
+        if(!user.getUser().getId().equals(ProdById.getVendedor().getId())){
+            throw new AcessoNegadoException();
         }
 
       Produtos produtos1 = new Produtos(
               ProdById.getId(),
               produtos.nomeProduto(),
-              usuarioGateway.getById(produtos.vendedor()).orElseThrow(() -> new UsuarioNotFoundException(produtos.vendedor())),
               produtos.descricao(),
               produtos.preco(),
               produtos.estoque()

@@ -3,13 +3,14 @@ package com.github.guilhermemonte21.Ecommerce.Domain.Entity;
 import java.util.UUID;
 
 public class UsuarioAutenticado {
-    private final UUID id;
+    private final Usuarios user;
 
 
-    public UsuarioAutenticado(UUID id) {
-        this.id = id;
+    public UsuarioAutenticado(Usuarios user) {
+        this.user = user;
     }
 
-    public UUID getId() { return id; }
-
+    public Usuarios getUser() {
+        return user;
+    }
 }

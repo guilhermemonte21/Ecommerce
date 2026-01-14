@@ -1,10 +1,12 @@
 package com.github.guilhermemonte21.Ecommerce.Application.UseCase.Pedidos.GetPedidosByComprador;
 
+import com.github.guilhermemonte21.Ecommerce.Application.Exceptions.AcessoNegadoException;
 import com.github.guilhermemonte21.Ecommerce.Application.Exceptions.UsuarioNotFoundException;
 import com.github.guilhermemonte21.Ecommerce.Application.Gateway.PedidoGateway;
 import com.github.guilhermemonte21.Ecommerce.Application.Gateway.UsuarioAutenticadoGateway;
 import com.github.guilhermemonte21.Ecommerce.Domain.Entity.UsuarioAutenticado;
 import com.github.guilhermemonte21.Ecommerce.Domain.Entity.Pedidos;
+import com.github.guilhermemonte21.Ecommerce.Domain.Entity.Usuarios;
 
 import java.util.List;
 import java.util.UUID;
@@ -23,8 +25,8 @@ public class getPedidosByComprador implements IGetPedidosByComprador{
     public List<Pedidos> getPedidosByComprador(UUID IdComprador) {
         List<Pedidos> pedidos = gateway.getPedidosByComprador(IdComprador);
         UsuarioAutenticado user = AuthGateway.get();
-        if(!user.getId().equals(IdComprador)){
-            throw new RuntimeException("Acesso Negado");
+        if(!user.getUser().getId().equals(IdComprador)){
+            throw new AcessoNegadoException();
         }
 
         if (pedidos.isEmpty()){

@@ -1,12 +1,14 @@
 package com.github.guilhermemonte21.Ecommerce.Application.UseCase.Carrinho.GetCarrinhoById;
 
 import com.github.guilhermemonte21.Ecommerce.Application.DTO.Carrinho.CarrinhoResponse;
+import com.github.guilhermemonte21.Ecommerce.Application.Exceptions.AcessoNegadoException;
 import com.github.guilhermemonte21.Ecommerce.Application.Exceptions.CarrinhoNotFoundException;
 import com.github.guilhermemonte21.Ecommerce.Application.Gateway.CarrinhoGateway;
 import com.github.guilhermemonte21.Ecommerce.Application.Gateway.UsuarioAutenticadoGateway;
 import com.github.guilhermemonte21.Ecommerce.Application.Mappers.CarrinhoMapperApl;
 import com.github.guilhermemonte21.Ecommerce.Domain.Entity.UsuarioAutenticado;
 import com.github.guilhermemonte21.Ecommerce.Domain.Entity.Carrinho;
+import com.github.guilhermemonte21.Ecommerce.Domain.Entity.Usuarios;
 import org.springframework.stereotype.Service;
 
 import java.util.UUID;
@@ -27,8 +29,8 @@ public class GetCarrinhoById implements IGetCarrinhoById{
     public CarrinhoResponse FindCarrinhoById(UUID Id){
         Carrinho carrinho = gateway.getById(Id).orElseThrow(() -> new CarrinhoNotFoundException(Id));
         UsuarioAutenticado user = AuthGateway.get();
-        if(!user.getId().equals(carrinho.getComprador().getId())){
-            throw new RuntimeException("Acesso Negado");
+        if(!user.getUser().getId().equals(carrinho.getComprador().getId())){
+            throw new AcessoNegadoException();
         }
         return mapper.DomainToResponse(carrinho);
 

@@ -11,6 +11,7 @@ import com.github.guilhermemonte21.Ecommerce.Domain.Entity.Produtos;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Component
@@ -24,9 +25,9 @@ public class CarrinhoMapperApl {
         this.usuGateway = usuGateway;
     }
 
-    public Carrinho CreateResquesttoDomain(CreateCarrinhoRequest carrinhoRequest){
+    public Carrinho CreateResquesttoDomain(CreateCarrinhoRequest carrinhoRequest, UUID IdComprador){
         Carrinho carrinho = new Carrinho();
-        carrinho.setComprador(usuGateway.getById(carrinhoRequest.getComprador()).orElseThrow(() -> new UsuarioNotFoundException(carrinhoRequest.getComprador())));
+        carrinho.setComprador(usuGateway.getById(IdComprador).orElseThrow(() -> new UsuarioNotFoundException(IdComprador)));
         List<Produtos> prods = carrinhoRequest.getProdutosIds()
                 .stream()
                 .map(c -> prodGateway.GetById(c)

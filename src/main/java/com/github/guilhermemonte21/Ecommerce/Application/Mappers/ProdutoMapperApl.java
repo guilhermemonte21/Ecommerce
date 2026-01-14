@@ -7,6 +7,8 @@ import com.github.guilhermemonte21.Ecommerce.Application.Gateway.UsuarioGateway;
 import com.github.guilhermemonte21.Ecommerce.Domain.Entity.Produtos;
 import org.springframework.stereotype.Component;
 
+import java.util.UUID;
+
 @Component
 public class ProdutoMapperApl {
     private final UsuarioGateway gateway;
@@ -15,13 +17,13 @@ public class ProdutoMapperApl {
         this.gateway = gateway;
     }
 
-    public Produtos toDomain(CreateProdutoRequest produtoRequest){
+    public Produtos toDomain(CreateProdutoRequest produtoRequest, UUID IdVendedor){
         Produtos newProduto = new Produtos();
         newProduto.setNomeProduto(produtoRequest.nomeProduto());
         newProduto.setPreco(produtoRequest.preco());
         newProduto.setEstoque(produtoRequest.estoque());
         newProduto.setDescricao(produtoRequest.descricao());
-        newProduto.setVendedor(gateway.getById(produtoRequest.vendedor()).orElseThrow(() -> new UsuarioNotFoundException(produtoRequest.vendedor())));
+        newProduto.setVendedor(gateway.getById(IdVendedor).orElseThrow(() -> new UsuarioNotFoundException(IdVendedor)));
         return newProduto;
     }
     public ProdutoResponse ToResponse(Produtos produtos){

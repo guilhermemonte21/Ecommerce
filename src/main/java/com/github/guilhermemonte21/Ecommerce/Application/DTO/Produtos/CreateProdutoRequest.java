@@ -13,8 +13,7 @@ public record CreateProdutoRequest(
      UUID id,
      @NotBlank
      String nomeProduto,
-     @NotNull
-     UUID vendedor,
+
      @NotBlank
      String descricao,
      @NotNull

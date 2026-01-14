@@ -10,6 +10,7 @@ import com.github.guilhermemonte21.Ecommerce.Application.UseCase.Carrinho.Remove
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.UUID;
@@ -30,14 +31,14 @@ public class CarrinhoController {
         this.remove = remove;
         this.limparCarrinho = limparCarrinho;
     }
-
+    @PreAuthorize("isAuthenticated()")
     @PostMapping("/Create")
     public ResponseEntity<CarrinhoResponse> create(@RequestBody @Valid CreateCarrinhoRequest carrinho){
         CarrinhoResponse newCarrinho = create.Criar(carrinho);
 
         return ResponseEntity.status(HttpStatus.CREATED).body(newCarrinho);
     }
-
+    @PreAuthorize("isAuthenticated()")
     @PostMapping("/Add/{idCarrinho}")
     public ResponseEntity<CarrinhoResponse> addItem(@PathVariable("idCarrinho") UUID Id,  UUID IdProduto,@RequestBody Long quantity){
            CarrinhoResponse newCarrinho = add.AdicionarAoCarrinho(Id, IdProduto, quantity);
@@ -45,7 +46,7 @@ public class CarrinhoController {
 
            return ResponseEntity.ok(newCarrinho);
            }
-
+    @PreAuthorize("isAuthenticated() ")
     @GetMapping("/{id}")
     public ResponseEntity<CarrinhoResponse> getById(@PathVariable("id") UUID Id){
         CarrinhoResponse carrinhobyId = getById.FindCarrinhoById(Id);
@@ -53,12 +54,13 @@ public class CarrinhoController {
            return ResponseEntity.status(HttpStatus.OK).body(carrinhobyId);
 
     }
+    @PreAuthorize("isAuthenticated()")
     @DeleteMapping("/{id}/{Id}")
     public ResponseEntity<Void> DeleteItem(@PathVariable("id") UUID Id,@PathVariable("Id") UUID id){
         remove.RemoverItem(Id, id);
         return ResponseEntity.noContent().build();
     }
-
+    @PreAuthorize("isAuthenticated()")
     @DeleteMapping("/{IdCarrinho}")
     public ResponseEntity<Void> LimparCarrinho(@PathVariable("IdCarrinho") UUID IdCarrinho){
         limparCarrinho.LimparCarrinho(IdCarrinho);

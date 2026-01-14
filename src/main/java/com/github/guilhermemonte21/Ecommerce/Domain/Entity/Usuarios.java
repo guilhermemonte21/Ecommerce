@@ -19,7 +19,7 @@ public class Usuarios {
     private String cpf;
     private String senha;
     private Boolean ativo = true;
-    private String role;
+
 
     public void ChangeToNotActive(){
         this.ativo = false;

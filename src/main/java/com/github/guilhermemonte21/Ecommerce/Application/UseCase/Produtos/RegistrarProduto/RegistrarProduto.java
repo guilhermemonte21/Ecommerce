@@ -3,24 +3,33 @@ package com.github.guilhermemonte21.Ecommerce.Application.UseCase.Produtos.Regis
 import com.github.guilhermemonte21.Ecommerce.Application.DTO.Produtos.CreateProdutoRequest;
 import com.github.guilhermemonte21.Ecommerce.Application.DTO.Produtos.ProdutoResponse;
 import com.github.guilhermemonte21.Ecommerce.Application.Gateway.ProdutoGateway;
+import com.github.guilhermemonte21.Ecommerce.Application.Gateway.UsuarioAutenticadoGateway;
 import com.github.guilhermemonte21.Ecommerce.Application.Mappers.ProdutoMapperApl;
 import com.github.guilhermemonte21.Ecommerce.Domain.Entity.Produtos;
+import com.github.guilhermemonte21.Ecommerce.Domain.Entity.UsuarioAutenticado;
 import org.springframework.stereotype.Service;
+
+import java.util.UUID;
 
 @Service
 public class RegistrarProduto implements IRegistrarProduto{
 
     private final ProdutoGateway gateway;
     private final ProdutoMapperApl produtoMapper;
+    private final UsuarioAutenticadoGateway AuthGateway;
 
-    public RegistrarProduto(ProdutoGateway gateway, ProdutoMapperApl produtoMapper) {
+    public RegistrarProduto(ProdutoGateway gateway, ProdutoMapperApl produtoMapper, UsuarioAutenticadoGateway authGateway) {
         this.gateway = gateway;
         this.produtoMapper = produtoMapper;
+        AuthGateway = authGateway;
     }
 
     @Override
     public ProdutoResponse Create(CreateProdutoRequest produtos){
-        Produtos newProd = produtoMapper.toDomain(produtos);
+        UsuarioAutenticado user = AuthGateway.get();
+
+        Produtos newProd = produtoMapper.toDomain(produtos, user.getUser().getId());
+
 
         Produtos salvo = gateway.salvar(newProd);
         return produtoMapper.ToResponse(salvo);

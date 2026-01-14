@@ -29,6 +29,14 @@ public class Produtos {
     @NotNull
     private Long Estoque;
 
+    public Produtos(UUID id, String nomeProduto, String descricao, BigDecimal preco, Long estoque) {
+        Id = id;
+        NomeProduto = nomeProduto;
+        Descricao = descricao;
+        Preco = preco;
+        Estoque = estoque;
+    }
+
     public void AtualizarEstoque(Long quantity){
         if(quantity == null){
             return;

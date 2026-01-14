@@ -9,6 +9,7 @@ import com.github.guilhermemonte21.Ecommerce.Application.UseCase.Produtos.GetPro
 import com.github.guilhermemonte21.Ecommerce.Application.UseCase.Produtos.RegistrarProduto.IRegistrarProduto;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -31,6 +32,7 @@ public class ProdutoController {
         this.atualizarProduto = atualizarProduto;
     }
 
+    @PreAuthorize("isAuthenticated()")
     @PostMapping
     public ResponseEntity<ProdutoResponse> criar(@RequestBody CreateProdutoRequest produtos){
         ProdutoResponse prod = registrarProduto.Create(produtos);
@@ -38,6 +40,7 @@ public class ProdutoController {
         return ResponseEntity.status(HttpStatus.CREATED).body(prod);
     }
 
+    @PreAuthorize("isAuthenticated() ")
     @PutMapping("/{id}")
     public ResponseEntity<Long> AtualizarEstoque( @PathVariable("id") UUID IdProduto,@RequestParam Long Quantity){
         Long EstoqueAtualizado = atualizarEstoque.AtualizarEstoque( IdProduto, Quantity);
@@ -48,6 +51,7 @@ public class ProdutoController {
         List<ProdutoResponse> list = buscarTodosOsProdutos.findAll();
         return ResponseEntity.status(HttpStatus.OK).body(list);
     }
+    @PreAuthorize("isAuthenticated()")
     @PutMapping("Atualizar/{IdProduto}")
     public ResponseEntity<ProdutoResponse>Atualizar(@PathVariable("IdProduto") UUID IdProduto, @RequestBody CreateProdutoRequest request){
         ProdutoResponse response = atualizarProduto.Atualizar(IdProduto, request);

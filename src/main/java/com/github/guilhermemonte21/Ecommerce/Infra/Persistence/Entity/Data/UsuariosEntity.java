@@ -37,8 +37,6 @@ public class UsuariosEntity {
     private Boolean Ativo = true;
 
 
-    @Column(name = "role_usuario")
-    private String Role ;
 
 }
 

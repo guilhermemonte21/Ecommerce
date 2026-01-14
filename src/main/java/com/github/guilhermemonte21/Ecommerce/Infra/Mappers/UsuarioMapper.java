@@ -15,7 +15,7 @@ public class UsuarioMapper {
         NewUser.setId(entity.getId());
         NewUser.setCpf(entity.getCpf());
         NewUser.setEmail(entity.getEmail());
-        NewUser.setRole(entity.getRole());
+
         NewUser.setNome(entity.getNome());
         NewUser.setAtivo(entity.getAtivo());
         NewUser.setSenha(entity.getSenha());
