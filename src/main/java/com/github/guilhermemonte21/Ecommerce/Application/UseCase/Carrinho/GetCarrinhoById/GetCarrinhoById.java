@@ -36,7 +36,5 @@ public class GetCarrinhoById implements IGetCarrinhoById{
             throw new RuntimeException("Cliente esta inativo");
         }
         return mapper.DomainToResponse(carrinho);
-
-
     }
 }

@@ -39,7 +39,6 @@ public class CriarCarrinho implements ICriarCarrinho{
         }
         carrinho1.atualizarValorTotal();
         carrinho1.AtualizadoAgora();
-
         Carrinho salvo = gateway.save(carrinho1);
         return mapper.DomainToResponse(salvo);
     }
