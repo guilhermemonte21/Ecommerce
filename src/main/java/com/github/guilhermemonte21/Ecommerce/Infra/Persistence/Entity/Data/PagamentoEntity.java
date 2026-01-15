@@ -29,9 +29,9 @@ import java.util.UUID;
         @Column(name = "gateway_payment_id", nullable = false)
         private String gatewayPaymentId;
 
-        @Enumerated(EnumType.STRING)
-        @Column(name = "metodo_pagamento", nullable = false)
-        private MetodoPagamento metodoPagamento;
+        //@Enumerated(EnumType.STRING)
+        //@Column(name = "metodo_pagamento", nullable = false)
+        //private MetodoPagamento metodoPagamento;
 
 
         @Column(name = "valor_total", nullable = false)

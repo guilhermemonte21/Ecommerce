@@ -5,9 +5,11 @@ import com.github.guilhermemonte21.Ecommerce.Application.Exceptions.AcessoNegado
 import com.github.guilhermemonte21.Ecommerce.Application.Gateway.UsuarioGateway;
 import com.github.guilhermemonte21.Ecommerce.Application.UseCase.Usuarios.Login.ILogin;
 import com.github.guilhermemonte21.Ecommerce.Domain.Entity.Usuarios;
+import org.springframework.stereotype.Service;
 
 import java.util.UUID;
 
+@Service
 public class CreateSellerAcount implements ICreateSellerAcount{
     private final ILogin login;
     private final UsuarioGateway gateway;

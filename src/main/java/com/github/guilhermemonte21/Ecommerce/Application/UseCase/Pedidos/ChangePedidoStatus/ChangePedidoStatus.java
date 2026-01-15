@@ -6,17 +6,19 @@ import com.github.guilhermemonte21.Ecommerce.Application.UseCase.Pagamento.Pagam
 import com.github.guilhermemonte21.Ecommerce.Domain.Entity.PedidoDoVendedor;
 import com.github.guilhermemonte21.Ecommerce.Domain.Entity.Pedidos;
 import com.github.guilhermemonte21.Ecommerce.Domain.Enum.StatusPedido;
+import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.UUID;
 
+@Service
 public class ChangePedidoStatus implements IChangePedidoStatus{
     private final PedidoGateway gateway;
-    private final Pagamento pay;
 
-    public ChangePedidoStatus(PedidoGateway gateway, Pagamento pay) {
+
+    public ChangePedidoStatus(PedidoGateway gateway) {
         this.gateway = gateway;
-        this.pay = pay;
+
     }
 
     @Override
