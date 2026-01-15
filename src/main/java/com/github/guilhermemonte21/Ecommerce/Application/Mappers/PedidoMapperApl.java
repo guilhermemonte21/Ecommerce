@@ -12,6 +12,7 @@ public class PedidoMapperApl {
                 pedido.getId(),
                 pedido.getComprador().getNome(),
                 pedido.getItens().stream().map(c -> c.getId()).toList(),
+                pedido.getEndereço(),
                 pedido.getPreco(),
                 pedido.getCriadoEm());
         return newPedido;

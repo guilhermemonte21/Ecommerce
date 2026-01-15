@@ -30,7 +30,7 @@ public class CriarPedido implements ICriarPedido{
 
     @Transactional
     @Override
-    public PedidoResponse CriarPedido(UUID CarrinhoId) {
+    public PedidoResponse CriarPedido(UUID CarrinhoId, String Endereço) {
         UsuarioAutenticado user = AuthGateway.get();
         if (user.getUser().getAtivo() == false){
             throw new UsuarioInativoException();

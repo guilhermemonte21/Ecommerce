@@ -14,6 +14,7 @@ public record PedidoResponse (
     UUID IdPedido,
     String NomeComprador,
     List<UUID> itens ,
+    String EndereçoDeEntrega,
     BigDecimal preco,
     OffsetDateTime criadoEm
 ){}

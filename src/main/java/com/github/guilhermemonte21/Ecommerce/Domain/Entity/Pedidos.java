@@ -22,6 +22,7 @@ public class Pedidos {
     private Usuarios Comprador;
     private List<PedidoDoVendedor> Itens = new ArrayList<>();
     private BigDecimal Preco;
+    private String Endereço;
     private StatusPedido Status = StatusPedido.CRIADO;
     private OffsetDateTime CriadoEm = OffsetDateTime.now();
 

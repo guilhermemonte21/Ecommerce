@@ -21,6 +21,7 @@ public class PedidoMapper {
         newPedido.setId(entity.getId());
         newPedido.setPreco(entity.getPreco());
         newPedido.setCriadoEm(entity.getCriadoEm());
+        newPedido.setEndereço(entity.getEndereço());
         newPedido.setComprador(usuarioMapper.toDomain(entity.getComprador()));
         newPedido.setItens(new ArrayList<>(entity.getPedidos().stream().map(pedidoDoVendedorMapper::toDomain).toList()));
         return newPedido;
@@ -31,6 +32,7 @@ public class PedidoMapper {
 
         newPedido.setId(entity.getId());
         newPedido.setPreco(entity.getPreco());
+        newPedido.setEndereço(entity.getEndereço());
         newPedido.setCriadoEm(entity.getCriadoEm());
         newPedido.setComprador(usuarioMapper.toEntity(entity.getComprador()));
         newPedido.setPedidos(new ArrayList<>(entity.getItens().stream().map(pedidoDoVendedorMapper::toEntity).toList()));

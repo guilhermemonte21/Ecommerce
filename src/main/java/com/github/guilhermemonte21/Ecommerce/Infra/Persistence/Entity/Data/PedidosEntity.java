@@ -40,6 +40,9 @@ public class PedidosEntity {
     @Column(name = "preco_pedido")
     private BigDecimal preco;
 
+    @Column(name = "Endereco_entrega")
+    private String Endereço;
+
     @Enumerated(EnumType.STRING)
     @Column(name = "status_pedido")
     private StatusPedido status = StatusPedido.CRIADO;

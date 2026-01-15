@@ -24,8 +24,8 @@ public class PedidoController {
     }
     @PreAuthorize("isAuthenticated()")
     @PostMapping("CriarPedido/{idCarrinho}")
-    public ResponseEntity<PedidoResponse> CriarPedido(@PathVariable("idCarrinho") UUID IdCarrinho){
-        PedidoResponse newPedido = criarPedido.CriarPedido(IdCarrinho);
+    public ResponseEntity<PedidoResponse> CriarPedido(@PathVariable("idCarrinho") UUID IdCarrinho, @RequestBody String Endereço){
+        PedidoResponse newPedido = criarPedido.CriarPedido(IdCarrinho, Endereço);
         return ResponseEntity.status(HttpStatus.CREATED).body(newPedido);
     }
     @PreAuthorize("isAuthenticated() ")

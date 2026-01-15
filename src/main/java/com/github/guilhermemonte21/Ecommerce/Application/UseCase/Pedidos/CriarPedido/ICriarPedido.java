@@ -6,5 +6,5 @@ import java.util.UUID;
 
 public interface ICriarPedido {
 
-    PedidoResponse CriarPedido(UUID CarrinhoId);
+    PedidoResponse CriarPedido(UUID CarrinhoId, String Endereço);
 }
