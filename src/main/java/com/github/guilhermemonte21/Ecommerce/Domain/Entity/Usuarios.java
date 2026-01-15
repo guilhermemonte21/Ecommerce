@@ -1,5 +1,7 @@
 package com.github.guilhermemonte21.Ecommerce.Domain.Entity;
 
+import jakarta.annotation.Nullable;
+import jakarta.persistence.Column;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -18,11 +20,8 @@ public class Usuarios {
     private String email;
     private String cpf;
     private String senha;
-    private Boolean ativo = true;
-
-
-    public void ChangeToNotActive(){
-        this.ativo = false;
-    }
+    private Boolean ativo ;
+    private String TipoUsuario;
+    private UUID gatewayAccountId;
 
 }

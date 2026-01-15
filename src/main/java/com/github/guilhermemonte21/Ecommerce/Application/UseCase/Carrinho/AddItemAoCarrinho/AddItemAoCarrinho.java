@@ -41,6 +41,7 @@ public class AddItemAoCarrinho implements IAddItemAoCarrinho{
         }
 
         Carrinho carrinhoComItem =  gateway.add(idCarrinho, produto, quantidade);
+
         if (!user.getUser().getId().equals(carrinhoComItem.getComprador().getId())){
             throw new RuntimeException("Acesso negado");
         }

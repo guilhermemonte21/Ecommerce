@@ -7,7 +7,9 @@ import com.github.guilhermemonte21.Ecommerce.Domain.Entity.Usuarios;
 import com.github.guilhermemonte21.Ecommerce.Infra.Config.TokenService;
 import com.github.guilhermemonte21.Ecommerce.Infra.Config.UsuarioDetails;
 import com.github.guilhermemonte21.Ecommerce.Infra.Persistence.Entity.Data.UsuariosEntity;
+import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.security.autoconfigure.SecurityProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.http.ResponseEntity;
@@ -31,7 +33,7 @@ public class LoginController {
 
     @PostMapping("/login")
     public ResponseEntity<TokenResponse> login(
-            @RequestBody LoginRequest request
+            @RequestBody @Valid LoginRequest request
     ) {
         boolean autenticado = login.Login(request.email(), request.senha()) ;
 

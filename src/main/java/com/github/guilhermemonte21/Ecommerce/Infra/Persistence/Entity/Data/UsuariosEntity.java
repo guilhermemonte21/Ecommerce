@@ -1,5 +1,7 @@
 package com.github.guilhermemonte21.Ecommerce.Infra.Persistence.Entity.Data;
 
+import com.github.guilhermemonte21.Ecommerce.Infra.Persistence.Entity.Enum.TipoUsuario;
+import jakarta.annotation.Nullable;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -34,9 +36,14 @@ public class UsuariosEntity {
     private String Senha;
 
     @Column(name = "ativo")
-    private Boolean Ativo = true;
+    private Boolean Ativo;
 
+    @Column(name = "tipo_usuario")
+    @Enumerated(value = EnumType.STRING)
+    private TipoUsuario TipoUsuario;
 
+    @Nullable
+    private UUID gatewayAccountId;
 
 }
 

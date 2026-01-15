@@ -10,7 +10,6 @@ import java.util.UUID;
 
 public record CreateProdutoRequest(
 
-     UUID id,
      @NotBlank
      String nomeProduto,
 

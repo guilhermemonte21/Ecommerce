@@ -7,6 +7,7 @@ import com.github.guilhermemonte21.Ecommerce.Application.UseCase.Produtos.Atuali
 import com.github.guilhermemonte21.Ecommerce.Application.UseCase.Produtos.BuscarTodosOsProdutos.IBuscarTodosOsProdutos;
 import com.github.guilhermemonte21.Ecommerce.Application.UseCase.Produtos.GetProdutoById.IGetProdutoById;
 import com.github.guilhermemonte21.Ecommerce.Application.UseCase.Produtos.RegistrarProduto.IRegistrarProduto;
+import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -34,7 +35,7 @@ public class ProdutoController {
 
     @PreAuthorize("isAuthenticated()")
     @PostMapping
-    public ResponseEntity<ProdutoResponse> criar(@RequestBody CreateProdutoRequest produtos){
+    public ResponseEntity<ProdutoResponse> criar(@RequestBody @Valid CreateProdutoRequest produtos){
         ProdutoResponse prod = registrarProduto.Create(produtos);
 
         return ResponseEntity.status(HttpStatus.CREATED).body(prod);

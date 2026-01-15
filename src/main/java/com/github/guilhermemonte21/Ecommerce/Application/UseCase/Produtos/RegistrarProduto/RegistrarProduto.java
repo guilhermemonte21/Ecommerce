@@ -2,6 +2,7 @@ package com.github.guilhermemonte21.Ecommerce.Application.UseCase.Produtos.Regis
 
 import com.github.guilhermemonte21.Ecommerce.Application.DTO.Produtos.CreateProdutoRequest;
 import com.github.guilhermemonte21.Ecommerce.Application.DTO.Produtos.ProdutoResponse;
+import com.github.guilhermemonte21.Ecommerce.Application.Exceptions.AcessoNegadoException;
 import com.github.guilhermemonte21.Ecommerce.Application.Exceptions.UsuarioInativoException;
 import com.github.guilhermemonte21.Ecommerce.Application.Gateway.ProdutoGateway;
 import com.github.guilhermemonte21.Ecommerce.Application.Gateway.UsuarioAutenticadoGateway;
@@ -9,9 +10,6 @@ import com.github.guilhermemonte21.Ecommerce.Application.Mappers.ProdutoMapperAp
 import com.github.guilhermemonte21.Ecommerce.Domain.Entity.Produtos;
 import com.github.guilhermemonte21.Ecommerce.Domain.Entity.UsuarioAutenticado;
 import org.springframework.stereotype.Service;
-
-import java.util.UUID;
-
 @Service
 public class RegistrarProduto implements IRegistrarProduto{
 
@@ -31,10 +29,10 @@ public class RegistrarProduto implements IRegistrarProduto{
         if (user.getUser().getAtivo() == false){
             throw new UsuarioInativoException();
         }
-
+        if (user.getUser().getTipoUsuario() != "Vendedor"){
+            throw new AcessoNegadoException();
+        }
         Produtos newProd = produtoMapper.toDomain(produtos, user.getUser().getId());
-
-
         Produtos salvo = gateway.salvar(newProd);
         return produtoMapper.ToResponse(salvo);
     }
