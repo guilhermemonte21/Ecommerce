@@ -15,8 +15,6 @@ import java.util.UUID;
 @NoArgsConstructor
 @AllArgsConstructor
 public class CreateCarrinhoRequest {
-
-
     @Nullable
     private List<UUID> produtosIds;
 }

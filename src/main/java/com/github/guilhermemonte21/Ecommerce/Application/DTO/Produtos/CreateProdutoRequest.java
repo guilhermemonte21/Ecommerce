@@ -18,6 +18,6 @@ public record CreateProdutoRequest(
      @NotNull
      BigDecimal preco,
     @NotNull
-    @Positive
+    @Positive(message = "Valor de estoque inválido")
     Long estoque
 ){}

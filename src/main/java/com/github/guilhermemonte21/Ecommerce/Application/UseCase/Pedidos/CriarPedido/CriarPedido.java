@@ -12,6 +12,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.math.BigDecimal;
 import java.time.OffsetDateTime;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 public class CriarPedido implements ICriarPedido{
@@ -40,14 +41,26 @@ public class CriarPedido implements ICriarPedido{
         Pedido.setComprador(user.getUser());
         Pedidos salvo = Pedidogateway.save(Pedido);
 
-        for (Produtos produtos : cart.getItens()){
-            PedidoDoVendedor micro = new PedidoDoVendedor();
-            micro.getProdutos().add(produtos);
-            micro.setVendedor(produtos.getVendedor());
-            micro.setPedido(salvo.getId());
-            micro.setValor(produtos.getPreco());
-            salvo.getItens().add(micro);
+        Map<UUID, PedidoDoVendedor> orders = new HashMap<>();
+        for (Produtos produto : cart.getItens()) {
+            UUID vendedorId = produto.getVendedor().getId();
+
+            if (orders.containsKey(vendedorId)) {
+
+                PedidoDoVendedor pedidoExistente = orders.get(vendedorId);
+                pedidoExistente.getProdutos().add(produto);
+                pedidoExistente.setValor(pedidoExistente.getValor().add(produto.getPreco()));
+            }
+                PedidoDoVendedor novoPedido = new PedidoDoVendedor();
+                novoPedido.getProdutos().add(produto);
+                novoPedido.setVendedor(produto.getVendedor());
+                novoPedido.setPedido(salvo.getId());
+                novoPedido.setValor(produto.getPreco());
+
+                orders.put(vendedorId, novoPedido);
         }
+
+        salvo.getItens().addAll(orders.values());
 
         salvo.setPreco(salvo.getItens().stream()
                 .map(PedidoDoVendedor::getValor)
