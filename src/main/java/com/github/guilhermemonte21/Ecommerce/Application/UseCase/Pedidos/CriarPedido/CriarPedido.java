@@ -1,7 +1,7 @@
 package com.github.guilhermemonte21.Ecommerce.Application.UseCase.Pedidos.CriarPedido;
 import com.github.guilhermemonte21.Ecommerce.Application.DTO.Pedidos.PedidoResponse;
 import com.github.guilhermemonte21.Ecommerce.Application.Exceptions.CarrinhoNotFoundException;
-import com.github.guilhermemonte21.Ecommerce.Application.Exceptions.UsuarioInativoException;
+import com.github.guilhermemonte21.Ecommerce.Application.Exceptions.CarrinhoVazioException;
 import com.github.guilhermemonte21.Ecommerce.Application.Gateway.CarrinhoGateway;
 import com.github.guilhermemonte21.Ecommerce.Application.Gateway.PedidoGateway;
 import com.github.guilhermemonte21.Ecommerce.Application.Gateway.UsuarioAutenticadoGateway;
@@ -12,7 +12,6 @@ import org.springframework.transaction.annotation.Transactional;
 import java.math.BigDecimal;
 import java.time.OffsetDateTime;
 import java.util.*;
-import java.util.stream.Collectors;
 
 @Service
 public class CriarPedido implements ICriarPedido{
@@ -31,50 +30,37 @@ public class CriarPedido implements ICriarPedido{
 
     @Transactional
     @Override
-    public PedidoResponse CriarPedido(UUID CarrinhoId, String Endereço) {
+    public PedidoResponse CriarPedido(UUID CarrinhoId, String Endereco) {
         UsuarioAutenticado user = AuthGateway.get();
-        if (user.getUser().getAtivo() == false){
-            throw new UsuarioInativoException();
-        }
         Carrinho cart = CarrinhoGateway.getById(CarrinhoId).orElseThrow(() -> new CarrinhoNotFoundException(CarrinhoId));
         Pedidos Pedido = new Pedidos();
         Pedido.setComprador(user.getUser());
         Pedidos salvo = Pedidogateway.save(Pedido);
+        if (cart.getItens() == null){
+            throw new CarrinhoVazioException( );
+        }
 
         Map<UUID, PedidoDoVendedor> orders = new HashMap<>();
         for (Produtos produto : cart.getItens()) {
             UUID vendedorId = produto.getVendedor().getId();
 
-            if (orders.containsKey(vendedorId)) {
-
-                PedidoDoVendedor pedidoExistente = orders.get(vendedorId);
-                pedidoExistente.getProdutos().add(produto);
-                pedidoExistente.setValor(pedidoExistente.getValor().add(produto.getPreco()));
-            }
-                PedidoDoVendedor novoPedido = new PedidoDoVendedor();
-                novoPedido.getProdutos().add(produto);
-                novoPedido.setVendedor(produto.getVendedor());
-                novoPedido.setPedido(salvo.getId());
-                novoPedido.setValor(produto.getPreco());
-
-                orders.put(vendedorId, novoPedido);
+            PedidoDoVendedor pedido = orders.computeIfAbsent(vendedorId, id -> {
+                PedidoDoVendedor novo = new PedidoDoVendedor();
+                novo.setVendedor(produto.getVendedor());
+                novo.setPedido(salvo.getId());
+                novo.setValor(BigDecimal.ZERO);
+                return novo;
+            });
+            pedido.getProdutos().add(produto);
+            pedido.setValor(pedido.getValor().add(produto.getPreco()));
         }
-
         salvo.getItens().addAll(orders.values());
-
-        salvo.setPreco(salvo.getItens().stream()
+        salvo.setPreco(orders.values().stream()
                 .map(PedidoDoVendedor::getValor)
                 .reduce(BigDecimal.ZERO, BigDecimal::add));
-
+        salvo.setEndereço(Endereco);
         salvo.setCriadoEm(OffsetDateTime.now());
-
         Pedidos CompleteOrder = Pedidogateway.save(salvo);
-
-        PedidoResponse Dto = mapperApl.toResponse(CompleteOrder);
-        return Dto;
+        return mapperApl.toResponse(CompleteOrder);
     }
-
-
-
-
 }

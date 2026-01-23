@@ -1,9 +1,7 @@
 package com.github.guilhermemonte21.Ecommerce.API.GlobalExceptionHandler;
-
 import com.github.guilhermemonte21.Ecommerce.Application.Exceptions.*;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
@@ -41,5 +39,9 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(UsuarioInativoException.class)
     public ResponseEntity<String> handleInactiveUser(UsuarioInativoException ex) {
         return ResponseEntity.status(HttpStatus.FORBIDDEN).body(ex.getMessage());
+    }
+    @ExceptionHandler(CarrinhoVazioException.class)
+    public ResponseEntity<String> handleCarrinhoVazio(CarrinhoVazioException ex) {
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).body(ex.getMessage());
     }
 }
