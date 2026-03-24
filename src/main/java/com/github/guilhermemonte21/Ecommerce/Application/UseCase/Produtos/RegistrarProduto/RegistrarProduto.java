@@ -9,8 +9,6 @@ import com.github.guilhermemonte21.Ecommerce.Application.Gateway.UsuarioAutentic
 import com.github.guilhermemonte21.Ecommerce.Application.Mappers.ProdutoMapperApl;
 import com.github.guilhermemonte21.Ecommerce.Domain.Entity.Produtos;
 import com.github.guilhermemonte21.Ecommerce.Domain.Entity.UsuarioAutenticado;
-import org.springframework.stereotype.Service;
-@Service
 public class RegistrarProduto implements IRegistrarProduto{
 
     private final ProdutoGateway gateway;
@@ -29,7 +27,7 @@ public class RegistrarProduto implements IRegistrarProduto{
         if (user.getUser().getAtivo() == false){
             throw new UsuarioInativoException();
         }
-        if (user.getUser().getTipoUsuario() != "Vendedor"){
+        if (!"Vendedor".equals(user.getUser().getTipoUsuario())){
             throw new AcessoNegadoException();
         }
         Produtos newProd = produtoMapper.toDomain(produtos, user.getUser().getId());

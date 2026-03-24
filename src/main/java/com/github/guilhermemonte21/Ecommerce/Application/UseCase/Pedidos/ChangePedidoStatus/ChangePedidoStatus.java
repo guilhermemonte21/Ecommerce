@@ -9,31 +9,18 @@ import org.springframework.stereotype.Service;
 
 import java.util.UUID;
 
-@Service
 public class ChangePedidoStatus implements IChangePedidoStatus {
     private final PedidoGateway gateway;
 
     public ChangePedidoStatus(PedidoGateway gateway) {
         this.gateway = gateway;
-
     }
 
     @Override
     public void ChangePedidosStatus(UUID IdPedido) {
         Pedidos pedidos = gateway.getById(IdPedido).orElseThrow(() -> new PedidoNotFoundException(IdPedido));
-        boolean pagos = pedidos.getItens().stream().allMatch(p -> p.getStatus() == StatusPedido.PAGO);
-        boolean entregues = pedidos.getItens().stream().allMatch(p -> p.getStatus() == StatusPedido.ENTREGUE);
-        boolean enviados = pedidos.getItens().stream().allMatch(p -> p.getStatus() == StatusPedido.ENVIADO);
-
-        if (pagos) {
-            pedidos.setStatus(StatusPedido.PAGO);
-        } else if (entregues) {
-            pedidos.setStatus(StatusPedido.ENTREGUE);
-        } else if (enviados) {
-            pedidos.setStatus(StatusPedido.ENVIADO);
-        } else {
-            pedidos.setStatus(StatusPedido.CRIADO);
-        }
+        
+        pedidos.syncStatus();
 
         gateway.save(pedidos);
     }

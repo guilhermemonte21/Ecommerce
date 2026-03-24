@@ -32,9 +32,29 @@ public class Pedidos {
 //        }
 //    }
 
-    public void ChangeToPago(){
-        this.Status = StatusPedido.PAGO;
+    public void syncStatus() {
+        boolean todosPagos = this.Itens.stream().allMatch(p -> p.getStatus() == StatusPedido.PAGO);
+        boolean todosEntregues = this.Itens.stream().allMatch(p -> p.getStatus() == StatusPedido.ENTREGUE);
+        boolean todosEnviados = this.Itens.stream().allMatch(p -> p.getStatus() == StatusPedido.ENVIADO);
+
+        if (todosEntregues) {
+            this.Status = StatusPedido.ENTREGUE;
+        } else if (todosEnviados) {
+            this.Status = StatusPedido.ENVIADO;
+        } else if (todosPagos) {
+            this.Status = StatusPedido.PAGO;
+        } else {
+            this.Status = StatusPedido.CRIADO;
+        }
     }
+
+    public void confirmarPagamento(){
+        this.Status = StatusPedido.PAGO;
+        for (PedidoDoVendedor item : this.Itens){
+            item.setStatus(StatusPedido.PAGO);
+        }
+    }
+
     public void ChangeToCancelado(){
         this.Status = StatusPedido.CANCELADO;
     }

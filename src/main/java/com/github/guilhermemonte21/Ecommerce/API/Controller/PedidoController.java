@@ -13,7 +13,7 @@ import java.util.List;
 import java.util.UUID;
 
 @RestController
-@RequestMapping("/Pedido")
+@RequestMapping("/pedidos")
 public class PedidoController {
     private final ICriarPedido criarPedido;
     private final IGetItensByPedido getItensByPedido;
@@ -22,16 +22,18 @@ public class PedidoController {
         this.criarPedido = criarPedido;
         this.getItensByPedido = getItensByPedido;
     }
+
     @PreAuthorize("isAuthenticated()")
-    @PostMapping("CriarPedido/{idCarrinho}")
-    public ResponseEntity<PedidoResponse> CriarPedido(@PathVariable("idCarrinho") UUID IdCarrinho, @RequestBody String Endereço){
-        PedidoResponse newPedido = criarPedido.CriarPedido(IdCarrinho, Endereço);
+    @PostMapping("/{idCarrinho}")
+    public ResponseEntity<PedidoResponse> criarPedido(@PathVariable("idCarrinho") UUID idCarrinho, @RequestBody String endereco) {
+        PedidoResponse newPedido = criarPedido.CriarPedido(idCarrinho, endereco);
         return ResponseEntity.status(HttpStatus.CREATED).body(newPedido);
     }
-    @PreAuthorize("isAuthenticated() ")
-    @GetMapping("/{IdPedido}/itens")
-    public ResponseEntity<List<PedidoDoVendedor>> GetItensDoPedido(@PathVariable UUID IdPedido){
-        List<PedidoDoVendedor> get = getItensByPedido.get(IdPedido);
-        return ResponseEntity.status(HttpStatus.OK).body(get);
+
+    @PreAuthorize("isAuthenticated()")
+    @GetMapping("/{idPedido}/itens")
+    public ResponseEntity<List<PedidoDoVendedor>> getItensDoPedido(@PathVariable("idPedido") UUID idPedido) {
+        List<PedidoDoVendedor> itens = getItensByPedido.get(idPedido);
+        return ResponseEntity.ok(itens);
     }
 }

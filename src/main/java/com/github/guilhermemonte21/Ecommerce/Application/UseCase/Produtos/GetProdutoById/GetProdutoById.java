@@ -5,11 +5,9 @@ import com.github.guilhermemonte21.Ecommerce.Application.Exceptions.ProdutoNotFo
 import com.github.guilhermemonte21.Ecommerce.Application.Gateway.ProdutoGateway;
 import com.github.guilhermemonte21.Ecommerce.Application.Mappers.ProdutoMapperApl;
 import com.github.guilhermemonte21.Ecommerce.Domain.Entity.Produtos;
-import org.springframework.stereotype.Service;
 
 import java.util.UUID;
 
-@Service
 public class GetProdutoById implements IGetProdutoById{
     private final ProdutoGateway gateway;
     private final ProdutoMapperApl mapperApl;

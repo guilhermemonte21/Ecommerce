@@ -12,13 +12,11 @@ import com.github.guilhermemonte21.Ecommerce.Application.Gateway.UsuarioAutentic
 import com.github.guilhermemonte21.Ecommerce.Application.Mappers.PedidoMapperApl;
 import com.github.guilhermemonte21.Ecommerce.Domain.Entity.*;
 import com.github.guilhermemonte21.Ecommerce.Domain.Enum.StatusPedido;
-import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import java.math.BigDecimal;
 import java.time.OffsetDateTime;
 import java.util.*;
 
-@Service
 public class CriarPedido implements ICriarPedido {
 
     private final PedidoGateway Pedidogateway;
@@ -52,15 +50,24 @@ public class CriarPedido implements ICriarPedido {
                         "Não é possível comprar o próprio produto: " + item.getNomeProduto());
             }
         }
+        Map<UUID, Long> productQuantities = new HashMap<>();
         for (Produtos itemCarrinho : cart.getItens()) {
-            Produtos produtoComLock = ProdutoGateway.GetByIdComLock(itemCarrinho.getId())
-                    .orElseThrow(() -> new ProdutoNotFoundException(itemCarrinho.getId()));
+            productQuantities.put(itemCarrinho.getId(), productQuantities.getOrDefault(itemCarrinho.getId(), 0L) + 1);
+        }
 
-            if (produtoComLock.getEstoque() == null || produtoComLock.getEstoque() < 1) {
+        // Fetch each unique product with lock, check stock, and decrement
+        for (Map.Entry<UUID, Long> entry : productQuantities.entrySet()) {
+            UUID idProduto = entry.getKey();
+            Long quantidade = entry.getValue();
+
+            Produtos produtoComLock = ProdutoGateway.GetByIdComLock(idProduto)
+                    .orElseThrow(() -> new ProdutoNotFoundException(idProduto));
+
+            if (produtoComLock.getEstoque() == null || produtoComLock.getEstoque() < quantidade) {
                 throw new EstoqueInsuficienteException(produtoComLock.getNomeProduto());
             }
 
-            produtoComLock.setEstoque(produtoComLock.getEstoque() - 1);
+            produtoComLock.setEstoque(produtoComLock.getEstoque() - quantidade);
             ProdutoGateway.salvar(produtoComLock);
         }
 

@@ -9,11 +9,9 @@ import com.github.guilhermemonte21.Ecommerce.Application.Mappers.CarrinhoMapperA
 import com.github.guilhermemonte21.Ecommerce.Domain.Entity.UsuarioAutenticado;
 import com.github.guilhermemonte21.Ecommerce.Domain.Entity.Carrinho;
 import com.github.guilhermemonte21.Ecommerce.Domain.Entity.Usuarios;
-import org.springframework.stereotype.Service;
 
 import java.util.UUID;
 
-@Service
 public class GetCarrinhoById implements IGetCarrinhoById{
     private final CarrinhoGateway gateway;
     private final CarrinhoMapperApl mapper;

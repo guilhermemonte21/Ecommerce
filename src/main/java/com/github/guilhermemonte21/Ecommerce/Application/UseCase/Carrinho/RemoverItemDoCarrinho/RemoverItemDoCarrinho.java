@@ -7,14 +7,11 @@ import com.github.guilhermemonte21.Ecommerce.Application.Gateway.CarrinhoGateway
 import com.github.guilhermemonte21.Ecommerce.Application.Gateway.UsuarioAutenticadoGateway;
 import com.github.guilhermemonte21.Ecommerce.Domain.Entity.UsuarioAutenticado;
 import com.github.guilhermemonte21.Ecommerce.Domain.Entity.Carrinho;
-import com.github.guilhermemonte21.Ecommerce.Domain.Entity.Usuarios;
-import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.UUID;
 
-@Service
-public class RemoverItemDoCarrinho implements IRemoverItemDoCarrinho{
+public class RemoverItemDoCarrinho implements IRemoverItemDoCarrinho {
     private final CarrinhoGateway gateway;
     private final UsuarioAutenticadoGateway AuthGateway;
 
@@ -25,16 +22,16 @@ public class RemoverItemDoCarrinho implements IRemoverItemDoCarrinho{
 
     @Override
     @Transactional
-    public void RemoverItem(UUID IdCarrinho, UUID idProduto){
+    public void RemoverItem(UUID IdCarrinho, UUID idProduto) {
         Carrinho carrinho = gateway.getById(IdCarrinho).orElseThrow(() -> new CarrinhoNotFoundException(IdCarrinho));
         UsuarioAutenticado user = AuthGateway.get();
-        if(!user.getUser().getId().equals(carrinho.getComprador().getId())){
+        if (!user.getUser().getId().equals(carrinho.getComprador().getId())) {
             throw new AcessoNegadoException();
         }
-        if (user.getUser().getAtivo() == false){
+        if (user.getUser().getAtivo() == false) {
             throw new UsuarioInativoException();
         }
-        gateway.DeleteItem(carrinho,idProduto);
+        gateway.DeleteItem(carrinho, idProduto);
         carrinho.atualizarValorTotal();
         carrinho.AtualizadoAgora();
 

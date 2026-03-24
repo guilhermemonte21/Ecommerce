@@ -5,9 +5,7 @@ import com.github.guilhermemonte21.Ecommerce.Application.Gateway.UsuarioGateway;
 import com.github.guilhermemonte21.Ecommerce.Application.Mappers.UsuarioMapperApl;
 import com.github.guilhermemonte21.Ecommerce.Domain.Entity.Usuarios;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.stereotype.Service;
 
-@Service
 public class CreateUser implements ICreateUser{
     private final UsuarioGateway gateway;
     private final PasswordEncoder encoder;

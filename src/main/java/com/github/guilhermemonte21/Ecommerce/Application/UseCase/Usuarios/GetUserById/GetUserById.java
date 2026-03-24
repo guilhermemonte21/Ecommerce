@@ -3,11 +3,9 @@ package com.github.guilhermemonte21.Ecommerce.Application.UseCase.Usuarios.GetUs
 import com.github.guilhermemonte21.Ecommerce.Application.Exceptions.UsuarioNotFoundException;
 import com.github.guilhermemonte21.Ecommerce.Application.Gateway.UsuarioGateway;
 import com.github.guilhermemonte21.Ecommerce.Domain.Entity.Usuarios;
-import org.springframework.stereotype.Service;
 
 import java.util.UUID;
 
-@Service
 public class GetUserById implements IGetUserById{
 
     private final UsuarioGateway gateway;

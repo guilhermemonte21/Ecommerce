@@ -17,7 +17,7 @@ import java.util.List;
 import java.util.UUID;
 
 @RestController
-@RequestMapping("/Produto")
+@RequestMapping("/produtos")
 public class ProdutoController {
     private final IRegistrarProduto registrarProduto;
     private final IAtualizarEstoque atualizarEstoque;
@@ -35,32 +35,34 @@ public class ProdutoController {
 
     @PreAuthorize("isAuthenticated()")
     @PostMapping
-    public ResponseEntity<ProdutoResponse> criar(@RequestBody @Valid CreateProdutoRequest produtos){
+    public ResponseEntity<ProdutoResponse> criar(@RequestBody @Valid CreateProdutoRequest produtos) {
         ProdutoResponse prod = registrarProduto.Create(produtos);
-
         return ResponseEntity.status(HttpStatus.CREATED).body(prod);
     }
 
-    @PreAuthorize("isAuthenticated() ")
-    @PutMapping("/{id}")
-    public ResponseEntity<Long> AtualizarEstoque( @PathVariable("id") UUID IdProduto,@RequestParam Long Quantity){
-        Long EstoqueAtualizado = atualizarEstoque.AtualizarEstoque( IdProduto, Quantity);
-        return ResponseEntity.ok().body(EstoqueAtualizado);
-    }
-    @GetMapping("FindAll")
-    public ResponseEntity<List<ProdutoResponse>> findAll(){
+    @GetMapping
+    public ResponseEntity<List<ProdutoResponse>> findAll() {
         List<ProdutoResponse> list = buscarTodosOsProdutos.findAll();
-        return ResponseEntity.status(HttpStatus.OK).body(list);
+        return ResponseEntity.ok(list);
     }
+
+    @GetMapping("/{idProduto}")
+    public ResponseEntity<ProdutoResponse> findById(@PathVariable("idProduto") UUID idProduto) {
+        ProdutoResponse response = getProdutoById.GetProdutoById(idProduto);
+        return ResponseEntity.ok(response);
+    }
+
     @PreAuthorize("isAuthenticated()")
-    @PutMapping("Atualizar/{IdProduto}")
-    public ResponseEntity<ProdutoResponse>Atualizar(@PathVariable("IdProduto") UUID IdProduto, @RequestBody CreateProdutoRequest request){
-        ProdutoResponse response = atualizarProduto.Atualizar(IdProduto, request);
+    @PutMapping("/{idProduto}")
+    public ResponseEntity<ProdutoResponse> atualizar(@PathVariable("idProduto") UUID idProduto, @RequestBody CreateProdutoRequest request) {
+        ProdutoResponse response = atualizarProduto.Atualizar(idProduto, request);
         return ResponseEntity.ok(response);
     }
-    @GetMapping("FindById/{IdProduto}")
-    public ResponseEntity<ProdutoResponse> findById(@PathVariable("IdProduto") UUID IdProduto){
-        ProdutoResponse response = getProdutoById.GetProdutoById(IdProduto);
-        return ResponseEntity.ok(response);
+
+    @PreAuthorize("isAuthenticated()")
+    @PatchMapping("/{idProduto}/estoque")
+    public ResponseEntity<Long> atualizarEstoque(@PathVariable("idProduto") UUID idProduto, @RequestParam Long quantity) {
+        Long estoqueAtualizado = atualizarEstoque.AtualizarEstoque(idProduto, quantity);
+        return ResponseEntity.ok(estoqueAtualizado);
     }
 }

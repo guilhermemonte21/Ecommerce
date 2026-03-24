@@ -8,11 +8,9 @@ import com.github.guilhermemonte21.Ecommerce.Application.Gateway.UsuarioAutentic
 import com.github.guilhermemonte21.Ecommerce.Domain.Entity.UsuarioAutenticado;
 import com.github.guilhermemonte21.Ecommerce.Domain.Entity.Produtos;
 import com.github.guilhermemonte21.Ecommerce.Domain.Entity.Usuarios;
-import org.springframework.stereotype.Service;
 
 import java.util.UUID;
 
-@Service
 public class DeletarProduto implements IDeletarProduto{
     private final ProdutoGateway gateway;
     private final UsuarioAutenticadoGateway AuthGateway;

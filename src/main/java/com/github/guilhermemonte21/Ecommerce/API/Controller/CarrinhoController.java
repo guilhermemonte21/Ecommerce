@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.UUID;
 
 @RestController
-@RequestMapping("/Carrinho")
+@RequestMapping("/carrinhos")
 public class CarrinhoController {
     private final IAddItemAoCarrinho add;
     private final ICriarCarrinho create;
@@ -24,47 +24,50 @@ public class CarrinhoController {
     private final IRemoverItemDoCarrinho remove;
     private final ILimparCarrinho limparCarrinho;
 
-    public CarrinhoController(IAddItemAoCarrinho add, ICriarCarrinho create, IGetCarrinhoById getById, IRemoverItemDoCarrinho remove, ILimparCarrinho limparCarrinho) {
+    public CarrinhoController(IAddItemAoCarrinho add, ICriarCarrinho create, IGetCarrinhoById getById,
+            IRemoverItemDoCarrinho remove, ILimparCarrinho limparCarrinho) {
         this.add = add;
         this.create = create;
         this.getById = getById;
         this.remove = remove;
         this.limparCarrinho = limparCarrinho;
     }
-    @PreAuthorize("isAuthenticated()")
-    @PostMapping("/Create")
-    public ResponseEntity<CarrinhoResponse> create(@RequestBody @Valid CreateCarrinhoRequest carrinho){
-        CarrinhoResponse newCarrinho = create.Criar(carrinho);
 
+    @PreAuthorize("isAuthenticated()")
+    @PostMapping
+    public ResponseEntity<CarrinhoResponse> create(@RequestBody @Valid CreateCarrinhoRequest carrinhoRequest) {
+        CarrinhoResponse newCarrinho = create.Criar(carrinhoRequest);
         return ResponseEntity.status(HttpStatus.CREATED).body(newCarrinho);
     }
+
     @PreAuthorize("isAuthenticated()")
-    @PostMapping("/Add/{idCarrinho}")
-    public ResponseEntity<CarrinhoResponse> addItem(@PathVariable("idCarrinho") UUID Id,  UUID IdProduto,@RequestBody Long quantity){
-           CarrinhoResponse newCarrinho = add.AdicionarAoCarrinho(Id, IdProduto, quantity);
+    @PostMapping("/{idCarrinho}/itens")
+    public ResponseEntity<CarrinhoResponse> addItem(@PathVariable("idCarrinho") UUID idCarrinho,
+            @RequestParam UUID idProduto, @RequestBody Long quantity) {
+        CarrinhoResponse newCarrinho = add.AdicionarAoCarrinho(idCarrinho, idProduto, quantity);
+        return ResponseEntity.ok(newCarrinho);
+    }
 
-
-           return ResponseEntity.ok(newCarrinho);
-           }
-    @PreAuthorize("isAuthenticated() ")
+    @PreAuthorize("isAuthenticated()")
     @GetMapping("/{id}")
-    public ResponseEntity<CarrinhoResponse> getById(@PathVariable("id") UUID Id){
-        CarrinhoResponse carrinhobyId = getById.FindCarrinhoById(Id);
-
-           return ResponseEntity.status(HttpStatus.OK).body(carrinhobyId);
-
+    public ResponseEntity<CarrinhoResponse> getById(@PathVariable("id") UUID id) {
+        CarrinhoResponse carrinhoResponse = getById.FindCarrinhoById(id);
+        return ResponseEntity.ok(carrinhoResponse);
     }
+
     @PreAuthorize("isAuthenticated()")
-    @DeleteMapping("/{id}/{Id}")
-    public ResponseEntity<Void> DeleteItem(@PathVariable("id") UUID Id,@PathVariable("Id") UUID id){
-        remove.RemoverItem(Id, id);
-        return ResponseEntity.noContent().build();
-    }
-    @PreAuthorize("isAuthenticated()")
-    @DeleteMapping("/{IdCarrinho}")
-    public ResponseEntity<Void> LimparCarrinho(@PathVariable("IdCarrinho") UUID IdCarrinho){
-        limparCarrinho.LimparCarrinho(IdCarrinho);
+    @DeleteMapping("/{idCarrinho}/itens/{idProduto}")
+    public ResponseEntity<Void> deleteItem(@PathVariable("idCarrinho") UUID idCarrinho,
+            @PathVariable("idProduto") UUID idProduto) {
+        remove.RemoverItem(idCarrinho, idProduto);
         return ResponseEntity.noContent().build();
     }
 
+    @PreAuthorize("isAuthenticated()")
+    @DeleteMapping("/{idCarrinho}/itens")
+    public ResponseEntity<Void> clearCart(@PathVariable("idCarrinho") UUID idCarrinho) {
+        limparCarrinho.LimparCarrinho(idCarrinho);
+        return ResponseEntity.noContent().build();
+    }
 }
+

@@ -5,9 +5,7 @@ import com.github.guilhermemonte21.Ecommerce.Application.Exceptions.AcessoNegado
 import com.github.guilhermemonte21.Ecommerce.Application.Gateway.UsuarioGateway;
 import com.github.guilhermemonte21.Ecommerce.Application.UseCase.Usuarios.Login.ILogin;
 import com.github.guilhermemonte21.Ecommerce.Domain.Entity.Usuarios;
-import org.springframework.stereotype.Service;
 
-@Service
 public class MudarAtividadeDaConta implements IMudarAtividadeDaConta{
     private final UsuarioGateway gateway;
     private final ILogin login;
@@ -18,20 +16,14 @@ public class MudarAtividadeDaConta implements IMudarAtividadeDaConta{
     }
 
     @Override
-    public Boolean MudarAtividadeDaConta(LoginRequest login1) {
-        Boolean log = login.Login(login1.email(), login1.senha());
-        if (!log){
+    public Boolean mudarAtividade(LoginRequest login1) {
+        Boolean autenticado = login.login(login1.email(), login1.senha());
+        if (!autenticado){
             throw new AcessoNegadoException();
         }
         Usuarios user = gateway.findByEmail(login1.email());
-        if (user.getAtivo() == true){
-        user.setAtivo(false);
+        user.setAtivo(!user.getAtivo());
         gateway.salvar(user);
-        }
-        if (user.getAtivo() == false) {
-            user.setAtivo(true);
-            gateway.salvar(user);
-        }
         return user.getAtivo();
         
     }

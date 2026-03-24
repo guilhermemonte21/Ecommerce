@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.UUID;
 
 @RestController
-@RequestMapping("/Usuario")
+@RequestMapping("/usuarios")
 public class UsuarioController {
     private final ICreateUser createUser;
     private final IMudarAtividadeDaConta changeActivity;
@@ -29,24 +29,27 @@ public class UsuarioController {
         this.sellerAcount = sellerAcount;
     }
 
-    @PostMapping("/usuarios")
-    public ResponseEntity<Usuarios> Criar(@RequestBody @Valid CreateUserRequest usuarios){
-        Usuarios usuarios1 = createUser.CreateUser(usuarios);
-        return ResponseEntity.status(HttpStatus.CREATED).body(usuarios1);
+    @PostMapping
+    public ResponseEntity<Usuarios> criar(@RequestBody @Valid CreateUserRequest usuarios) {
+        Usuarios newUser = createUser.CreateUser(usuarios);
+        return ResponseEntity.status(HttpStatus.CREATED).body(newUser);
     }
-    @PutMapping("/DesativarConta")
-    public ResponseEntity<Boolean> MudarAtividadeDaConta(@RequestBody @Valid LoginRequest login){
-        Boolean isUnactive = changeActivity.MudarAtividadeDaConta(login);
-        return ResponseEntity.ok(isUnactive);
-    }
-    @GetMapping("/{ID}")
-    public ResponseEntity<Usuarios> getById(@PathVariable UUID ID){
-        Usuarios user = getUserById.getUser(ID);
+
+    @GetMapping("/{id}")
+    public ResponseEntity<Usuarios> getById(@PathVariable("id") UUID id) {
+        Usuarios user = getUserById.getUser(id);
         return ResponseEntity.ok(user);
     }
-    @PutMapping("/CreateSellerAcount")
-    public ResponseEntity<Usuarios> sellerAcount(LoginRequest log, UUID GatewayId){
-       Usuarios user = sellerAcount.create(log, GatewayId);
-       return ResponseEntity.ok(user);
+
+    @PatchMapping("/status")
+    public ResponseEntity<Boolean> mudarAtividadeDaConta(@RequestBody @Valid LoginRequest login) {
+        Boolean isInactive = changeActivity.mudarAtividade(login);
+        return ResponseEntity.ok(isInactive);
+    }
+
+    @PostMapping("/vendedores")
+    public ResponseEntity<Usuarios> createSellerAccount(@RequestBody LoginRequest login, @RequestParam UUID gatewayId) {
+        Usuarios user = sellerAcount.create(login, gatewayId);
+        return ResponseEntity.status(HttpStatus.CREATED).body(user);
     }
 }

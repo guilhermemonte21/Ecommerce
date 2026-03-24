@@ -4,11 +4,9 @@ import com.github.guilhermemonte21.Ecommerce.Application.DTO.Produtos.ProdutoRes
 import com.github.guilhermemonte21.Ecommerce.Application.Gateway.ProdutoGateway;
 import com.github.guilhermemonte21.Ecommerce.Application.Mappers.ProdutoMapperApl;
 import com.github.guilhermemonte21.Ecommerce.Domain.Entity.Produtos;
-import org.springframework.stereotype.Service;
 
 import java.util.List;
 
-@Service
 public class BuscarTodosOsProdutos implements IBuscarTodosOsProdutos{
     private final ProdutoGateway gateway;
     private final ProdutoMapperApl mapperApl;

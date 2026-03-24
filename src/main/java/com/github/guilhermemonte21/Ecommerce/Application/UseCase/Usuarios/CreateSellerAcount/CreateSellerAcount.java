@@ -5,11 +5,9 @@ import com.github.guilhermemonte21.Ecommerce.Application.Exceptions.AcessoNegado
 import com.github.guilhermemonte21.Ecommerce.Application.Gateway.UsuarioGateway;
 import com.github.guilhermemonte21.Ecommerce.Application.UseCase.Usuarios.Login.ILogin;
 import com.github.guilhermemonte21.Ecommerce.Domain.Entity.Usuarios;
-import org.springframework.stereotype.Service;
 
 import java.util.UUID;
 
-@Service
 public class CreateSellerAcount implements ICreateSellerAcount{
     private final ILogin login;
     private final UsuarioGateway gateway;
@@ -20,8 +18,8 @@ public class CreateSellerAcount implements ICreateSellerAcount{
 
     @Override
     public Usuarios create(LoginRequest log, UUID GatewayId) {
-        Boolean logado = login.Login(log.email(), log.senha());
-        if (!logado){
+        Boolean autenticado = login.login(log.email(), log.senha());
+        if (!autenticado){
             throw new AcessoNegadoException();
         }
         Usuarios user = gateway.findByEmail(log.email());
