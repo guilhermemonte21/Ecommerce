@@ -7,25 +7,38 @@ import com.github.guilhermemonte21.Ecommerce.Application.UseCase.Produtos.Atuali
 import com.github.guilhermemonte21.Ecommerce.Application.UseCase.Produtos.BuscarTodosOsProdutos.IBuscarTodosOsProdutos;
 import com.github.guilhermemonte21.Ecommerce.Application.UseCase.Produtos.GetProdutoById.IGetProdutoById;
 import com.github.guilhermemonte21.Ecommerce.Application.UseCase.Produtos.RegistrarProduto.IRegistrarProduto;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
 import java.util.UUID;
 
 @RestController
-@RequestMapping("/produtos")
+@RequestMapping("/api/v1/produtos")
+@Tag(name = "Produtos", description = "Gerenciamento de produtos")
 public class ProdutoController {
+
+    private static final Logger log = LoggerFactory.getLogger(ProdutoController.class);
+
     private final IRegistrarProduto registrarProduto;
     private final IAtualizarEstoque atualizarEstoque;
     private final IGetProdutoById getProdutoById;
     private final IBuscarTodosOsProdutos buscarTodosOsProdutos;
     private final IAtualizarProduto atualizarProduto;
 
-    public ProdutoController(IRegistrarProduto registrarProduto, IAtualizarEstoque atualizarEstoque, IGetProdutoById getProdutoById, IBuscarTodosOsProdutos buscarTodosOsProdutos, IAtualizarProduto atualizarProduto) {
+    public ProdutoController(IRegistrarProduto registrarProduto, IAtualizarEstoque atualizarEstoque,
+                             IGetProdutoById getProdutoById, IBuscarTodosOsProdutos buscarTodosOsProdutos,
+                             IAtualizarProduto atualizarProduto) {
         this.registrarProduto = registrarProduto;
         this.atualizarEstoque = atualizarEstoque;
         this.getProdutoById = getProdutoById;
@@ -33,36 +46,48 @@ public class ProdutoController {
         this.atualizarProduto = atualizarProduto;
     }
 
+    @Operation(summary = "Registrar novo produto")
     @PreAuthorize("isAuthenticated()")
     @PostMapping
     public ResponseEntity<ProdutoResponse> criar(@RequestBody @Valid CreateProdutoRequest produtos) {
-        ProdutoResponse prod = registrarProduto.Create(produtos);
+        log.info("Registrando novo produto: {}", produtos.nomeProduto());
+        ProdutoResponse prod = registrarProduto.create(produtos);
         return ResponseEntity.status(HttpStatus.CREATED).body(prod);
     }
 
+    @Operation(summary = "Listar todos os produtos", description = "Listagem paginada de produtos")
     @GetMapping
-    public ResponseEntity<List<ProdutoResponse>> findAll() {
-        List<ProdutoResponse> list = buscarTodosOsProdutos.findAll();
-        return ResponseEntity.ok(list);
+    public ResponseEntity<Page<ProdutoResponse>> findAll(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "20") int size,
+            @RequestParam(defaultValue = "nomeProduto") String sortBy) {
+        Pageable pageable = PageRequest.of(page, size, Sort.by(sortBy));
+        Page<ProdutoResponse> result = buscarTodosOsProdutos.findAll(pageable);
+        return ResponseEntity.ok(result);
     }
 
+    @Operation(summary = "Buscar produto por ID")
     @GetMapping("/{idProduto}")
     public ResponseEntity<ProdutoResponse> findById(@PathVariable("idProduto") UUID idProduto) {
-        ProdutoResponse response = getProdutoById.GetProdutoById(idProduto);
+        ProdutoResponse response = getProdutoById.getProdutoById(idProduto);
         return ResponseEntity.ok(response);
     }
 
+    @Operation(summary = "Atualizar produto")
     @PreAuthorize("isAuthenticated()")
     @PutMapping("/{idProduto}")
-    public ResponseEntity<ProdutoResponse> atualizar(@PathVariable("idProduto") UUID idProduto, @RequestBody CreateProdutoRequest request) {
-        ProdutoResponse response = atualizarProduto.Atualizar(idProduto, request);
+    public ResponseEntity<ProdutoResponse> atualizar(@PathVariable("idProduto") UUID idProduto,
+                                                      @RequestBody @Valid CreateProdutoRequest request) {
+        ProdutoResponse response = atualizarProduto.atualizar(idProduto, request);
         return ResponseEntity.ok(response);
     }
 
+    @Operation(summary = "Atualizar estoque do produto")
     @PreAuthorize("isAuthenticated()")
     @PatchMapping("/{idProduto}/estoque")
-    public ResponseEntity<Long> atualizarEstoque(@PathVariable("idProduto") UUID idProduto, @RequestParam Long quantity) {
-        Long estoqueAtualizado = atualizarEstoque.AtualizarEstoque(idProduto, quantity);
+    public ResponseEntity<Long> atualizarEstoque(@PathVariable("idProduto") UUID idProduto,
+                                                  @RequestParam Long quantity) {
+        Long estoqueAtualizado = atualizarEstoque.atualizarEstoque(idProduto, quantity);
         return ResponseEntity.ok(estoqueAtualizado);
     }
 }

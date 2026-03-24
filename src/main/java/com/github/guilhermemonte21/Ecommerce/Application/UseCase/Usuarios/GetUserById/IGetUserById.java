@@ -1,9 +1,9 @@
 package com.github.guilhermemonte21.Ecommerce.Application.UseCase.Usuarios.GetUserById;
 
-import com.github.guilhermemonte21.Ecommerce.Domain.Entity.Usuarios;
+import com.github.guilhermemonte21.Ecommerce.Application.DTO.Usuarios.UsuarioResponse;
 
 import java.util.UUID;
 
 public interface IGetUserById {
-    Usuarios getUser(UUID Id);
+    UsuarioResponse getUser(UUID id);
 }

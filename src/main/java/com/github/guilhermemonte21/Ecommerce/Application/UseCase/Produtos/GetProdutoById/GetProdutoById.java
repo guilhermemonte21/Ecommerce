@@ -8,7 +8,8 @@ import com.github.guilhermemonte21.Ecommerce.Domain.Entity.Produtos;
 
 import java.util.UUID;
 
-public class GetProdutoById implements IGetProdutoById{
+public class GetProdutoById implements IGetProdutoById {
+
     private final ProdutoGateway gateway;
     private final ProdutoMapperApl mapperApl;
 
@@ -18,10 +19,8 @@ public class GetProdutoById implements IGetProdutoById{
     }
 
     @Override
-    public ProdutoResponse GetProdutoById(UUID id){
-        Produtos produtos = gateway.GetById(id).orElseThrow(() -> new ProdutoNotFoundException(id));
-        return mapperApl.ToResponse(produtos);
-
-
+    public ProdutoResponse getProdutoById(UUID id) {
+        Produtos produtos = gateway.getById(id).orElseThrow(() -> new ProdutoNotFoundException(id));
+        return mapperApl.toResponse(produtos);
     }
 }

@@ -4,5 +4,5 @@ import com.github.guilhermemonte21.Ecommerce.Application.DTO.Carrinho.CreateCarr
 import com.github.guilhermemonte21.Ecommerce.Application.DTO.Carrinho.CarrinhoResponse;
 
 public interface ICriarCarrinho {
-    CarrinhoResponse Criar(CreateCarrinhoRequest carrinho);
+    CarrinhoResponse criar(CreateCarrinhoRequest carrinho);
 }

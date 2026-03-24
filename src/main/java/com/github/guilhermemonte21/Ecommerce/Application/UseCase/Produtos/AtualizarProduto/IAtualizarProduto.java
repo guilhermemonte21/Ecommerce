@@ -6,5 +6,5 @@ import com.github.guilhermemonte21.Ecommerce.Application.DTO.Produtos.ProdutoRes
 import java.util.UUID;
 
 public interface IAtualizarProduto {
-    ProdutoResponse Atualizar(UUID IdProduto, CreateProdutoRequest produtos);
+    ProdutoResponse atualizar(UUID idProduto, CreateProdutoRequest produtos);
 }

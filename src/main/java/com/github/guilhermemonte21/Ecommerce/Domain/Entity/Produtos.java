@@ -1,12 +1,9 @@
 package com.github.guilhermemonte21.Ecommerce.Domain.Entity;
 
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-
 
 import java.math.BigDecimal;
 import java.util.UUID;
@@ -16,35 +13,28 @@ import java.util.UUID;
 @NoArgsConstructor
 @AllArgsConstructor
 public class Produtos {
-    private UUID Id;
-    @NotBlank
-    private String NomeProduto;
-    @NotNull
-    private Usuarios Vendedor;
-    @NotBlank
-    private String Descricao;
-    @NotNull
-    private BigDecimal Preco;
-    @NotNull
-    private Long Estoque;
+    private UUID id;
+    private String nomeProduto;
+    private Usuarios vendedor;
+    private String descricao;
+    private BigDecimal preco;
+    private Long estoque;
 
     public Produtos(UUID id, String nomeProduto, String descricao, BigDecimal preco, Long estoque) {
-        Id = id;
-        NomeProduto = nomeProduto;
-        Descricao = descricao;
-        Preco = preco;
-        Estoque = estoque;
+        this.id = id;
+        this.nomeProduto = nomeProduto;
+        this.descricao = descricao;
+        this.preco = preco;
+        this.estoque = estoque;
     }
 
-    public void AtualizarEstoque(Long quantity){
-        if(quantity == null){
+    public void atualizarEstoque(Long quantity) {
+        if (quantity == null) {
             return;
         }
-        if(this.Estoque == null){
-            this.Estoque = 0L;
+        if (this.estoque == null) {
+            this.estoque = 0L;
         }
-        this.Estoque += quantity;
+        this.estoque += quantity;
     }
-
-
 }

@@ -12,34 +12,39 @@ import com.github.guilhermemonte21.Ecommerce.Application.Gateway.UsuarioAutentic
 import com.github.guilhermemonte21.Ecommerce.Application.Mappers.PedidoMapperApl;
 import com.github.guilhermemonte21.Ecommerce.Domain.Entity.*;
 import com.github.guilhermemonte21.Ecommerce.Domain.Enum.StatusPedido;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.transaction.annotation.Transactional;
+
 import java.math.BigDecimal;
 import java.time.OffsetDateTime;
 import java.util.*;
 
 public class CriarPedido implements ICriarPedido {
 
-    private final PedidoGateway Pedidogateway;
-    private final CarrinhoGateway CarrinhoGateway;
-    private final ProdutoGateway ProdutoGateway;
-    private final PedidoMapperApl mapperApl;
-    private final UsuarioAutenticadoGateway AuthGateway;
+    private static final Logger log = LoggerFactory.getLogger(CriarPedido.class);
 
-    public CriarPedido(PedidoGateway pedidogateway, CarrinhoGateway carrinhoGateway, ProdutoGateway produtoGateway,
-            PedidoMapperApl mapperApl, UsuarioAutenticadoGateway authGateway) {
-        Pedidogateway = pedidogateway;
-        CarrinhoGateway = carrinhoGateway;
-        ProdutoGateway = produtoGateway;
+    private final PedidoGateway pedidoGateway;
+    private final CarrinhoGateway carrinhoGateway;
+    private final ProdutoGateway produtoGateway;
+    private final PedidoMapperApl mapperApl;
+    private final UsuarioAutenticadoGateway authGateway;
+
+    public CriarPedido(PedidoGateway pedidoGateway, CarrinhoGateway carrinhoGateway, ProdutoGateway produtoGateway,
+                       PedidoMapperApl mapperApl, UsuarioAutenticadoGateway authGateway) {
+        this.pedidoGateway = pedidoGateway;
+        this.carrinhoGateway = carrinhoGateway;
+        this.produtoGateway = produtoGateway;
         this.mapperApl = mapperApl;
-        AuthGateway = authGateway;
+        this.authGateway = authGateway;
     }
 
     @Transactional
     @Override
-    public PedidoResponse CriarPedido(UUID CarrinhoId, String Endereco) {
-        UsuarioAutenticado user = AuthGateway.get();
-        Carrinho cart = CarrinhoGateway.getById(CarrinhoId)
-                .orElseThrow(() -> new CarrinhoNotFoundException(CarrinhoId));
+    public PedidoResponse criarPedido(UUID carrinhoId, String endereco) {
+        UsuarioAutenticado user = authGateway.get();
+        Carrinho cart = carrinhoGateway.getById(carrinhoId)
+                .orElseThrow(() -> new CarrinhoNotFoundException(carrinhoId));
 
         if (cart.getItens() == null || cart.getItens().isEmpty()) {
             throw new CarrinhoVazioException();
@@ -50,17 +55,18 @@ public class CriarPedido implements ICriarPedido {
                         "Não é possível comprar o próprio produto: " + item.getNomeProduto());
             }
         }
+
         Map<UUID, Long> productQuantities = new HashMap<>();
         for (Produtos itemCarrinho : cart.getItens()) {
-            productQuantities.put(itemCarrinho.getId(), productQuantities.getOrDefault(itemCarrinho.getId(), 0L) + 1);
+            productQuantities.put(itemCarrinho.getId(),
+                    productQuantities.getOrDefault(itemCarrinho.getId(), 0L) + 1);
         }
 
-        // Fetch each unique product with lock, check stock, and decrement
         for (Map.Entry<UUID, Long> entry : productQuantities.entrySet()) {
             UUID idProduto = entry.getKey();
             Long quantidade = entry.getValue();
 
-            Produtos produtoComLock = ProdutoGateway.GetByIdComLock(idProduto)
+            Produtos produtoComLock = produtoGateway.getByIdComLock(idProduto)
                     .orElseThrow(() -> new ProdutoNotFoundException(idProduto));
 
             if (produtoComLock.getEstoque() == null || produtoComLock.getEstoque() < quantidade) {
@@ -68,17 +74,17 @@ public class CriarPedido implements ICriarPedido {
             }
 
             produtoComLock.setEstoque(produtoComLock.getEstoque() - quantidade);
-            ProdutoGateway.salvar(produtoComLock);
+            produtoGateway.salvar(produtoComLock);
         }
 
-        Pedidos Pedido = new Pedidos();
-        Pedido.setComprador(user.getUser());
-        Pedidos salvo = Pedidogateway.save(Pedido);
+        Pedidos pedido = new Pedidos();
+        pedido.setComprador(user.getUser());
+        Pedidos salvo = pedidoGateway.save(pedido);
 
         Map<UUID, PedidoDoVendedor> orders = new HashMap<>();
         for (Produtos produto : cart.getItens()) {
             UUID vendedorId = produto.getVendedor().getId();
-            PedidoDoVendedor pedido = orders.computeIfAbsent(vendedorId, id -> {
+            PedidoDoVendedor pedidoVendedor = orders.computeIfAbsent(vendedorId, id -> {
                 PedidoDoVendedor novo = new PedidoDoVendedor();
                 novo.setVendedor(produto.getVendedor());
                 novo.setPedido(salvo.getId());
@@ -86,18 +92,21 @@ public class CriarPedido implements ICriarPedido {
                 novo.setStatus(StatusPedido.CRIADO);
                 return novo;
             });
-            pedido.getProdutos().add(produto);
-            pedido.setValor(pedido.getValor().add(produto.getPreco()));
+            pedidoVendedor.getProdutos().add(produto);
+            pedidoVendedor.setValor(pedidoVendedor.getValor().add(produto.getPreco()));
         }
+
         salvo.getItens().addAll(orders.values());
         salvo.setPreco(orders.values().stream()
                 .map(PedidoDoVendedor::getValor)
                 .reduce(BigDecimal.ZERO, BigDecimal::add));
-        salvo.setEndereço(Endereco);
+        salvo.setEndereço(endereco);
         salvo.setCriadoEm(OffsetDateTime.now());
 
-        Pedidos CompleteOrder = Pedidogateway.save(salvo);
-        CarrinhoGateway.LimparCarrinho(cart);
-        return mapperApl.toResponse(CompleteOrder);
+        Pedidos completeOrder = pedidoGateway.save(salvo);
+        carrinhoGateway.limparCarrinho(cart);
+
+        log.info("Pedido criado com sucesso: id={}, comprador={}", completeOrder.getId(), user.getUser().getId());
+        return mapperApl.toResponse(completeOrder);
     }
 }

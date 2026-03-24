@@ -3,5 +3,5 @@ package com.github.guilhermemonte21.Ecommerce.Application.UseCase.Produtos.Atual
 import java.util.UUID;
 
 public interface IAtualizarEstoque {
-    public Long AtualizarEstoque( UUID idProduto, Long quantity);
+    Long atualizarEstoque(UUID idProduto, Long quantity);
 }

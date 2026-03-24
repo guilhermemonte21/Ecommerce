@@ -5,50 +5,55 @@ import com.github.guilhermemonte21.Ecommerce.Application.DTO.Produtos.ProdutoRes
 import com.github.guilhermemonte21.Ecommerce.Application.Exceptions.AcessoNegadoException;
 import com.github.guilhermemonte21.Ecommerce.Application.Exceptions.ProdutoNotFoundException;
 import com.github.guilhermemonte21.Ecommerce.Application.Exceptions.UsuarioInativoException;
-import com.github.guilhermemonte21.Ecommerce.Application.Exceptions.UsuarioNotFoundException;
 import com.github.guilhermemonte21.Ecommerce.Application.Gateway.ProdutoGateway;
 import com.github.guilhermemonte21.Ecommerce.Application.Gateway.UsuarioAutenticadoGateway;
 import com.github.guilhermemonte21.Ecommerce.Application.Gateway.UsuarioGateway;
 import com.github.guilhermemonte21.Ecommerce.Application.Mappers.ProdutoMapperApl;
-import com.github.guilhermemonte21.Ecommerce.Domain.Entity.UsuarioAutenticado;
 import com.github.guilhermemonte21.Ecommerce.Domain.Entity.Produtos;
+import com.github.guilhermemonte21.Ecommerce.Domain.Entity.UsuarioAutenticado;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.UUID;
 
 public class AtualizarProduto implements IAtualizarProduto {
+
+    private static final Logger log = LoggerFactory.getLogger(AtualizarProduto.class);
+
     private final ProdutoGateway gateway;
     private final ProdutoMapperApl mapperApl;
     private final UsuarioGateway usuarioGateway;
-    private final UsuarioAutenticadoGateway AuthGateway;
+    private final UsuarioAutenticadoGateway authGateway;
 
-    public AtualizarProduto(ProdutoGateway gateway, ProdutoMapperApl mapperApl, UsuarioGateway usuarioGateway,
-            UsuarioAutenticadoGateway authGateway) {
+    public AtualizarProduto(ProdutoGateway gateway, ProdutoMapperApl mapperApl,
+                            UsuarioGateway usuarioGateway, UsuarioAutenticadoGateway authGateway) {
         this.gateway = gateway;
         this.mapperApl = mapperApl;
         this.usuarioGateway = usuarioGateway;
-        AuthGateway = authGateway;
+        this.authGateway = authGateway;
     }
 
     @Override
-    public ProdutoResponse Atualizar(UUID IdProduto, CreateProdutoRequest produtos) {
-
-        Produtos ProdById = gateway.GetById(IdProduto)
-                .orElseThrow(() -> new ProdutoNotFoundException(IdProduto));
-        UsuarioAutenticado user = AuthGateway.get();
-        if (!user.getUser().getId().equals(ProdById.getVendedor().getId())) {
+    public ProdutoResponse atualizar(UUID idProduto, CreateProdutoRequest produtos) {
+        Produtos prodById = gateway.getById(idProduto)
+                .orElseThrow(() -> new ProdutoNotFoundException(idProduto));
+        UsuarioAutenticado user = authGateway.get();
+        if (!user.getUser().getId().equals(prodById.getVendedor().getId())) {
             throw new AcessoNegadoException();
         }
-        if (user.getUser().getAtivo() == false) {
+        if (Boolean.FALSE.equals(user.getUser().getAtivo())) {
             throw new UsuarioInativoException();
         }
 
-        Produtos produtos1 = new Produtos(
-                ProdById.getId(),
+        Produtos atualizado = new Produtos(
+                prodById.getId(),
                 produtos.nomeProduto(),
                 produtos.descricao(),
                 produtos.preco(),
                 produtos.estoque());
-        Produtos salvo = gateway.salvar(produtos1);
-        return mapperApl.ToResponse(salvo);
+        atualizado.setVendedor(prodById.getVendedor());
+        Produtos salvo = gateway.salvar(atualizado);
+        log.info("Produto atualizado: id={}", idProduto);
+        return mapperApl.toResponse(salvo);
     }
 }

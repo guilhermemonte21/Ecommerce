@@ -1,8 +1,8 @@
 package com.github.guilhermemonte21.Ecommerce.Application.UseCase.Usuarios.CreateUser;
 
 import com.github.guilhermemonte21.Ecommerce.Application.DTO.Usuarios.CreateUserRequest;
-import com.github.guilhermemonte21.Ecommerce.Domain.Entity.Usuarios;
+import com.github.guilhermemonte21.Ecommerce.Application.DTO.Usuarios.UsuarioResponse;
 
 public interface ICreateUser {
-    Usuarios CreateUser(CreateUserRequest newUser);
+    UsuarioResponse createUser(CreateUserRequest newUser);
 }

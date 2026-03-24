@@ -1,9 +1,5 @@
 package com.github.guilhermemonte21.Ecommerce.Domain.Entity;
 
-
-
-import jakarta.annotation.Nullable;
-import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -20,26 +16,23 @@ import java.util.UUID;
 @NoArgsConstructor
 @AllArgsConstructor
 public class Carrinho {
-    private UUID Id;
-
-    @NotNull
-    private Usuarios Comprador;
-    @Nullable
-    private List<Produtos> Itens = new ArrayList<>();
-    private BigDecimal ValorTotal;
-    private OffsetDateTime AtualizadoEm;
-
+    private UUID id;
+    private Usuarios comprador;
+    private List<Produtos> itens = new ArrayList<>();
+    private BigDecimal valorTotal;
+    private OffsetDateTime atualizadoEm;
 
     public void atualizarValorTotal() {
-        this.ValorTotal = this.Itens.stream()
+        this.valorTotal = this.itens.stream()
                 .map(Produtos::getPreco)
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
+    }
 
+    public void atualizadoAgora() {
+        this.atualizadoEm = OffsetDateTime.now();
     }
-    public void AtualizadoAgora(){
-        this.AtualizadoEm = OffsetDateTime.now();
-    }
-    public void Limpar(){
+
+    public void limpar() {
         this.getItens().clear();
     }
 }

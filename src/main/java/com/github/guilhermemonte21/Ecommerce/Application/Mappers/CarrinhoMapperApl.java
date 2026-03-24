@@ -16,8 +16,8 @@ import java.util.stream.Collectors;
 
 @Component
 public class CarrinhoMapperApl {
-    private final ProdutoGateway prodGateway;
 
+    private final ProdutoGateway prodGateway;
     private final UsuarioGateway usuGateway;
 
     public CarrinhoMapperApl(ProdutoGateway prodGateway, UsuarioGateway usuGateway) {
@@ -25,27 +25,26 @@ public class CarrinhoMapperApl {
         this.usuGateway = usuGateway;
     }
 
-    public Carrinho CreateResquesttoDomain(CreateCarrinhoRequest carrinhoRequest, UUID IdComprador){
+    public Carrinho createRequestToDomain(CreateCarrinhoRequest carrinhoRequest, UUID idComprador) {
         Carrinho carrinho = new Carrinho();
-        carrinho.setComprador(usuGateway.getById(IdComprador).orElseThrow(() -> new UsuarioNotFoundException(IdComprador)));
+        carrinho.setComprador(usuGateway.getById(idComprador)
+                .orElseThrow(() -> new UsuarioNotFoundException(idComprador)));
         List<Produtos> prods = carrinhoRequest.getProdutosIds()
                 .stream()
-                .map(c -> prodGateway.GetById(c)
+                .map(c -> prodGateway.getById(c)
                         .orElseThrow(() -> new ProdutoNotFoundException(c)))
                 .collect(Collectors.toList());
-
-
         carrinho.setItens(prods);
-       return carrinho;
+        return carrinho;
     }
-    public CarrinhoResponse DomainToResponse(Carrinho carrinho){
-        CarrinhoResponse Dto = new CarrinhoResponse(
+
+    public CarrinhoResponse domainToResponse(Carrinho carrinho) {
+        return new CarrinhoResponse(
                 carrinho.getId(),
-                carrinho.getItens().stream().map(c-> c.getNomeProduto()).toList(),
+                carrinho.getItens().stream().map(Produtos::getNomeProduto).toList(),
                 carrinho.getComprador().getNome(),
                 carrinho.getValorTotal(),
                 carrinho.getAtualizadoEm()
         );
-        return Dto;
     }
 }

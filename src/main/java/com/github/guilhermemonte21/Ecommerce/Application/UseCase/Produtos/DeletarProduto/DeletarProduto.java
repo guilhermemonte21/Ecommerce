@@ -5,32 +5,36 @@ import com.github.guilhermemonte21.Ecommerce.Application.Exceptions.ProdutoNotFo
 import com.github.guilhermemonte21.Ecommerce.Application.Exceptions.UsuarioInativoException;
 import com.github.guilhermemonte21.Ecommerce.Application.Gateway.ProdutoGateway;
 import com.github.guilhermemonte21.Ecommerce.Application.Gateway.UsuarioAutenticadoGateway;
-import com.github.guilhermemonte21.Ecommerce.Domain.Entity.UsuarioAutenticado;
 import com.github.guilhermemonte21.Ecommerce.Domain.Entity.Produtos;
-import com.github.guilhermemonte21.Ecommerce.Domain.Entity.Usuarios;
+import com.github.guilhermemonte21.Ecommerce.Domain.Entity.UsuarioAutenticado;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.UUID;
 
-public class DeletarProduto implements IDeletarProduto{
+public class DeletarProduto implements IDeletarProduto {
+
+    private static final Logger log = LoggerFactory.getLogger(DeletarProduto.class);
+
     private final ProdutoGateway gateway;
-    private final UsuarioAutenticadoGateway AuthGateway;
+    private final UsuarioAutenticadoGateway authGateway;
 
     public DeletarProduto(ProdutoGateway gateway, UsuarioAutenticadoGateway authGateway) {
         this.gateway = gateway;
-        AuthGateway = authGateway;
+        this.authGateway = authGateway;
     }
 
     @Override
-    public void Deletar(UUID id){
-        Produtos produtoById = gateway.GetById(id).orElseThrow(() -> new ProdutoNotFoundException(id));
-        UsuarioAutenticado user = AuthGateway.get();
-        if(!user.getUser().getId().equals(produtoById.getVendedor().getId())){
+    public void deletar(UUID id) {
+        Produtos produtoById = gateway.getById(id).orElseThrow(() -> new ProdutoNotFoundException(id));
+        UsuarioAutenticado user = authGateway.get();
+        if (!user.getUser().getId().equals(produtoById.getVendedor().getId())) {
             throw new AcessoNegadoException();
         }
-        if (user.getUser().getAtivo() == false){
+        if (Boolean.FALSE.equals(user.getUser().getAtivo())) {
             throw new UsuarioInativoException();
         }
-
-        gateway.Delete(produtoById);
+        gateway.delete(produtoById);
+        log.info("Produto deletado: id={}", id);
     }
 }

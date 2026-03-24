@@ -5,35 +5,36 @@ import com.github.guilhermemonte21.Ecommerce.Application.Exceptions.CarrinhoNotF
 import com.github.guilhermemonte21.Ecommerce.Application.Exceptions.UsuarioInativoException;
 import com.github.guilhermemonte21.Ecommerce.Application.Gateway.CarrinhoGateway;
 import com.github.guilhermemonte21.Ecommerce.Application.Gateway.UsuarioAutenticadoGateway;
-import com.github.guilhermemonte21.Ecommerce.Domain.Entity.UsuarioAutenticado;
 import com.github.guilhermemonte21.Ecommerce.Domain.Entity.Carrinho;
+import com.github.guilhermemonte21.Ecommerce.Domain.Entity.UsuarioAutenticado;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.UUID;
 
 public class RemoverItemDoCarrinho implements IRemoverItemDoCarrinho {
+
     private final CarrinhoGateway gateway;
-    private final UsuarioAutenticadoGateway AuthGateway;
+    private final UsuarioAutenticadoGateway authGateway;
 
     public RemoverItemDoCarrinho(CarrinhoGateway gateway, UsuarioAutenticadoGateway authGateway) {
         this.gateway = gateway;
-        AuthGateway = authGateway;
+        this.authGateway = authGateway;
     }
 
     @Override
     @Transactional
-    public void RemoverItem(UUID IdCarrinho, UUID idProduto) {
-        Carrinho carrinho = gateway.getById(IdCarrinho).orElseThrow(() -> new CarrinhoNotFoundException(IdCarrinho));
-        UsuarioAutenticado user = AuthGateway.get();
+    public void removerItem(UUID idCarrinho, UUID idProduto) {
+        Carrinho carrinho = gateway.getById(idCarrinho)
+                .orElseThrow(() -> new CarrinhoNotFoundException(idCarrinho));
+        UsuarioAutenticado user = authGateway.get();
         if (!user.getUser().getId().equals(carrinho.getComprador().getId())) {
             throw new AcessoNegadoException();
         }
-        if (user.getUser().getAtivo() == false) {
+        if (Boolean.FALSE.equals(user.getUser().getAtivo())) {
             throw new UsuarioInativoException();
         }
-        gateway.DeleteItem(carrinho, idProduto);
+        gateway.deleteItem(carrinho, idProduto);
         carrinho.atualizarValorTotal();
-        carrinho.AtualizadoAgora();
-
+        carrinho.atualizadoAgora();
     }
 }

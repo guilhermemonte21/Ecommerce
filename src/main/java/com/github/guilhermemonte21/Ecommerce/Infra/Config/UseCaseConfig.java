@@ -13,6 +13,8 @@ import com.github.guilhermemonte21.Ecommerce.Application.UseCase.Pedidos.ChangeP
 import com.github.guilhermemonte21.Ecommerce.Application.UseCase.Pedidos.ChangePedidoStatus.IChangePedidoStatus;
 import com.github.guilhermemonte21.Ecommerce.Application.UseCase.Pedidos.CriarPedido.CriarPedido;
 import com.github.guilhermemonte21.Ecommerce.Application.UseCase.Pedidos.CriarPedido.ICriarPedido;
+import com.github.guilhermemonte21.Ecommerce.Application.UseCase.Pedidos.GetItensByPedido.GetItensByPedido;
+import com.github.guilhermemonte21.Ecommerce.Application.UseCase.Pedidos.GetItensByPedido.IGetItensByPedido;
 import com.github.guilhermemonte21.Ecommerce.Application.UseCase.Produtos.AtualizarEstoque.AtualizarEstoque;
 import com.github.guilhermemonte21.Ecommerce.Application.UseCase.Produtos.AtualizarEstoque.IAtualizarEstoque;
 import com.github.guilhermemonte21.Ecommerce.Application.UseCase.Produtos.AtualizarProduto.AtualizarProduto;
@@ -48,8 +50,8 @@ public class UseCaseConfig {
     }
 
     @Bean
-    public IGetUserById getUserById(UsuarioGateway gateway) {
-        return new GetUserById(gateway);
+    public IGetUserById getUserById(UsuarioGateway gateway, UsuarioMapperApl mapper) {
+        return new GetUserById(gateway, mapper);
     }
 
     @Bean
@@ -63,12 +65,13 @@ public class UseCaseConfig {
     }
 
     @Bean
-    public ICreateSellerAcount createSellerAcount(ILogin login, UsuarioGateway gateway) {
-        return new CreateSellerAcount(login, gateway);
+    public ICreateSellerAcount createSellerAcount(ILogin login, UsuarioGateway gateway, UsuarioMapperApl mapper) {
+        return new CreateSellerAcount(login, gateway, mapper);
     }
 
     @Bean
-    public IRegistrarProduto registrarProduto(ProdutoGateway gateway, ProdutoMapperApl mapper, UsuarioAutenticadoGateway auth) {
+    public IRegistrarProduto registrarProduto(ProdutoGateway gateway, ProdutoMapperApl mapper,
+                                               UsuarioAutenticadoGateway auth) {
         return new RegistrarProduto(gateway, mapper, auth);
     }
 
@@ -93,7 +96,8 @@ public class UseCaseConfig {
     }
 
     @Bean
-    public IAtualizarProduto atualizarProduto(ProdutoGateway gateway, ProdutoMapperApl mapper, UsuarioGateway usuarioGateway, UsuarioAutenticadoGateway auth) {
+    public IAtualizarProduto atualizarProduto(ProdutoGateway gateway, ProdutoMapperApl mapper,
+                                               UsuarioGateway usuarioGateway, UsuarioAutenticadoGateway auth) {
         return new AtualizarProduto(gateway, mapper, usuarioGateway, auth);
     }
 
@@ -108,12 +112,21 @@ public class UseCaseConfig {
     }
 
     @Bean
-    public ICriarPedido criarPedido(PedidoGateway pedidoGateway, CarrinhoGateway carrinhoGateway, ProdutoGateway produtoGateway, PedidoMapperApl mapper, UsuarioAutenticadoGateway auth) {
+    public ICriarPedido criarPedido(PedidoGateway pedidoGateway, CarrinhoGateway carrinhoGateway,
+                                     ProdutoGateway produtoGateway, PedidoMapperApl mapper,
+                                     UsuarioAutenticadoGateway auth) {
         return new CriarPedido(pedidoGateway, carrinhoGateway, produtoGateway, mapper, auth);
     }
 
     @Bean
-    public ICriarCarrinho criarCarrinho(CarrinhoGateway gateway, CarrinhoMapperApl mapper, UsuarioAutenticadoGateway auth) {
+    public IGetItensByPedido getItensByPedido(PedidoGateway pedidoGateway, UsuarioAutenticadoGateway auth,
+                                               PedidoDoVendedorMapperApl mapperApl) {
+        return new GetItensByPedido(pedidoGateway, auth, mapperApl);
+    }
+
+    @Bean
+    public ICriarCarrinho criarCarrinho(CarrinhoGateway gateway, CarrinhoMapperApl mapper,
+                                         UsuarioAutenticadoGateway auth) {
         return new CriarCarrinho(gateway, mapper, auth);
     }
 
@@ -128,12 +141,14 @@ public class UseCaseConfig {
     }
 
     @Bean
-    public IGetCarrinhoById getCarrinhoById(CarrinhoGateway gateway, CarrinhoMapperApl mapper, UsuarioAutenticadoGateway auth) {
+    public IGetCarrinhoById getCarrinhoById(CarrinhoGateway gateway, CarrinhoMapperApl mapper,
+                                             UsuarioAutenticadoGateway auth) {
         return new GetCarrinhoById(gateway, mapper, auth);
     }
 
     @Bean
-    public IAddItemAoCarrinho addItemAoCarrinho(CarrinhoGateway gateway, ProdutoGateway produtoGateway, CarrinhoMapperApl mapper, UsuarioAutenticadoGateway auth) {
+    public IAddItemAoCarrinho addItemAoCarrinho(CarrinhoGateway gateway, ProdutoGateway produtoGateway,
+                                                 CarrinhoMapperApl mapper, UsuarioAutenticadoGateway auth) {
         return new AddItemAoCarrinho(gateway, produtoGateway, mapper, auth);
     }
 }

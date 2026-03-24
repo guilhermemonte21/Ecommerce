@@ -9,11 +9,11 @@ import java.util.UUID;
 public interface CarrinhoGateway {
     Carrinho save(Carrinho carrinhoEntity);
 
-    Optional<Carrinho> getById(UUID Id);
+    Optional<Carrinho> getById(UUID id);
 
-    Carrinho add(UUID Id, Produtos produto, Long quantity);
+    Carrinho add(UUID id, Produtos produto, Long quantity);
 
-    void DeleteItem(Carrinho carrinho, UUID id);
+    void deleteItem(Carrinho carrinho, UUID id);
 
-    void LimparCarrinho(Carrinho carrinho);
+    void limparCarrinho(Carrinho carrinho);
 }

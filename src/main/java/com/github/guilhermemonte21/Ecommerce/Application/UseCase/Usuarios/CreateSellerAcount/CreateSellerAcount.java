@@ -1,33 +1,43 @@
 package com.github.guilhermemonte21.Ecommerce.Application.UseCase.Usuarios.CreateSellerAcount;
 
 import com.github.guilhermemonte21.Ecommerce.API.DTO.LoginRequest;
+import com.github.guilhermemonte21.Ecommerce.Application.DTO.Usuarios.UsuarioResponse;
 import com.github.guilhermemonte21.Ecommerce.Application.Exceptions.AcessoNegadoException;
 import com.github.guilhermemonte21.Ecommerce.Application.Gateway.UsuarioGateway;
+import com.github.guilhermemonte21.Ecommerce.Application.Mappers.UsuarioMapperApl;
 import com.github.guilhermemonte21.Ecommerce.Application.UseCase.Usuarios.Login.ILogin;
 import com.github.guilhermemonte21.Ecommerce.Domain.Entity.Usuarios;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.UUID;
 
-public class CreateSellerAcount implements ICreateSellerAcount{
+public class CreateSellerAcount implements ICreateSellerAcount {
+
+    private static final Logger log = LoggerFactory.getLogger(CreateSellerAcount.class);
+
     private final ILogin login;
     private final UsuarioGateway gateway;
-    public CreateSellerAcount(ILogin login, UsuarioGateway gateway) {
+    private final UsuarioMapperApl mapperApl;
+
+    public CreateSellerAcount(ILogin login, UsuarioGateway gateway, UsuarioMapperApl mapperApl) {
         this.login = login;
         this.gateway = gateway;
+        this.mapperApl = mapperApl;
     }
 
     @Override
-    public Usuarios create(LoginRequest log, UUID GatewayId) {
-        Boolean autenticado = login.login(log.email(), log.senha());
-        if (!autenticado){
+    public UsuarioResponse create(LoginRequest loginRequest, UUID gatewayId) {
+        Boolean autenticado = login.login(loginRequest.email(), loginRequest.senha());
+        if (!autenticado) {
             throw new AcessoNegadoException();
         }
-        Usuarios user = gateway.findByEmail(log.email());
-
+        Usuarios user = gateway.findByEmail(loginRequest.email());
         user.setTipoUsuario("Vendedor");
-        user.setGatewayAccountId(GatewayId);
+        user.setGatewayAccountId(gatewayId);
 
         Usuarios salvo = gateway.salvar(user);
-        return salvo;
+        log.info("Conta de vendedor criada: id={}, email={}", salvo.getId(), salvo.getEmail());
+        return mapperApl.toResponse(salvo);
     }
 }

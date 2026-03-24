@@ -3,11 +3,11 @@ package com.github.guilhermemonte21.Ecommerce.Application.UseCase.Produtos.Busca
 import com.github.guilhermemonte21.Ecommerce.Application.DTO.Produtos.ProdutoResponse;
 import com.github.guilhermemonte21.Ecommerce.Application.Gateway.ProdutoGateway;
 import com.github.guilhermemonte21.Ecommerce.Application.Mappers.ProdutoMapperApl;
-import com.github.guilhermemonte21.Ecommerce.Domain.Entity.Produtos;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
-import java.util.List;
+public class BuscarTodosOsProdutos implements IBuscarTodosOsProdutos {
 
-public class BuscarTodosOsProdutos implements IBuscarTodosOsProdutos{
     private final ProdutoGateway gateway;
     private final ProdutoMapperApl mapperApl;
 
@@ -17,8 +17,7 @@ public class BuscarTodosOsProdutos implements IBuscarTodosOsProdutos{
     }
 
     @Override
-    public List<ProdutoResponse> findAll() {
-        List<Produtos> finded =  gateway.findAll();
-        return finded.stream().map(mapperApl::ToResponse).toList();
+    public Page<ProdutoResponse> findAll(Pageable pageable) {
+        return gateway.findAll(pageable).map(mapperApl::toResponse);
     }
 }

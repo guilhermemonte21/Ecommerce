@@ -8,30 +8,26 @@ import org.springframework.stereotype.Component;
 @Component
 public class UsuarioMapper {
 
-    public Usuarios toDomain(UsuariosEntity entity){
-        if(entity == null){
+    public Usuarios toDomain(UsuariosEntity entity) {
+        if (entity == null) {
             return null;
         }
-        Usuarios NewUser = new Usuarios();
-        NewUser.setId(entity.getId());
-        NewUser.setCpf(entity.getCpf());
-        NewUser.setEmail(entity.getEmail());
-
-        NewUser.setNome(entity.getNome());
-        NewUser.setAtivo(entity.getAtivo());
-        NewUser.setSenha(entity.getSenha());
-        if(entity.getTipoUsuario() == TipoUsuario.Comprador){
-            NewUser.setTipoUsuario("Comprador");
+        Usuarios user = new Usuarios();
+        user.setId(entity.getId());
+        user.setCpf(entity.getCpf());
+        user.setEmail(entity.getEmail());
+        user.setNome(entity.getNome());
+        user.setAtivo(entity.getAtivo());
+        user.setSenha(entity.getSenha());
+        if (entity.getTipoUsuario() != null) {
+            user.setTipoUsuario(entity.getTipoUsuario().name());
         }
-        if(entity.getTipoUsuario() == TipoUsuario.Vendedor){
-            NewUser.setTipoUsuario("Vendedor");
-        }
-        NewUser.setGatewayAccountId(entity.getGatewayAccountId());
-        return NewUser;
+        user.setGatewayAccountId(entity.getGatewayAccountId());
+        return user;
     }
 
-    public UsuariosEntity toEntity(Usuarios usuarios){
-        if (usuarios == null){
+    public UsuariosEntity toEntity(Usuarios usuarios) {
+        if (usuarios == null) {
             return null;
         }
         UsuariosEntity entity = new UsuariosEntity();
@@ -41,10 +37,10 @@ public class UsuarioMapper {
         entity.setSenha(usuarios.getSenha());
         entity.setEmail(usuarios.getEmail());
         entity.setAtivo(usuarios.getAtivo());
-        if(usuarios.getTipoUsuario() == "Comprador"){
-        entity.setTipoUsuario(TipoUsuario.Comprador);
+        if ("Comprador".equals(usuarios.getTipoUsuario())) {
+            entity.setTipoUsuario(TipoUsuario.Comprador);
         }
-        if (usuarios.getTipoUsuario() == "Vendedor"){
+        if ("Vendedor".equals(usuarios.getTipoUsuario())) {
             entity.setTipoUsuario(TipoUsuario.Vendedor);
         }
         entity.setGatewayAccountId(usuarios.getGatewayAccountId());

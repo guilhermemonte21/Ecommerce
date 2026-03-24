@@ -5,5 +5,5 @@ import com.github.guilhermemonte21.Ecommerce.Application.DTO.Produtos.ProdutoRes
 import java.util.UUID;
 
 public interface IGetProdutoById {
-   ProdutoResponse GetProdutoById(UUID id);
+    ProdutoResponse getProdutoById(UUID id);
 }

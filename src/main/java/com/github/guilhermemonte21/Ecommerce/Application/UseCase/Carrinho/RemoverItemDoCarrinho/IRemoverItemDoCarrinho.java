@@ -3,5 +3,5 @@ package com.github.guilhermemonte21.Ecommerce.Application.UseCase.Carrinho.Remov
 import java.util.UUID;
 
 public interface IRemoverItemDoCarrinho {
-    void RemoverItem(UUID IdCarrinho, UUID idProduto);
+    void removerItem(UUID idCarrinho, UUID idProduto);
 }

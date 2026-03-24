@@ -1,6 +1,7 @@
 package com.github.guilhermemonte21.Ecommerce.Infra.Gateway.Impl;
 
 import com.github.guilhermemonte21.Ecommerce.Application.Exceptions.CarrinhoNotFoundException;
+import com.github.guilhermemonte21.Ecommerce.Application.Exceptions.ProdutoNotFoundException;
 import com.github.guilhermemonte21.Ecommerce.Domain.Entity.Carrinho;
 import com.github.guilhermemonte21.Ecommerce.Domain.Entity.Produtos;
 import com.github.guilhermemonte21.Ecommerce.Application.Gateway.CarrinhoGateway;
@@ -23,7 +24,8 @@ public class CarrinhoRepositoryImpl implements CarrinhoGateway {
     private final CarrinhoMapper carrinhoMapper;
     private final JpaProdutosRepository jpaProdutosRepository;
 
-    public CarrinhoRepositoryImpl(JpaCarrinhoRepository jpaCarrinhoRepository, ProdutoMapper produtoMapper, CarrinhoMapper carrinhoMapper, JpaProdutosRepository jpaProdutosRepository) {
+    public CarrinhoRepositoryImpl(JpaCarrinhoRepository jpaCarrinhoRepository, ProdutoMapper produtoMapper,
+                                  CarrinhoMapper carrinhoMapper, JpaProdutosRepository jpaProdutosRepository) {
         this.jpaCarrinhoRepository = jpaCarrinhoRepository;
         this.produtoMapper = produtoMapper;
         this.carrinhoMapper = carrinhoMapper;
@@ -34,51 +36,41 @@ public class CarrinhoRepositoryImpl implements CarrinhoGateway {
     public Carrinho save(Carrinho carrinhoEntity) {
         CarrinhoEntity newCarrinho = carrinhoMapper.toEntity(carrinhoEntity);
         CarrinhoEntity salvo = jpaCarrinhoRepository.save(newCarrinho);
-        Carrinho carrinho = carrinhoMapper.toDomain(salvo);
-        return carrinho;
+        return carrinhoMapper.toDomain(salvo);
     }
 
     @Override
-    public Optional<Carrinho> getById(UUID Id) {
-       Optional<Carrinho> CarrinhoById = jpaCarrinhoRepository.findById(Id).map(carrinhoMapper::toDomain);
-       return CarrinhoById;
+    public Optional<Carrinho> getById(UUID id) {
+        return jpaCarrinhoRepository.findById(id).map(carrinhoMapper::toDomain);
     }
 
     @Override
-    public Carrinho add(UUID Id, Produtos produtos, Long quantity) {
-        CarrinhoEntity CarrinhobyId = jpaCarrinhoRepository.findById(Id).orElseThrow(() -> new CarrinhoNotFoundException(Id));
-
+    public Carrinho add(UUID id, Produtos produtos, Long quantity) {
+        CarrinhoEntity carrinhoById = jpaCarrinhoRepository.findById(id)
+                .orElseThrow(() -> new CarrinhoNotFoundException(id));
         ProdutosEntity entity = produtoMapper.toEntity(produtos);
-
         for (int i = 0; i < quantity; i++) {
-            CarrinhobyId.getItens().add(entity);
+            carrinhoById.getItens().add(entity);
         }
-
-        Carrinho newCarrinho = carrinhoMapper.toDomain(CarrinhobyId);
-
-        return newCarrinho;
+        return carrinhoMapper.toDomain(carrinhoById);
     }
 
     @Override
-    public void DeleteItem(Carrinho carrinho, UUID id) {
-       CarrinhoEntity carrinhoEntity = jpaCarrinhoRepository.findById(carrinho.getId()).orElseThrow(() -> new RuntimeException("Não Encontrado"));
-       ProdutosEntity produtosEntity = jpaProdutosRepository.findById(id).orElseThrow(() -> new RuntimeException("Produto não está presente no Carrinho"));
-
-       carrinhoEntity.getItens().set(0, produtosEntity);
-        carrinhoEntity.getItens().remove(0);
+    public void deleteItem(Carrinho carrinho, UUID id) {
+        CarrinhoEntity carrinhoEntity = jpaCarrinhoRepository.findById(carrinho.getId())
+                .orElseThrow(() -> new CarrinhoNotFoundException(carrinho.getId()));
+        ProdutosEntity produtosEntity = jpaProdutosRepository.findById(id)
+                .orElseThrow(() -> new ProdutoNotFoundException(id));
+        carrinhoEntity.getItens().remove(produtosEntity);
         jpaCarrinhoRepository.save(carrinhoEntity);
-
-
     }
 
     @Override
-    public void LimparCarrinho(Carrinho cart) {
-
-        cart.Limpar();
+    public void limparCarrinho(Carrinho cart) {
+        cart.limpar();
         cart.atualizarValorTotal();
-        cart.AtualizadoAgora();
+        cart.atualizadoAgora();
         CarrinhoEntity carrinho = carrinhoMapper.toEntity(cart);
-
         jpaCarrinhoRepository.save(carrinho);
     }
 }

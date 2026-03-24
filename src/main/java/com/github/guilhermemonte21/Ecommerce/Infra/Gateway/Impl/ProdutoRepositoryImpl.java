@@ -6,62 +6,52 @@ import com.github.guilhermemonte21.Ecommerce.Infra.Mappers.ProdutoMapper;
 import com.github.guilhermemonte21.Ecommerce.Infra.Persistence.Entity.Data.ProdutosEntity;
 import com.github.guilhermemonte21.Ecommerce.Infra.Persistence.JpaRepository.JpaProdutosRepository;
 import com.github.guilhermemonte21.Ecommerce.Infra.Persistence.JpaRepository.JpaUsuarioRepository;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Component;
 
-import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
 @Component
 public class ProdutoRepositoryImpl implements ProdutoGateway {
 
-    private final JpaProdutosRepository JpaProdutosRepo;
-    private final JpaUsuarioRepository JpaUsuarioRepo;
+    private final JpaProdutosRepository jpaProdutosRepo;
+    private final JpaUsuarioRepository jpaUsuarioRepo;
     private final ProdutoMapper mapper;
 
-    public ProdutoRepositoryImpl(JpaProdutosRepository jpaProdutosRepo, JpaUsuarioRepository jpaUsuarioRepo, ProdutoMapper mapper) {
-        JpaProdutosRepo = jpaProdutosRepo;
-        JpaUsuarioRepo = jpaUsuarioRepo;
+    public ProdutoRepositoryImpl(JpaProdutosRepository jpaProdutosRepo, JpaUsuarioRepository jpaUsuarioRepo,
+                                 ProdutoMapper mapper) {
+        this.jpaProdutosRepo = jpaProdutosRepo;
+        this.jpaUsuarioRepo = jpaUsuarioRepo;
         this.mapper = mapper;
     }
 
     @Override
     public Produtos salvar(Produtos produtos) {
         ProdutosEntity produtosEntity = mapper.toEntity(produtos);
-
-        ProdutosEntity salvo = JpaProdutosRepo.save(produtosEntity);
-
-        Produtos newProduto = mapper.toDomain(salvo);
-
-        return newProduto;
+        ProdutosEntity salvo = jpaProdutosRepo.save(produtosEntity);
+        return mapper.toDomain(salvo);
     }
 
     @Override
-    public Optional<Produtos> GetById(UUID Id) {
-        Optional<Produtos> entity = JpaProdutosRepo.findById(Id).map(mapper::toDomain);
-        return entity;
+    public Optional<Produtos> getById(UUID id) {
+        return jpaProdutosRepo.findById(id).map(mapper::toDomain);
     }
 
     @Override
-    public void Delete(Produtos produtos) {
+    public void delete(Produtos produtos) {
         ProdutosEntity produtosEntity = mapper.toEntity(produtos);
-        JpaProdutosRepo.delete(produtosEntity);
+        jpaProdutosRepo.delete(produtosEntity);
     }
 
     @Override
-    public List<Produtos> findAll() {
-        List<ProdutosEntity> entityList = JpaProdutosRepo.findAll();
-        List<Produtos> domainList = entityList.stream().map(mapper::toDomain).toList();
-        return domainList;
+    public Page<Produtos> findAll(Pageable pageable) {
+        return jpaProdutosRepo.findAll(pageable).map(mapper::toDomain);
     }
 
     @Override
-    public Optional<Produtos> GetByIdComLock(UUID Id) {
-        return JpaProdutosRepo.findByIdWithLock(Id).map(mapper::toDomain);
+    public Optional<Produtos> getByIdComLock(UUID id) {
+        return jpaProdutosRepo.findByIdWithLock(id).map(mapper::toDomain);
     }
-
-
 }
-
-
-

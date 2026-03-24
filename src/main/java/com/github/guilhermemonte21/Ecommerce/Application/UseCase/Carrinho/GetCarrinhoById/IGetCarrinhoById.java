@@ -5,5 +5,5 @@ import com.github.guilhermemonte21.Ecommerce.Application.DTO.Carrinho.CarrinhoRe
 import java.util.UUID;
 
 public interface IGetCarrinhoById {
-    CarrinhoResponse FindCarrinhoById(UUID Id);
+    CarrinhoResponse findCarrinhoById(UUID id);
 }

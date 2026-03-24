@@ -5,5 +5,5 @@ import com.github.guilhermemonte21.Ecommerce.Application.DTO.Carrinho.CarrinhoRe
 import java.util.UUID;
 
 public interface IAddItemAoCarrinho {
-    CarrinhoResponse AdicionarAoCarrinho(UUID id, UUID IdProduto, Long quantidade);
+    CarrinhoResponse adicionarAoCarrinho(UUID id, UUID idProduto, Long quantidade);
 }

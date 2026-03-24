@@ -11,30 +11,32 @@ import java.util.UUID;
 
 @Component
 public class ProdutoMapperApl {
+
     private final UsuarioGateway gateway;
 
     public ProdutoMapperApl(UsuarioGateway gateway) {
         this.gateway = gateway;
     }
 
-    public Produtos toDomain(CreateProdutoRequest produtoRequest, UUID IdVendedor){
+    public Produtos toDomain(CreateProdutoRequest produtoRequest, UUID idVendedor) {
         Produtos newProduto = new Produtos();
         newProduto.setNomeProduto(produtoRequest.nomeProduto());
         newProduto.setPreco(produtoRequest.preco());
         newProduto.setEstoque(produtoRequest.estoque());
         newProduto.setDescricao(produtoRequest.descricao());
-        newProduto.setVendedor(gateway.getById(IdVendedor).orElseThrow(() -> new UsuarioNotFoundException(IdVendedor)));
+        newProduto.setVendedor(gateway.getById(idVendedor)
+                .orElseThrow(() -> new UsuarioNotFoundException(idVendedor)));
         return newProduto;
     }
-    public ProdutoResponse ToResponse(Produtos produtos){
-        ProdutoResponse response = new ProdutoResponse(
+
+    public ProdutoResponse toResponse(Produtos produtos) {
+        return new ProdutoResponse(
                 produtos.getId(),
                 produtos.getNomeProduto(),
-                produtos.getVendedor().getNome(),
+                produtos.getVendedor() != null ? produtos.getVendedor().getNome() : null,
                 produtos.getPreco(),
                 produtos.getDescricao(),
                 produtos.getEstoque()
         );
-        return response;
     }
 }

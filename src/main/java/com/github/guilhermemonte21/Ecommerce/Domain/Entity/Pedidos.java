@@ -6,7 +6,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-
 import java.math.BigDecimal;
 import java.time.OffsetDateTime;
 import java.util.ArrayList;
@@ -18,51 +17,46 @@ import java.util.UUID;
 @NoArgsConstructor
 @AllArgsConstructor
 public class Pedidos {
-    private UUID Id;
-    private Usuarios Comprador;
-    private List<PedidoDoVendedor> Itens = new ArrayList<>();
-    private BigDecimal Preco;
-    private String Endereço;
-    private StatusPedido Status = StatusPedido.CRIADO;
-    private OffsetDateTime CriadoEm = OffsetDateTime.now();
-
-//    public void CompradorNaoVendedor(){
-//        if (this.Comprador == this.Itens.get().getVendedor().getId()){
-//            throw new RuntimeException("Não pode comprar o proprio produto");
-//        }
-//    }
+    private UUID id;
+    private Usuarios comprador;
+    private List<PedidoDoVendedor> itens = new ArrayList<>();
+    private BigDecimal preco;
+    private String endereço;
+    private StatusPedido status = StatusPedido.CRIADO;
+    private OffsetDateTime criadoEm = OffsetDateTime.now();
 
     public void syncStatus() {
-        boolean todosPagos = this.Itens.stream().allMatch(p -> p.getStatus() == StatusPedido.PAGO);
-        boolean todosEntregues = this.Itens.stream().allMatch(p -> p.getStatus() == StatusPedido.ENTREGUE);
-        boolean todosEnviados = this.Itens.stream().allMatch(p -> p.getStatus() == StatusPedido.ENVIADO);
+        boolean todosPagos = this.itens.stream().allMatch(p -> p.getStatus() == StatusPedido.PAGO);
+        boolean todosEntregues = this.itens.stream().allMatch(p -> p.getStatus() == StatusPedido.ENTREGUE);
+        boolean todosEnviados = this.itens.stream().allMatch(p -> p.getStatus() == StatusPedido.ENVIADO);
 
         if (todosEntregues) {
-            this.Status = StatusPedido.ENTREGUE;
+            this.status = StatusPedido.ENTREGUE;
         } else if (todosEnviados) {
-            this.Status = StatusPedido.ENVIADO;
+            this.status = StatusPedido.ENVIADO;
         } else if (todosPagos) {
-            this.Status = StatusPedido.PAGO;
+            this.status = StatusPedido.PAGO;
         } else {
-            this.Status = StatusPedido.CRIADO;
+            this.status = StatusPedido.CRIADO;
         }
     }
 
-    public void confirmarPagamento(){
-        this.Status = StatusPedido.PAGO;
-        for (PedidoDoVendedor item : this.Itens){
+    public void confirmarPagamento() {
+        this.status = StatusPedido.PAGO;
+        for (PedidoDoVendedor item : this.itens) {
             item.setStatus(StatusPedido.PAGO);
         }
     }
 
-    public void ChangeToCancelado(){
-        this.Status = StatusPedido.CANCELADO;
-    }
-    public void ChangeToEnviado(){
-        this.Status = StatusPedido.ENVIADO;
-    }
-    public void ChangeToEntregue(){
-        this.Status = StatusPedido.ENTREGUE;
+    public void changeToCancelado() {
+        this.status = StatusPedido.CANCELADO;
     }
 
+    public void changeToEnviado() {
+        this.status = StatusPedido.ENVIADO;
+    }
+
+    public void changeToEntregue() {
+        this.status = StatusPedido.ENTREGUE;
+    }
 }
