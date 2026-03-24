@@ -44,4 +44,8 @@ public class GlobalExceptionHandler {
     public ResponseEntity<String> handleCarrinhoVazio(CarrinhoVazioException ex) {
         return ResponseEntity.status(HttpStatus.NO_CONTENT).body(ex.getMessage());
     }
+    @ExceptionHandler(EstoqueInsuficienteException.class)
+    public ResponseEntity<String> handleEstoqueInsuficiente(EstoqueInsuficienteException ex) {
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(ex.getMessage());
+    }
 }

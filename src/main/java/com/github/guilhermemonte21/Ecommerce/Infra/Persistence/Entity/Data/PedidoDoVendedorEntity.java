@@ -1,5 +1,6 @@
 package com.github.guilhermemonte21.Ecommerce.Infra.Persistence.Entity.Data;
 
+import com.github.guilhermemonte21.Ecommerce.Infra.Persistence.Entity.Enum.StatusPedido;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -41,8 +42,9 @@ public class PedidoDoVendedorEntity {
     @Column(name = "valorDoPedido")
     private BigDecimal Valor;
 
+    @Enumerated(EnumType.STRING)
     @Column(name = "StatusDoPedido")
-    private String Status;
+    private StatusPedido status;
 
 
 }

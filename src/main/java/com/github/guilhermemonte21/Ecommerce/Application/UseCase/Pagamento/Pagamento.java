@@ -1,14 +1,11 @@
 package com.github.guilhermemonte21.Ecommerce.Application.UseCase.Pagamento;
 
 import com.github.guilhermemonte21.Ecommerce.Application.Exceptions.PedidoNotFoundException;
-import com.github.guilhermemonte21.Ecommerce.Application.Gateway.PedidoDoVendedorGateway;
 import com.github.guilhermemonte21.Ecommerce.Application.Gateway.PedidoGateway;
 import com.github.guilhermemonte21.Ecommerce.Application.Gateway.ProdutoGateway;
-import com.github.guilhermemonte21.Ecommerce.Application.Gateway.UsuarioGateway;
 import com.github.guilhermemonte21.Ecommerce.Application.UseCase.Pedidos.ChangePedidoStatus.ChangePedidoStatus;
 import com.github.guilhermemonte21.Ecommerce.Domain.Entity.PedidoDoVendedor;
 import com.github.guilhermemonte21.Ecommerce.Domain.Entity.Pedidos;
-import com.github.guilhermemonte21.Ecommerce.Domain.Entity.Produtos;
 import com.github.guilhermemonte21.Ecommerce.Domain.Enum.StatusPedido;
 import org.springframework.stereotype.Service;
 
@@ -33,11 +30,16 @@ public class Pagamento {
 
         List<PedidoDoVendedor> itens = order.getItens();
         for (PedidoDoVendedor seller : itens){
-            seller.setStatus("Pago");
+            seller.setStatus(StatusPedido.PAGO);
+            
+            // REMOVIDO: Decremento de estoque redundante
+            // O estoque já é decrementado no CriarPedido com trava (Pessimistic Lock)
+            /*
             for (Produtos produtos : seller.getProdutos()){
                 produtos.setEstoque(produtos.getEstoque() - 1L );
                 produtoGateway.salvar(produtos);
             }
+            */
         }
         change.ChangePedidosStatus(order.getId());
 

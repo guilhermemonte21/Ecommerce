@@ -1,5 +1,6 @@
 package com.github.guilhermemonte21.Ecommerce.Domain.Entity;
 
+import com.github.guilhermemonte21.Ecommerce.Domain.Enum.StatusPedido;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -26,6 +27,6 @@ public class PedidoDoVendedor {
 
     private BigDecimal Valor;
 
-    private String Status;
+    private StatusPedido Status;
 
 }

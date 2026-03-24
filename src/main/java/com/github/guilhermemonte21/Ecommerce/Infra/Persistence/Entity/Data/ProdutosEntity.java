@@ -38,5 +38,9 @@ public class ProdutosEntity {
     @Column(name = "estoque_produto")
     private Long estoque;
 
+    @Version
+    @Column(name = "version")
+    private Long version;
+
 }
 

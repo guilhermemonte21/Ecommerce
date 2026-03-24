@@ -12,6 +12,8 @@ public interface ProdutoGateway {
 
     Optional<Produtos> GetById(UUID Id);
 
+    Optional<Produtos> GetByIdComLock(UUID Id);
+
     void Delete(Produtos produtos);
 
     List<Produtos> findAll();

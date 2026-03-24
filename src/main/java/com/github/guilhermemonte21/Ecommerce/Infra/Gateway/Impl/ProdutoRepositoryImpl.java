@@ -55,6 +55,11 @@ public class ProdutoRepositoryImpl implements ProdutoGateway {
         return domainList;
     }
 
+    @Override
+    public Optional<Produtos> GetByIdComLock(UUID Id) {
+        return JpaProdutosRepo.findByIdWithLock(Id).map(mapper::toDomain);
+    }
+
 
 }
 
