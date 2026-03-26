@@ -1,10 +1,13 @@
 package com.github.guilhermemonte21.Ecommerce.API.Controller;
 
+import com.github.guilhermemonte21.Ecommerce.API.Idempotency.Idempotent;
 import com.github.guilhermemonte21.Ecommerce.Application.DTO.Pedidos.PedidoDoVendedorResponse;
 import com.github.guilhermemonte21.Ecommerce.Application.DTO.Pedidos.PedidoResponse;
 import com.github.guilhermemonte21.Ecommerce.Application.UseCase.Pedidos.CriarPedido.ICriarPedido;
 import com.github.guilhermemonte21.Ecommerce.Application.UseCase.Pedidos.GetItensByPedido.IGetItensByPedido;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.enums.ParameterIn;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -33,6 +36,8 @@ public class PedidoController {
 
     @Operation(summary = "Criar pedido a partir do carrinho")
     @PreAuthorize("isAuthenticated()")
+    @Idempotent
+    @Parameter(name = "Idempotency-Key", in = ParameterIn.HEADER, required = true, description = "Chave única da requisição (UUID)", example = "550e8400-e29b-41d4-a716-446655440000")
     @PostMapping("/{idCarrinho}")
     public ResponseEntity<PedidoResponse> criarPedido(@PathVariable("idCarrinho") UUID idCarrinho,
                                                        @RequestBody String endereco) {

@@ -5,19 +5,12 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
 
 import java.math.BigDecimal;
-import java.util.UUID;
-
 
 public record CreateProdutoRequest(
 
-     @NotBlank
-     String nomeProduto,
+        @NotBlank String nomeProduto,
 
-     @NotBlank
-     String descricao,
-     @NotNull
-     BigDecimal preco,
-    @NotNull
-    @Positive(message = "Valor de estoque inválido")
-    Long estoque
-){}
+        @NotBlank String descricao,
+        @NotNull BigDecimal preco,
+        @NotNull @Positive(message = "Valor de estoque inválido") Long estoque) {
+}

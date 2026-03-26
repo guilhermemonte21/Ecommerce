@@ -8,10 +8,8 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import javax.crypto.SecretKey;
-import java.io.Serializable;
 import java.nio.charset.StandardCharsets;
 import java.util.Date;
-import java.util.UUID;
 
 @Component
 public class TokenService {
@@ -21,11 +19,9 @@ public class TokenService {
     private final SecretKey key;
 
     public TokenService(
-            @Value("${security.jwt.secret}") String secret
-    ) {
+            @Value("${security.jwt.secret}") String secret) {
         this.key = Keys.hmacShaKeyFor(
-                secret.getBytes(StandardCharsets.UTF_8)
-        );
+                secret.getBytes(StandardCharsets.UTF_8));
     }
 
     public String gerarToken(String Email) {
@@ -35,8 +31,7 @@ public class TokenService {
 
                 .setIssuedAt(new Date())
                 .setExpiration(
-                        new Date(System.currentTimeMillis() + EXPIRATION)
-                )
+                        new Date(System.currentTimeMillis() + EXPIRATION))
                 .signWith(key, SignatureAlgorithm.HS256)
                 .compact();
     }

@@ -7,7 +7,6 @@ import com.github.guilhermemonte21.Ecommerce.Application.Exceptions.ProdutoNotFo
 import com.github.guilhermemonte21.Ecommerce.Application.Exceptions.UsuarioInativoException;
 import com.github.guilhermemonte21.Ecommerce.Application.Gateway.ProdutoGateway;
 import com.github.guilhermemonte21.Ecommerce.Application.Gateway.UsuarioAutenticadoGateway;
-import com.github.guilhermemonte21.Ecommerce.Application.Gateway.UsuarioGateway;
 import com.github.guilhermemonte21.Ecommerce.Application.Mappers.ProdutoMapperApl;
 import com.github.guilhermemonte21.Ecommerce.Domain.Entity.Produtos;
 import com.github.guilhermemonte21.Ecommerce.Domain.Entity.UsuarioAutenticado;
@@ -22,14 +21,12 @@ public class AtualizarProduto implements IAtualizarProduto {
 
     private final ProdutoGateway gateway;
     private final ProdutoMapperApl mapperApl;
-    private final UsuarioGateway usuarioGateway;
     private final UsuarioAutenticadoGateway authGateway;
 
     public AtualizarProduto(ProdutoGateway gateway, ProdutoMapperApl mapperApl,
-                            UsuarioGateway usuarioGateway, UsuarioAutenticadoGateway authGateway) {
+            UsuarioAutenticadoGateway authGateway) {
         this.gateway = gateway;
         this.mapperApl = mapperApl;
-        this.usuarioGateway = usuarioGateway;
         this.authGateway = authGateway;
     }
 

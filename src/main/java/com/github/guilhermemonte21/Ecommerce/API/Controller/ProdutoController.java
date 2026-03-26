@@ -1,5 +1,6 @@
 package com.github.guilhermemonte21.Ecommerce.API.Controller;
 
+import com.github.guilhermemonte21.Ecommerce.API.Idempotency.Idempotent;
 import com.github.guilhermemonte21.Ecommerce.Application.DTO.Produtos.CreateProdutoRequest;
 import com.github.guilhermemonte21.Ecommerce.Application.DTO.Produtos.ProdutoResponse;
 import com.github.guilhermemonte21.Ecommerce.Application.UseCase.Produtos.AtualizarEstoque.IAtualizarEstoque;
@@ -8,6 +9,8 @@ import com.github.guilhermemonte21.Ecommerce.Application.UseCase.Produtos.Buscar
 import com.github.guilhermemonte21.Ecommerce.Application.UseCase.Produtos.GetProdutoById.IGetProdutoById;
 import com.github.guilhermemonte21.Ecommerce.Application.UseCase.Produtos.RegistrarProduto.IRegistrarProduto;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.enums.ParameterIn;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.slf4j.Logger;
@@ -48,6 +51,8 @@ public class ProdutoController {
 
     @Operation(summary = "Registrar novo produto")
     @PreAuthorize("isAuthenticated()")
+    @Idempotent
+    @Parameter(name = "Idempotency-Key", in = ParameterIn.HEADER, required = true, description = "Chave única da requisição (UUID)", example = "550e8400-e29b-41d4-a716-446655440000")
     @PostMapping
     public ResponseEntity<ProdutoResponse> criar(@RequestBody @Valid CreateProdutoRequest produtos) {
         log.info("Registrando novo produto: {}", produtos.nomeProduto());

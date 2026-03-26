@@ -2,7 +2,6 @@ package com.github.guilhermemonte21.Ecommerce.Infra.Gateway.Impl;
 
 import com.github.guilhermemonte21.Ecommerce.Domain.Entity.Pedidos;
 import com.github.guilhermemonte21.Ecommerce.Application.Gateway.PedidoGateway;
-import com.github.guilhermemonte21.Ecommerce.Infra.Mappers.PedidoDoVendedorMapper;
 import com.github.guilhermemonte21.Ecommerce.Infra.Mappers.PedidoMapper;
 import com.github.guilhermemonte21.Ecommerce.Infra.Persistence.Entity.Data.PedidosEntity;
 import com.github.guilhermemonte21.Ecommerce.Infra.Persistence.JpaRepository.JpaPedidosRepository;
@@ -16,12 +15,10 @@ import java.util.UUID;
 public class PedidoRepositoryImpl implements PedidoGateway {
     private final JpaPedidosRepository jpaPedidosRepository;
     private final PedidoMapper pedidosMapper;
-    private final PedidoDoVendedorMapper pedidoDoVendedorMapper;
 
-    public PedidoRepositoryImpl(JpaPedidosRepository jpaPedidosRepository, PedidoMapper pedidosMapper, PedidoDoVendedorMapper pedidoDoVendedorMapper) {
+    public PedidoRepositoryImpl(JpaPedidosRepository jpaPedidosRepository, PedidoMapper pedidosMapper) {
         this.jpaPedidosRepository = jpaPedidosRepository;
         this.pedidosMapper = pedidosMapper;
-        this.pedidoDoVendedorMapper = pedidoDoVendedorMapper;
     }
 
     @Override
@@ -40,10 +37,10 @@ public class PedidoRepositoryImpl implements PedidoGateway {
         return PedidosById;
     }
 
-    public List<Pedidos> getPedidosByComprador(UUID IdComprador){
+    public List<Pedidos> getPedidosByComprador(UUID IdComprador) {
         List<PedidosEntity> pedidoById = jpaPedidosRepository.getPedidosByComprador(IdComprador);
 
-       List<Pedidos> pedidos =  pedidoById.stream().map(pedidosMapper::toDomain).toList();
+        List<Pedidos> pedidos = pedidoById.stream().map(pedidosMapper::toDomain).toList();
 
         return pedidos;
     }

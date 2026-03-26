@@ -45,7 +45,6 @@ public class PedidoDoVendedorMapper {
 
         entity.setPedido(pedidos);
 
-        // Conversao Domain Enum -> Infra Enum
         if (domain.getStatus() != null) {
             entity.setStatus(com.github.guilhermemonte21.Ecommerce.Infra.Persistence.Entity.Enum.StatusPedido
                     .valueOf(domain.getStatus().name()));

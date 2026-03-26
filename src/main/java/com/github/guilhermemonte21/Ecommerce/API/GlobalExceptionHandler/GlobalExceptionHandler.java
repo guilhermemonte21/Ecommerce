@@ -60,6 +60,13 @@ public class GlobalExceptionHandler {
         return createProblemDetail(HttpStatus.BAD_REQUEST, "Argumento inválido", ex.getMessage());
     }
 
+    @ExceptionHandler(OperacaoDuplicadaException.class)
+    public ProblemDetail handleOperacaoDuplicada(OperacaoDuplicadaException ex) {
+        log.warn("Operação duplicada ou inválida: {}", ex.getMessage());
+        return createProblemDetail(HttpStatus.BAD_REQUEST, "Chave de Idempotência inválida ou duplicada",
+                ex.getMessage());
+    }
+
     @ExceptionHandler(AcessoNegadoException.class)
     public ProblemDetail handleAcessoNegado(AcessoNegadoException ex) {
         log.warn("Acesso negado: {}", ex.getMessage());

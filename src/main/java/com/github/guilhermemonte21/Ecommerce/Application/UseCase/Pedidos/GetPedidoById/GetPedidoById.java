@@ -9,13 +9,11 @@ import com.github.guilhermemonte21.Ecommerce.Application.Gateway.UsuarioAutentic
 import com.github.guilhermemonte21.Ecommerce.Application.Mappers.PedidoMapperApl;
 import com.github.guilhermemonte21.Ecommerce.Domain.Entity.UsuarioAutenticado;
 import com.github.guilhermemonte21.Ecommerce.Domain.Entity.Pedidos;
-import com.github.guilhermemonte21.Ecommerce.Domain.Entity.Usuarios;
-import org.springframework.stereotype.Service;
+
 
 import java.util.UUID;
 
-@Service
-public class GetPedidoById implements IGetPedidoById{
+public class GetPedidoById implements IGetPedidoById {
     private final PedidoGateway gateway;
     private final PedidoMapperApl mapperApl;
     private final UsuarioAutenticadoGateway AuthGateway;
@@ -30,10 +28,10 @@ public class GetPedidoById implements IGetPedidoById{
     public PedidoResponse pedidoById(UUID IdPedido) {
         Pedidos pedidos = gateway.getById(IdPedido).orElseThrow(() -> new PedidoNotFoundException(IdPedido));
         UsuarioAutenticado user = AuthGateway.get();
-        if(!user.getUser().getId().equals(pedidos.getComprador().getId())){
+        if (!user.getUser().getId().equals(pedidos.getComprador().getId())) {
             throw new AcessoNegadoException();
         }
-        if (user.getUser().getAtivo() == false){
+        if (user.getUser().getAtivo() == false) {
             throw new UsuarioInativoException();
         }
         PedidoResponse response = mapperApl.toResponse(pedidos);

@@ -7,12 +7,11 @@ import com.github.guilhermemonte21.Ecommerce.Application.Gateway.PedidoGateway;
 import com.github.guilhermemonte21.Ecommerce.Application.Gateway.UsuarioAutenticadoGateway;
 import com.github.guilhermemonte21.Ecommerce.Domain.Entity.UsuarioAutenticado;
 import com.github.guilhermemonte21.Ecommerce.Domain.Entity.Pedidos;
-import com.github.guilhermemonte21.Ecommerce.Domain.Entity.Usuarios;
 
 import java.util.List;
 import java.util.UUID;
 
-public class getPedidosByComprador implements IGetPedidosByComprador{
+public class getPedidosByComprador implements IGetPedidosByComprador {
 
     private final PedidoGateway gateway;
     private final UsuarioAutenticadoGateway AuthGateway;
@@ -26,14 +25,14 @@ public class getPedidosByComprador implements IGetPedidosByComprador{
     public List<Pedidos> getPedidosByComprador(UUID IdComprador) {
         List<Pedidos> pedidos = gateway.getPedidosByComprador(IdComprador);
         UsuarioAutenticado user = AuthGateway.get();
-        if(!user.getUser().getId().equals(IdComprador)){
+        if (!user.getUser().getId().equals(IdComprador)) {
             throw new AcessoNegadoException();
         }
-        if (user.getUser().getAtivo() == false){
+        if (user.getUser().getAtivo() == false) {
             throw new UsuarioInativoException();
         }
 
-        if (pedidos.isEmpty()){
+        if (pedidos.isEmpty()) {
             throw new UsuarioNotFoundException(IdComprador);
         }
 

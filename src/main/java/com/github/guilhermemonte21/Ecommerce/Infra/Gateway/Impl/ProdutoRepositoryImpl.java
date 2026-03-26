@@ -5,7 +5,6 @@ import com.github.guilhermemonte21.Ecommerce.Application.Gateway.ProdutoGateway;
 import com.github.guilhermemonte21.Ecommerce.Infra.Mappers.ProdutoMapper;
 import com.github.guilhermemonte21.Ecommerce.Infra.Persistence.Entity.Data.ProdutosEntity;
 import com.github.guilhermemonte21.Ecommerce.Infra.Persistence.JpaRepository.JpaProdutosRepository;
-import com.github.guilhermemonte21.Ecommerce.Infra.Persistence.JpaRepository.JpaUsuarioRepository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Component;
@@ -17,13 +16,11 @@ import java.util.UUID;
 public class ProdutoRepositoryImpl implements ProdutoGateway {
 
     private final JpaProdutosRepository jpaProdutosRepo;
-    private final JpaUsuarioRepository jpaUsuarioRepo;
     private final ProdutoMapper mapper;
 
-    public ProdutoRepositoryImpl(JpaProdutosRepository jpaProdutosRepo, JpaUsuarioRepository jpaUsuarioRepo,
-                                 ProdutoMapper mapper) {
+    public ProdutoRepositoryImpl(JpaProdutosRepository jpaProdutosRepo, ProdutoMapper mapper) {
         this.jpaProdutosRepo = jpaProdutosRepo;
-        this.jpaUsuarioRepo = jpaUsuarioRepo;
+
         this.mapper = mapper;
     }
 

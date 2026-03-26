@@ -15,6 +15,10 @@ import com.github.guilhermemonte21.Ecommerce.Application.UseCase.Pedidos.CriarPe
 import com.github.guilhermemonte21.Ecommerce.Application.UseCase.Pedidos.CriarPedido.ICriarPedido;
 import com.github.guilhermemonte21.Ecommerce.Application.UseCase.Pedidos.GetItensByPedido.GetItensByPedido;
 import com.github.guilhermemonte21.Ecommerce.Application.UseCase.Pedidos.GetItensByPedido.IGetItensByPedido;
+import com.github.guilhermemonte21.Ecommerce.Application.UseCase.Pedidos.GetPedidoById.GetPedidoById;
+import com.github.guilhermemonte21.Ecommerce.Application.UseCase.Pedidos.GetPedidoById.IGetPedidoById;
+import com.github.guilhermemonte21.Ecommerce.Application.UseCase.Pedidos.GetPedidosByComprador.IGetPedidosByComprador;
+import com.github.guilhermemonte21.Ecommerce.Application.UseCase.Pedidos.GetPedidosByComprador.getPedidosByComprador;
 import com.github.guilhermemonte21.Ecommerce.Application.UseCase.Produtos.AtualizarEstoque.AtualizarEstoque;
 import com.github.guilhermemonte21.Ecommerce.Application.UseCase.Produtos.AtualizarEstoque.IAtualizarEstoque;
 import com.github.guilhermemonte21.Ecommerce.Application.UseCase.Produtos.AtualizarProduto.AtualizarProduto;
@@ -97,13 +101,13 @@ public class UseCaseConfig {
 
     @Bean
     public IAtualizarProduto atualizarProduto(ProdutoGateway gateway, ProdutoMapperApl mapper,
-                                               UsuarioGateway usuarioGateway, UsuarioAutenticadoGateway auth) {
-        return new AtualizarProduto(gateway, mapper, usuarioGateway, auth);
+                                               UsuarioAutenticadoGateway auth) {
+        return new AtualizarProduto(gateway, mapper, auth);
     }
 
     @Bean
-    public IPagamento pagamento(PedidoGateway pedidoGateway, ProdutoGateway produtoGateway) {
-        return new Pagamento(pedidoGateway, produtoGateway);
+    public IPagamento pagamento(PedidoGateway pedidoGateway) {
+        return new Pagamento(pedidoGateway);
     }
 
     @Bean
@@ -122,6 +126,17 @@ public class UseCaseConfig {
     public IGetItensByPedido getItensByPedido(PedidoGateway pedidoGateway, UsuarioAutenticadoGateway auth,
                                                PedidoDoVendedorMapperApl mapperApl) {
         return new GetItensByPedido(pedidoGateway, auth, mapperApl);
+    }
+
+    @Bean
+    public IGetPedidoById getPedidoById(PedidoGateway gateway, PedidoMapperApl mapperApl,
+                                         UsuarioAutenticadoGateway authGateway) {
+        return new GetPedidoById(gateway, mapperApl, authGateway);
+    }
+
+    @Bean
+    public IGetPedidosByComprador getPedidosByComprador(PedidoGateway gateway, UsuarioAutenticadoGateway authGateway) {
+        return new getPedidosByComprador(gateway, authGateway);
     }
 
     @Bean
@@ -150,5 +165,11 @@ public class UseCaseConfig {
     public IAddItemAoCarrinho addItemAoCarrinho(CarrinhoGateway gateway, ProdutoGateway produtoGateway,
                                                  CarrinhoMapperApl mapper, UsuarioAutenticadoGateway auth) {
         return new AddItemAoCarrinho(gateway, produtoGateway, mapper, auth);
+    }
+
+    @Bean
+    public IdempotencyGateway idempotencyGateway(com.github.guilhermemonte21.Ecommerce.Infra.Persistence.JpaRepository.JpaIdempotencyRepository repository,
+                                                 com.github.guilhermemonte21.Ecommerce.Infra.Mappers.IdempotencyRecordMapper mapper) {
+        return new com.github.guilhermemonte21.Ecommerce.Infra.Gateway.IdempotencyGatewayImpl(repository, mapper);
     }
 }

@@ -1,5 +1,6 @@
 package com.github.guilhermemonte21.Ecommerce.API.Controller;
 
+import com.github.guilhermemonte21.Ecommerce.API.Idempotency.Idempotent;
 import com.github.guilhermemonte21.Ecommerce.Application.DTO.Carrinho.CreateCarrinhoDTO.CreateCarrinhoRequest;
 import com.github.guilhermemonte21.Ecommerce.Application.DTO.Carrinho.CarrinhoResponse;
 import com.github.guilhermemonte21.Ecommerce.Application.UseCase.Carrinho.AddItemAoCarrinho.IAddItemAoCarrinho;
@@ -8,6 +9,8 @@ import com.github.guilhermemonte21.Ecommerce.Application.UseCase.Carrinho.GetCar
 import com.github.guilhermemonte21.Ecommerce.Application.UseCase.Carrinho.LimparCarrinho.ILimparCarrinho;
 import com.github.guilhermemonte21.Ecommerce.Application.UseCase.Carrinho.RemoverItemDoCarrinho.IRemoverItemDoCarrinho;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.enums.ParameterIn;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.slf4j.Logger;
@@ -43,6 +46,8 @@ public class CarrinhoController {
 
     @Operation(summary = "Criar novo carrinho")
     @PreAuthorize("isAuthenticated()")
+    @Idempotent
+    @Parameter(name = "Idempotency-Key", in = ParameterIn.HEADER, required = true, description = "Chave única da requisição (UUID)", example = "550e8400-e29b-41d4-a716-446655440000")
     @PostMapping
     public ResponseEntity<CarrinhoResponse> create(@RequestBody @Valid CreateCarrinhoRequest carrinhoRequest) {
         log.info("Criando novo carrinho");

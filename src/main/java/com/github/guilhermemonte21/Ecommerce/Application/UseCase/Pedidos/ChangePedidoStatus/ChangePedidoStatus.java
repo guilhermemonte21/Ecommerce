@@ -2,10 +2,7 @@ package com.github.guilhermemonte21.Ecommerce.Application.UseCase.Pedidos.Change
 
 import com.github.guilhermemonte21.Ecommerce.Application.Exceptions.PedidoNotFoundException;
 import com.github.guilhermemonte21.Ecommerce.Application.Gateway.PedidoGateway;
-import com.github.guilhermemonte21.Ecommerce.Domain.Entity.PedidoDoVendedor;
 import com.github.guilhermemonte21.Ecommerce.Domain.Entity.Pedidos;
-import com.github.guilhermemonte21.Ecommerce.Domain.Enum.StatusPedido;
-import org.springframework.stereotype.Service;
 
 import java.util.UUID;
 
@@ -19,7 +16,7 @@ public class ChangePedidoStatus implements IChangePedidoStatus {
     @Override
     public void ChangePedidosStatus(UUID IdPedido) {
         Pedidos pedidos = gateway.getById(IdPedido).orElseThrow(() -> new PedidoNotFoundException(IdPedido));
-        
+
         pedidos.syncStatus();
 
         gateway.save(pedidos);

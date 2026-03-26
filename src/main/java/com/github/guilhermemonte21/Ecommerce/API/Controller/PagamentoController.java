@@ -1,7 +1,10 @@
 package com.github.guilhermemonte21.Ecommerce.API.Controller;
 
+import com.github.guilhermemonte21.Ecommerce.API.Idempotency.Idempotent;
 import com.github.guilhermemonte21.Ecommerce.Application.UseCase.Pagamento.IPagamento;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.enums.ParameterIn;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.AllArgsConstructor;
 import org.slf4j.Logger;
@@ -24,6 +27,8 @@ public class PagamentoController {
 
     @Operation(summary = "Confirmar pagamento de um pedido")
     @PreAuthorize("isAuthenticated()")
+    @Idempotent
+    @Parameter(name = "Idempotency-Key", in = ParameterIn.HEADER, required = true, description = "Chave única da requisição (UUID)", example = "550e8400-e29b-41d4-a716-446655440000")
     @PostMapping("/{idPedido}")
     public ResponseEntity<Void> pagar(@PathVariable("idPedido") UUID idPedido) {
         log.info("Processando pagamento para pedido: {}", idPedido);

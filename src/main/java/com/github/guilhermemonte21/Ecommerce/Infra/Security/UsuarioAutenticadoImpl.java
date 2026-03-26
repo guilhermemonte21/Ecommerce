@@ -1,7 +1,6 @@
 package com.github.guilhermemonte21.Ecommerce.Infra.Security;
 
 import com.github.guilhermemonte21.Ecommerce.Application.Gateway.UsuarioAutenticadoGateway;
-import com.github.guilhermemonte21.Ecommerce.Application.UseCase.Usuarios.Login.ILogin;
 import com.github.guilhermemonte21.Ecommerce.Domain.Entity.UsuarioAutenticado;
 import com.github.guilhermemonte21.Ecommerce.Domain.Entity.Usuarios;
 import com.github.guilhermemonte21.Ecommerce.Infra.Config.UsuarioDetails;
@@ -14,11 +13,8 @@ import org.springframework.stereotype.Component;
 public class UsuarioAutenticadoImpl implements UsuarioAutenticadoGateway {
     private final UsuarioMapper mapper;
 
-    private final ILogin login;
-
-    public UsuarioAutenticadoImpl(UsuarioMapper mapper, ILogin login) {
+    public UsuarioAutenticadoImpl(UsuarioMapper mapper) {
         this.mapper = mapper;
-        this.login = login;
     }
 
     @Override
@@ -36,4 +32,4 @@ public class UsuarioAutenticadoImpl implements UsuarioAutenticadoGateway {
 
         return new UsuarioAutenticado(user);
     }
-    }
+}

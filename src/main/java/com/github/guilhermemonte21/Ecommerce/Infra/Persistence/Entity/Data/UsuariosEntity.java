@@ -3,7 +3,6 @@ package com.github.guilhermemonte21.Ecommerce.Infra.Persistence.Entity.Data;
 import com.github.guilhermemonte21.Ecommerce.Infra.Persistence.Entity.Enum.TipoUsuario;
 import jakarta.annotation.Nullable;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -46,4 +45,3 @@ public class UsuariosEntity {
     private UUID gatewayAccountId;
 
 }
-
