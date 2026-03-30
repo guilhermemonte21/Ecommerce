@@ -32,7 +32,17 @@ public class Carrinho {
         this.atualizadoEm = OffsetDateTime.now();
     }
 
+    public void adicionarItem(Produtos produto, Long quantidade) {
+        for (int i = 0; i < quantidade; i++) {
+            this.itens.add(produto);
+        }
+        this.atualizarValorTotal();
+        this.atualizadoAgora();
+    }
+
     public void limpar() {
         this.getItens().clear();
+        this.atualizarValorTotal();
+        this.atualizadoAgora();
     }
 }

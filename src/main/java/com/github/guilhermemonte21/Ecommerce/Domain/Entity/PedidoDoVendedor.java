@@ -21,7 +21,7 @@ public class PedidoDoVendedor {
 
     private Usuarios Vendedor;
 
-    private UUID Pedido;
+    private Pedidos Pedido;
 
     private List<Produtos> produtos = new ArrayList<>();
 

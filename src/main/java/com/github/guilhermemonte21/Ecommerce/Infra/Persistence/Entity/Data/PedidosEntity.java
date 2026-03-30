@@ -45,7 +45,7 @@ public class PedidosEntity {
 
     @Enumerated(EnumType.STRING)
     @Column(name = "status_pedido")
-    private StatusPedido status = StatusPedido.CRIADO;
+    private StatusPedido status = StatusPedido.PENDENTE;
 
     @Column(name = "criado_em")
     private OffsetDateTime criadoEm = OffsetDateTime.now();

@@ -31,6 +31,7 @@ public class LimparCarrinho implements ILimparCarrinho {
         if (Boolean.FALSE.equals(user.getUser().getAtivo())) {
             throw new UsuarioInativoException();
         }
-        gateway.limparCarrinho(carrinho);
+        carrinho.limpar();
+        gateway.save(carrinho);
     }
 }

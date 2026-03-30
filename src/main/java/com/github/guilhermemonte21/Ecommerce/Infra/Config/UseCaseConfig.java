@@ -106,8 +106,8 @@ public class UseCaseConfig {
     }
 
     @Bean
-    public IPagamento pagamento(PedidoGateway pedidoGateway) {
-        return new Pagamento(pedidoGateway);
+    public IPagamento pagamento(PedidoGateway pedidoGateway, ProdutoGateway produtoGateway) {
+        return new Pagamento(pedidoGateway, produtoGateway);
     }
 
     @Bean

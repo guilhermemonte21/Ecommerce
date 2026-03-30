@@ -35,4 +35,13 @@ public class PagamentoController {
         pagamento.pagar(idPedido);
         return ResponseEntity.ok().build();
     }
+
+    @Operation(summary = "Cancelar pagamento de um pedido e restaurar estoque")
+    @PreAuthorize("isAuthenticated()")
+    @DeleteMapping("/{idPedido}")
+    public ResponseEntity<Void> cancelar(@PathVariable("idPedido") UUID idPedido) {
+        log.info("Cancelando pagamento para pedido: {}", idPedido);
+        pagamento.cancelarPagamento(idPedido);
+        return ResponseEntity.noContent().build();
+    }
 }

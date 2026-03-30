@@ -39,10 +39,9 @@ public class PedidoController {
     @Idempotent
     @Parameter(name = "Idempotency-Key", in = ParameterIn.HEADER, required = true, description = "Chave única da requisição (UUID)", example = "550e8400-e29b-41d4-a716-446655440000")
     @PostMapping("/{idCarrinho}")
-    public ResponseEntity<PedidoResponse> criarPedido(@PathVariable("idCarrinho") UUID idCarrinho,
-                                                       @RequestBody String endereco) {
-        log.info("Criando pedido para carrinho: {}", idCarrinho);
-        PedidoResponse newPedido = criarPedido.criarPedido(idCarrinho, endereco);
+    public ResponseEntity<PedidoResponse> criarPedido(@RequestBody String endereco) {
+
+        PedidoResponse newPedido = criarPedido.criarPedido(endereco);
         return ResponseEntity.status(HttpStatus.CREATED).body(newPedido);
     }
 

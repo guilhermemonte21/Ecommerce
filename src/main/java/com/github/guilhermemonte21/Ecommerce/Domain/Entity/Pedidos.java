@@ -22,29 +22,34 @@ public class Pedidos {
     private List<PedidoDoVendedor> itens = new ArrayList<>();
     private BigDecimal preco;
     private String endereço;
-    private StatusPedido status = StatusPedido.CRIADO;
+    private StatusPedido status = StatusPedido.PENDENTE;
     private OffsetDateTime criadoEm = OffsetDateTime.now();
 
     public void syncStatus() {
-        boolean todosPagos = this.itens.stream().allMatch(p -> p.getStatus() == StatusPedido.PAGO);
-        boolean todosEntregues = this.itens.stream().allMatch(p -> p.getStatus() == StatusPedido.ENTREGUE);
-        boolean todosEnviados = this.itens.stream().allMatch(p -> p.getStatus() == StatusPedido.ENVIADO);
-
-        if (todosEntregues) {
+        if (this.itens.stream().allMatch(p -> p.getStatus() == StatusPedido.ENTREGUE)) {
             this.status = StatusPedido.ENTREGUE;
-        } else if (todosEnviados) {
+        } else if (this.itens.stream().allMatch(p -> p.getStatus() == StatusPedido.ENVIADO)) {
             this.status = StatusPedido.ENVIADO;
-        } else if (todosPagos) {
-            this.status = StatusPedido.PAGO;
+        } else if (this.itens.stream().allMatch(p -> p.getStatus() == StatusPedido.APROVADO)) {
+            this.status = StatusPedido.APROVADO;
+        } else if (this.itens.stream().allMatch(p -> p.getStatus() == StatusPedido.CANCELADO)) {
+            this.status = StatusPedido.CANCELADO;
         } else {
-            this.status = StatusPedido.CRIADO;
+            this.status = StatusPedido.PENDENTE;
         }
     }
 
     public void confirmarPagamento() {
-        this.status = StatusPedido.PAGO;
+        this.status = StatusPedido.APROVADO;
         for (PedidoDoVendedor item : this.itens) {
-            item.setStatus(StatusPedido.PAGO);
+            item.setStatus(StatusPedido.APROVADO);
+        }
+    }
+
+    public void cancelar() {
+        this.status = StatusPedido.CANCELADO;
+        for (PedidoDoVendedor item : this.itens) {
+            item.setStatus(StatusPedido.CANCELADO);
         }
     }
 

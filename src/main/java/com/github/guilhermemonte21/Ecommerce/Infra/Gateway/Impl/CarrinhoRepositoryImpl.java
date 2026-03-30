@@ -3,7 +3,6 @@ package com.github.guilhermemonte21.Ecommerce.Infra.Gateway.Impl;
 import com.github.guilhermemonte21.Ecommerce.Application.Exceptions.CarrinhoNotFoundException;
 import com.github.guilhermemonte21.Ecommerce.Application.Exceptions.ProdutoNotFoundException;
 import com.github.guilhermemonte21.Ecommerce.Domain.Entity.Carrinho;
-import com.github.guilhermemonte21.Ecommerce.Domain.Entity.Produtos;
 import com.github.guilhermemonte21.Ecommerce.Application.Gateway.CarrinhoGateway;
 import com.github.guilhermemonte21.Ecommerce.Infra.Mappers.CarrinhoMapper;
 import com.github.guilhermemonte21.Ecommerce.Infra.Mappers.ProdutoMapper;
@@ -45,17 +44,6 @@ public class CarrinhoRepositoryImpl implements CarrinhoGateway {
     }
 
     @Override
-    public Carrinho add(UUID id, Produtos produtos, Long quantity) {
-        CarrinhoEntity carrinhoById = jpaCarrinhoRepository.findById(id)
-                .orElseThrow(() -> new CarrinhoNotFoundException(id));
-        ProdutosEntity entity = produtoMapper.toEntity(produtos);
-        for (int i = 0; i < quantity; i++) {
-            carrinhoById.getItens().add(entity);
-        }
-        return carrinhoMapper.toDomain(carrinhoById);
-    }
-
-    @Override
     public void deleteItem(Carrinho carrinho, UUID id) {
         CarrinhoEntity carrinhoEntity = jpaCarrinhoRepository.findById(carrinho.getId())
                 .orElseThrow(() -> new CarrinhoNotFoundException(carrinho.getId()));
@@ -64,13 +52,9 @@ public class CarrinhoRepositoryImpl implements CarrinhoGateway {
         carrinhoEntity.getItens().remove(produtosEntity);
         jpaCarrinhoRepository.save(carrinhoEntity);
     }
-
     @Override
-    public void limparCarrinho(Carrinho cart) {
-        cart.limpar();
-        cart.atualizarValorTotal();
-        cart.atualizadoAgora();
-        CarrinhoEntity carrinho = carrinhoMapper.toEntity(cart);
-        jpaCarrinhoRepository.save(carrinho);
+    public Carrinho getByDono(UUID id){
+        CarrinhoEntity cart = jpaCarrinhoRepository.findByCompradorId(id);
+        return carrinhoMapper.toDomain(cart);
     }
 }

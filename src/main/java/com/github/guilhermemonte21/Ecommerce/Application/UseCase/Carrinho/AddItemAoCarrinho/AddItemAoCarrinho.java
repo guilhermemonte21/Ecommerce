@@ -41,16 +41,14 @@ public class AddItemAoCarrinho implements IAddItemAoCarrinho {
             throw new UsuarioInativoException();
         }
 
-        Carrinho carrinhoValidator = gateway.getById(idCarrinho)
+        Carrinho carrinho = gateway.getById(idCarrinho)
                 .orElseThrow(() -> new CarrinhoNotFoundException(idCarrinho));
-        if (!user.getUser().getId().equals(carrinhoValidator.getComprador().getId())) {
+        if (!user.getUser().getId().equals(carrinho.getComprador().getId())) {
             throw new AcessoNegadoException();
         }
 
-        Carrinho carrinhoComItem = gateway.add(idCarrinho, produto, quantidade);
-        carrinhoComItem.atualizarValorTotal();
-        carrinhoComItem.atualizadoAgora();
-        Carrinho cart = gateway.save(carrinhoComItem);
-        return mapperApl.domainToResponse(cart);
+        carrinho.adicionarItem(produto, quantidade);
+        Carrinho salvamento = gateway.save(carrinho);
+        return mapperApl.domainToResponse(salvamento);
     }
 }

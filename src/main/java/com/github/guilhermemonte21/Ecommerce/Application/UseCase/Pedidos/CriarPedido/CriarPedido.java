@@ -1,10 +1,8 @@
 package com.github.guilhermemonte21.Ecommerce.Application.UseCase.Pedidos.CriarPedido;
 
+import com.github.guilhermemonte21.Ecommerce.API.Idempotency.Idempotent;
 import com.github.guilhermemonte21.Ecommerce.Application.DTO.Pedidos.PedidoResponse;
-import com.github.guilhermemonte21.Ecommerce.Application.Exceptions.CarrinhoNotFoundException;
-import com.github.guilhermemonte21.Ecommerce.Application.Exceptions.CarrinhoVazioException;
-import com.github.guilhermemonte21.Ecommerce.Application.Exceptions.EstoqueInsuficienteException;
-import com.github.guilhermemonte21.Ecommerce.Application.Exceptions.ProdutoNotFoundException;
+import com.github.guilhermemonte21.Ecommerce.Application.Exceptions.*;
 import com.github.guilhermemonte21.Ecommerce.Application.Gateway.CarrinhoGateway;
 import com.github.guilhermemonte21.Ecommerce.Application.Gateway.PedidoGateway;
 import com.github.guilhermemonte21.Ecommerce.Application.Gateway.ProdutoGateway;
@@ -31,7 +29,7 @@ public class CriarPedido implements ICriarPedido {
     private final UsuarioAutenticadoGateway authGateway;
 
     public CriarPedido(PedidoGateway pedidoGateway, CarrinhoGateway carrinhoGateway, ProdutoGateway produtoGateway,
-                       PedidoMapperApl mapperApl, UsuarioAutenticadoGateway authGateway) {
+            PedidoMapperApl mapperApl, UsuarioAutenticadoGateway authGateway) {
         this.pedidoGateway = pedidoGateway;
         this.carrinhoGateway = carrinhoGateway;
         this.produtoGateway = produtoGateway;
@@ -40,12 +38,17 @@ public class CriarPedido implements ICriarPedido {
     }
 
     @Transactional
+    @Idempotent
     @Override
-    public PedidoResponse criarPedido(UUID carrinhoId, String endereco) {
+    public PedidoResponse criarPedido(String endereco) {
+        if (endereco == null || endereco.isBlank()) {
+            throw new IllegalArgumentException("Endereço de entrega é obrigatório");
+        }
         UsuarioAutenticado user = authGateway.get();
-        Carrinho cart = carrinhoGateway.getById(carrinhoId)
-                .orElseThrow(() -> new CarrinhoNotFoundException(carrinhoId));
-
+        if (user.getUser().getId() == null) {
+            throw new IllegalArgumentException("Usuário não autenticado");
+        }
+       Carrinho cart = carrinhoGateway.getByDono(user.getUser().getId());
         if (cart.getItens() == null || cart.getItens().isEmpty()) {
             throw new CarrinhoVazioException();
         }
@@ -55,17 +58,15 @@ public class CriarPedido implements ICriarPedido {
                         "Não é possível comprar o próprio produto: " + item.getNomeProduto());
             }
         }
-
         Map<UUID, Long> productQuantities = new HashMap<>();
         for (Produtos itemCarrinho : cart.getItens()) {
             productQuantities.put(itemCarrinho.getId(),
                     productQuantities.getOrDefault(itemCarrinho.getId(), 0L) + 1);
         }
-
+        Map<UUID, Produtos> productDetails = new HashMap<>();
         for (Map.Entry<UUID, Long> entry : productQuantities.entrySet()) {
             UUID idProduto = entry.getKey();
             Long quantidade = entry.getValue();
-
             Produtos produtoComLock = produtoGateway.getByIdComLock(idProduto)
                     .orElseThrow(() -> new ProdutoNotFoundException(idProduto));
 
@@ -75,25 +76,26 @@ public class CriarPedido implements ICriarPedido {
 
             produtoComLock.setEstoque(produtoComLock.getEstoque() - quantidade);
             produtoGateway.salvar(produtoComLock);
+            productDetails.put(idProduto, produtoComLock);
         }
-
         Pedidos pedido = new Pedidos();
         pedido.setComprador(user.getUser());
         Pedidos salvo = pedidoGateway.save(pedido);
-
         Map<UUID, PedidoDoVendedor> orders = new HashMap<>();
-        for (Produtos produto : cart.getItens()) {
-            UUID vendedorId = produto.getVendedor().getId();
+        for (Produtos itemCarrinho : cart.getItens()) {
+            Produtos dbProduct = productDetails.get(itemCarrinho.getId());
+            UUID vendedorId = dbProduct.getVendedor().getId();
             PedidoDoVendedor pedidoVendedor = orders.computeIfAbsent(vendedorId, id -> {
                 PedidoDoVendedor novo = new PedidoDoVendedor();
-                novo.setVendedor(produto.getVendedor());
-                novo.setPedido(salvo.getId());
+                novo.setVendedor(dbProduct.getVendedor());
+                novo.setPedido(salvo);
                 novo.setValor(BigDecimal.ZERO);
-                novo.setStatus(StatusPedido.CRIADO);
+                novo.setStatus(StatusPedido.PENDENTE);
                 return novo;
             });
-            pedidoVendedor.getProdutos().add(produto);
-            pedidoVendedor.setValor(pedidoVendedor.getValor().add(produto.getPreco()));
+
+            pedidoVendedor.getProdutos().add(dbProduct);
+            pedidoVendedor.setValor(pedidoVendedor.getValor().add(dbProduct.getPreco()));
         }
 
         salvo.getItens().addAll(orders.values());
@@ -104,8 +106,8 @@ public class CriarPedido implements ICriarPedido {
         salvo.setCriadoEm(OffsetDateTime.now());
 
         Pedidos completeOrder = pedidoGateway.save(salvo);
-        carrinhoGateway.limparCarrinho(cart);
-
+        cart.limpar();
+        carrinhoGateway.save(cart);
         log.info("Pedido criado com sucesso: id={}, comprador={}", completeOrder.getId(), user.getUser().getId());
         return mapperApl.toResponse(completeOrder);
     }

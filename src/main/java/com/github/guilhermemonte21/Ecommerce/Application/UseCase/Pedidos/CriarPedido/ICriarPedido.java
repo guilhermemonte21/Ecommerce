@@ -5,5 +5,5 @@ import com.github.guilhermemonte21.Ecommerce.Application.DTO.Pedidos.PedidoRespo
 import java.util.UUID;
 
 public interface ICriarPedido {
-    PedidoResponse criarPedido(UUID carrinhoId, String endereco);
+    PedidoResponse criarPedido( String endereco);
 }

@@ -11,9 +11,7 @@ public interface CarrinhoGateway {
 
     Optional<Carrinho> getById(UUID id);
 
-    Carrinho add(UUID id, Produtos produto, Long quantity);
-
     void deleteItem(Carrinho carrinho, UUID id);
 
-    void limparCarrinho(Carrinho carrinho);
+    Carrinho getByDono(UUID id);
 }

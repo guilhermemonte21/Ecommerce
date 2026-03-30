@@ -82,7 +82,7 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(CarrinhoVazioException.class)
     public ProblemDetail handleCarrinhoVazio(CarrinhoVazioException ex) {
         log.warn("Carrinho vazio: {}", ex.getMessage());
-        return createProblemDetail(HttpStatus.UNPROCESSABLE_ENTITY, "Carrinho vazio", ex.getMessage());
+        return createProblemDetail(HttpStatus.UNPROCESSABLE_CONTENT, "Carrinho vazio", ex.getMessage());
     }
 
     @ExceptionHandler(EstoqueInsuficienteException.class)

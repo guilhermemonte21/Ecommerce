@@ -4,4 +4,5 @@ import java.util.UUID;
 
 public interface IPagamento {
     Boolean pagar(UUID IdPedido);
+    void cancelarPagamento(UUID idPedido);
 }
