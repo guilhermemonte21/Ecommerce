@@ -38,7 +38,6 @@ public class CriarPedido implements ICriarPedido {
     }
 
     @Transactional
-    @Idempotent
     @Override
     public PedidoResponse criarPedido(String endereco) {
         if (endereco == null || endereco.isBlank()) {
