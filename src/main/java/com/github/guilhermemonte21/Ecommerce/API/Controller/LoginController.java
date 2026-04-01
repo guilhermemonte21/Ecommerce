@@ -8,8 +8,10 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
+import io.github.resilience4j.ratelimiter.annotation.RateLimiter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -29,6 +31,7 @@ public class LoginController {
 
     @Operation(summary = "Login", description = "Autentica um usuário e retorna um token JWT")
     @PostMapping("/login")
+    @RateLimiter(name = "loginRateLimiter", fallbackMethod = "fallbackLogin")
     public ResponseEntity<TokenResponse> login(@RequestBody @Valid LoginRequest request) {
         boolean autenticado = login.login(request.email(), request.senha());
 
@@ -40,5 +43,10 @@ public class LoginController {
             log.warn("Tentativa de login falhou: email={}", request.email());
             return ResponseEntity.status(401).build();
         }
+    }
+
+    public ResponseEntity<TokenResponse> fallbackLogin(LoginRequest request, Throwable t) {
+        log.warn("Rate limit excedido para tentativas de login: email={}", request.email());
+        return ResponseEntity.status(HttpStatus.TOO_MANY_REQUESTS).build();
     }
 }

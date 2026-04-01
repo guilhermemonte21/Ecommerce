@@ -8,6 +8,7 @@ import com.stripe.model.PaymentIntent;
 import com.stripe.model.Transfer;
 import com.stripe.param.PaymentIntentCreateParams;
 import com.stripe.param.TransferCreateParams;
+import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
@@ -20,6 +21,7 @@ public class StripePagamentoGatewayImpl implements PagamentoGateway {
     private static final Logger log = LoggerFactory.getLogger(StripePagamentoGatewayImpl.class);
 
     @Override
+    @CircuitBreaker(name = "stripeService", fallbackMethod = "fallbackPagamento")
     public boolean processarPagamento(Pedidos pedido) {
         for (PedidoDoVendedor subPedido : pedido.getItens()) {
             String stripeAcc = subPedido.getVendedor().getStripeAccountId();
@@ -70,5 +72,10 @@ public class StripePagamentoGatewayImpl implements PagamentoGateway {
             log.error("Erro ao integrar com a Stripe: {}", e.getMessage(), e);
             throw new RuntimeException("Falha ao processar pagamento com a Stripe: " + e.getUserMessage());
         }
+    }
+
+    public boolean fallbackPagamento(Pedidos pedido, Throwable t) {
+        log.error("Circuit Breaker aberto ou falha na Stripe para o pedido {}. Erro: {}", pedido.getId(), t.getMessage());
+        throw new RuntimeException("Serviço de pagamento (Stripe) temporariamente indisponível. Tente novamente mais tarde.");
     }
 }

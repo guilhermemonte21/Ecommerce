@@ -10,8 +10,6 @@ import com.github.guilhermemonte21.Ecommerce.Domain.Entity.Usuarios;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.UUID;
-
 public class CreateSellerAcount implements ICreateSellerAcount {
 
     private static final Logger log = LoggerFactory.getLogger(CreateSellerAcount.class);
