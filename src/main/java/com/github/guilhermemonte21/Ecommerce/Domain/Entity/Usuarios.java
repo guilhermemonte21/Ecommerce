@@ -19,5 +19,5 @@ public class Usuarios {
     private String senha;
     private Boolean ativo;
     private String tipoUsuario;
-    private UUID gatewayAccountId;
+    private String stripeAccountId;
 }

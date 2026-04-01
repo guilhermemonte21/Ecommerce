@@ -2,8 +2,6 @@ package com.github.guilhermemonte21.Ecommerce.Application.UseCase.Pedidos.CriarP
 
 import com.github.guilhermemonte21.Ecommerce.Application.DTO.Pedidos.PedidoResponse;
 
-import java.util.UUID;
-
 public interface ICriarPedido {
-    PedidoResponse criarPedido( String endereco);
+    PedidoResponse criarPedido(String endereco);
 }

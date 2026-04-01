@@ -5,7 +5,6 @@ import com.github.guilhermemonte21.Ecommerce.Application.Exceptions.ProdutoNotFo
 import com.github.guilhermemonte21.Ecommerce.Domain.Entity.Carrinho;
 import com.github.guilhermemonte21.Ecommerce.Application.Gateway.CarrinhoGateway;
 import com.github.guilhermemonte21.Ecommerce.Infra.Mappers.CarrinhoMapper;
-import com.github.guilhermemonte21.Ecommerce.Infra.Mappers.ProdutoMapper;
 import com.github.guilhermemonte21.Ecommerce.Infra.Persistence.Entity.Data.CarrinhoEntity;
 import com.github.guilhermemonte21.Ecommerce.Infra.Persistence.Entity.Data.ProdutosEntity;
 import com.github.guilhermemonte21.Ecommerce.Infra.Persistence.JpaRepository.JpaCarrinhoRepository;
@@ -19,14 +18,12 @@ import java.util.UUID;
 public class CarrinhoRepositoryImpl implements CarrinhoGateway {
 
     private final JpaCarrinhoRepository jpaCarrinhoRepository;
-    private final ProdutoMapper produtoMapper;
     private final CarrinhoMapper carrinhoMapper;
     private final JpaProdutosRepository jpaProdutosRepository;
 
-    public CarrinhoRepositoryImpl(JpaCarrinhoRepository jpaCarrinhoRepository, ProdutoMapper produtoMapper,
-                                  CarrinhoMapper carrinhoMapper, JpaProdutosRepository jpaProdutosRepository) {
+    public CarrinhoRepositoryImpl(JpaCarrinhoRepository jpaCarrinhoRepository, CarrinhoMapper carrinhoMapper,
+            JpaProdutosRepository jpaProdutosRepository) {
         this.jpaCarrinhoRepository = jpaCarrinhoRepository;
-        this.produtoMapper = produtoMapper;
         this.carrinhoMapper = carrinhoMapper;
         this.jpaProdutosRepository = jpaProdutosRepository;
     }
@@ -52,8 +49,9 @@ public class CarrinhoRepositoryImpl implements CarrinhoGateway {
         carrinhoEntity.getItens().remove(produtosEntity);
         jpaCarrinhoRepository.save(carrinhoEntity);
     }
+
     @Override
-    public Carrinho getByDono(UUID id){
+    public Carrinho getByDono(UUID id) {
         CarrinhoEntity cart = jpaCarrinhoRepository.findByCompradorId(id);
         return carrinhoMapper.toDomain(cart);
     }

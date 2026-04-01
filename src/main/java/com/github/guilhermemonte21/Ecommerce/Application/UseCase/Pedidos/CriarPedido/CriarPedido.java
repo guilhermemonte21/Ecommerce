@@ -48,7 +48,7 @@ public class CriarPedido implements ICriarPedido {
         if (user.getUser().getId() == null) {
             throw new IllegalArgumentException("Usuário não autenticado");
         }
-       Carrinho cart = carrinhoGateway.getByDono(user.getUser().getId());
+        Carrinho cart = carrinhoGateway.getByDono(user.getUser().getId());
         if (cart.getItens() == null || cart.getItens().isEmpty()) {
             throw new CarrinhoVazioException();
         }
@@ -80,7 +80,7 @@ public class CriarPedido implements ICriarPedido {
         }
         Pedidos pedido = new Pedidos();
         pedido.setComprador(user.getUser());
-        Pedidos salvo = pedidoGateway.save(pedido);
+
         Map<UUID, PedidoDoVendedor> orders = new HashMap<>();
         for (Produtos itemCarrinho : cart.getItens()) {
             Produtos dbProduct = productDetails.get(itemCarrinho.getId());
@@ -88,7 +88,7 @@ public class CriarPedido implements ICriarPedido {
             PedidoDoVendedor pedidoVendedor = orders.computeIfAbsent(vendedorId, id -> {
                 PedidoDoVendedor novo = new PedidoDoVendedor();
                 novo.setVendedor(dbProduct.getVendedor());
-                novo.setPedido(salvo);
+                novo.setPedido(pedido);
                 novo.setValor(BigDecimal.ZERO);
                 novo.setStatus(StatusPedido.PENDENTE);
                 return novo;
@@ -98,14 +98,14 @@ public class CriarPedido implements ICriarPedido {
             pedidoVendedor.setValor(pedidoVendedor.getValor().add(dbProduct.getPreco()));
         }
 
-        salvo.getItens().addAll(orders.values());
-        salvo.setPreco(orders.values().stream()
+        pedido.getItens().addAll(orders.values());
+        pedido.setPreco(orders.values().stream()
                 .map(PedidoDoVendedor::getValor)
                 .reduce(BigDecimal.ZERO, BigDecimal::add));
-        salvo.setEndereço(endereco);
-        salvo.setCriadoEm(OffsetDateTime.now());
+        pedido.setEndereço(endereco);
+        pedido.setCriadoEm(OffsetDateTime.now());
 
-        Pedidos completeOrder = pedidoGateway.save(salvo);
+        Pedidos completeOrder = pedidoGateway.save(pedido);
         cart.limpar();
         carrinhoGateway.save(cart);
         log.info("Pedido criado com sucesso: id={}, comprador={}", completeOrder.getId(), user.getUser().getId());

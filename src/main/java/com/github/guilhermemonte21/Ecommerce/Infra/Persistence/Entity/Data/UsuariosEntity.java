@@ -41,7 +41,7 @@ public class UsuariosEntity {
     @Enumerated(value = EnumType.STRING)
     private TipoUsuario TipoUsuario;
 
-    @Nullable
-    private UUID gatewayAccountId;
+    @Column(name = "stripe_account_id")
+    private String stripeAccountId;
 
 }

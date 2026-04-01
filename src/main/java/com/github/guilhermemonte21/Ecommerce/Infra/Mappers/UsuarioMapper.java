@@ -22,7 +22,7 @@ public class UsuarioMapper {
         if (entity.getTipoUsuario() != null) {
             user.setTipoUsuario(entity.getTipoUsuario().name());
         }
-        user.setGatewayAccountId(entity.getGatewayAccountId());
+        user.setStripeAccountId(entity.getStripeAccountId());
         return user;
     }
 
@@ -43,7 +43,7 @@ public class UsuarioMapper {
         if ("Vendedor".equals(usuarios.getTipoUsuario())) {
             entity.setTipoUsuario(TipoUsuario.Vendedor);
         }
-        entity.setGatewayAccountId(usuarios.getGatewayAccountId());
+        entity.setStripeAccountId(usuarios.getStripeAccountId());
         return entity;
     }
 }

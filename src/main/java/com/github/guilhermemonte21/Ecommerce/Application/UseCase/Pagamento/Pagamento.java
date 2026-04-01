@@ -1,32 +1,48 @@
 package com.github.guilhermemonte21.Ecommerce.Application.UseCase.Pagamento;
 
 import com.github.guilhermemonte21.Ecommerce.Application.Exceptions.PedidoNotFoundException;
+import com.github.guilhermemonte21.Ecommerce.Application.Gateway.PagamentoGateway;
 import com.github.guilhermemonte21.Ecommerce.Application.Gateway.PedidoGateway;
 import com.github.guilhermemonte21.Ecommerce.Application.Gateway.ProdutoGateway;
 import com.github.guilhermemonte21.Ecommerce.Domain.Entity.PedidoDoVendedor;
 import com.github.guilhermemonte21.Ecommerce.Domain.Entity.Pedidos;
 import com.github.guilhermemonte21.Ecommerce.Domain.Entity.Produtos;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.UUID;
 
 public class Pagamento implements IPagamento {
 
+    private static final Logger log = LoggerFactory.getLogger(Pagamento.class);
+
     private final PedidoGateway pedidoGateway;
     private final ProdutoGateway produtoGateway;
+    private final PagamentoGateway pagamentoGateway;
 
-    public Pagamento(PedidoGateway pedidoGateway, ProdutoGateway produtoGateway) {
+    public Pagamento(PedidoGateway pedidoGateway, ProdutoGateway produtoGateway, PagamentoGateway pagamentoGateway) {
         this.pedidoGateway = pedidoGateway;
         this.produtoGateway = produtoGateway;
+        this.pagamentoGateway = pagamentoGateway;
     }
 
-    // TODO: substituir por integração real com Stripe
     @Override
     public Boolean pagar(UUID idPedido) {
         Pedidos pedido = pedidoGateway.getById(idPedido)
                 .orElseThrow(() -> new PedidoNotFoundException(idPedido));
-        pedido.confirmarPagamento();
-        pedidoGateway.save(pedido);
-        return true;
+
+        log.info("Iniciando processo de pagamento no Gateway (Stripe) para o pedido {}", idPedido);
+        boolean sucesso = pagamentoGateway.processarPagamento(pedido);
+        
+        if (sucesso) {
+            log.info("Pagamento aprovado. Atualizando status do pedido {}", idPedido);
+            pedido.confirmarPagamento();
+            pedidoGateway.save(pedido);
+            return true;
+        }
+        
+        log.error("Pagamento não foi aprovado no Gateway para o pedido {}", idPedido);
+        return false;
     }
 
     @Override

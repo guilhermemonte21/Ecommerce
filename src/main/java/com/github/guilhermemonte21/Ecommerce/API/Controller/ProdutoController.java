@@ -6,6 +6,7 @@ import com.github.guilhermemonte21.Ecommerce.Application.DTO.Produtos.ProdutoRes
 import com.github.guilhermemonte21.Ecommerce.Application.UseCase.Produtos.AtualizarEstoque.IAtualizarEstoque;
 import com.github.guilhermemonte21.Ecommerce.Application.UseCase.Produtos.AtualizarProduto.IAtualizarProduto;
 import com.github.guilhermemonte21.Ecommerce.Application.UseCase.Produtos.BuscarTodosOsProdutos.IBuscarTodosOsProdutos;
+import com.github.guilhermemonte21.Ecommerce.Application.UseCase.Produtos.DeletarProduto.IDeletarProduto;
 import com.github.guilhermemonte21.Ecommerce.Application.UseCase.Produtos.GetProdutoById.IGetProdutoById;
 import com.github.guilhermemonte21.Ecommerce.Application.UseCase.Produtos.RegistrarProduto.IRegistrarProduto;
 import io.swagger.v3.oas.annotations.Operation;
@@ -38,15 +39,17 @@ public class ProdutoController {
     private final IGetProdutoById getProdutoById;
     private final IBuscarTodosOsProdutos buscarTodosOsProdutos;
     private final IAtualizarProduto atualizarProduto;
+    private final IDeletarProduto deletarProduto;
 
     public ProdutoController(IRegistrarProduto registrarProduto, IAtualizarEstoque atualizarEstoque,
                              IGetProdutoById getProdutoById, IBuscarTodosOsProdutos buscarTodosOsProdutos,
-                             IAtualizarProduto atualizarProduto) {
+                             IAtualizarProduto atualizarProduto, IDeletarProduto deletarProduto) {
         this.registrarProduto = registrarProduto;
         this.atualizarEstoque = atualizarEstoque;
         this.getProdutoById = getProdutoById;
         this.buscarTodosOsProdutos = buscarTodosOsProdutos;
         this.atualizarProduto = atualizarProduto;
+        this.deletarProduto = deletarProduto;
     }
 
     @Operation(summary = "Registrar novo produto")
@@ -94,5 +97,13 @@ public class ProdutoController {
                                                   @RequestParam Long quantity) {
         Long estoqueAtualizado = atualizarEstoque.atualizarEstoque(idProduto, quantity);
         return ResponseEntity.ok(estoqueAtualizado);
+    }
+
+    @Operation(summary = "Deletar produto")
+    @PreAuthorize("isAuthenticated()")
+    @DeleteMapping("/{idProduto}")
+    public ResponseEntity<Void> deletar(@PathVariable("idProduto") UUID idProduto) {
+        deletarProduto.deletar(idProduto);
+        return ResponseEntity.noContent().build();
     }
 }

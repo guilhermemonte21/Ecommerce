@@ -6,5 +6,5 @@ import com.github.guilhermemonte21.Ecommerce.Application.DTO.Usuarios.UsuarioRes
 import java.util.UUID;
 
 public interface ICreateSellerAcount {
-    UsuarioResponse create(LoginRequest log, UUID gatewayId);
+    UsuarioResponse create(LoginRequest log, String stripeAccountId);
 }

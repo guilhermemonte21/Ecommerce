@@ -27,14 +27,14 @@ public class CreateSellerAcount implements ICreateSellerAcount {
     }
 
     @Override
-    public UsuarioResponse create(LoginRequest loginRequest, UUID gatewayId) {
+    public UsuarioResponse create(LoginRequest loginRequest, String stripeAccountId) {
         Boolean autenticado = login.login(loginRequest.email(), loginRequest.senha());
         if (!autenticado) {
             throw new AcessoNegadoException();
         }
         Usuarios user = gateway.findByEmail(loginRequest.email());
         user.setTipoUsuario("Vendedor");
-        user.setGatewayAccountId(gatewayId);
+        user.setStripeAccountId(stripeAccountId);
 
         Usuarios salvo = gateway.salvar(user);
         log.info("Conta de vendedor criada: id={}, email={}", salvo.getId(), salvo.getEmail());

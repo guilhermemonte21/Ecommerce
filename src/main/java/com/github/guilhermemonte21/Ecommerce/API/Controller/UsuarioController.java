@@ -67,8 +67,8 @@ public class UsuarioController {
     @PreAuthorize("isAuthenticated()")
     @PostMapping("/vendedores")
     public ResponseEntity<UsuarioResponse> createSellerAccount(@RequestBody LoginRequest login,
-                                                                @RequestParam UUID gatewayId) {
-        UsuarioResponse user = sellerAcount.create(login, gatewayId);
+                                                                @RequestParam String stripeAccountId) {
+        UsuarioResponse user = sellerAcount.create(login, stripeAccountId);
         return ResponseEntity.status(HttpStatus.CREATED).body(user);
     }
 }

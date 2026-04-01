@@ -5,12 +5,14 @@ import com.github.guilhermemonte21.Ecommerce.Application.DTO.Pedidos.PedidoDoVen
 import com.github.guilhermemonte21.Ecommerce.Application.DTO.Pedidos.PedidoResponse;
 import com.github.guilhermemonte21.Ecommerce.Application.UseCase.Pedidos.CriarPedido.ICriarPedido;
 import com.github.guilhermemonte21.Ecommerce.Application.UseCase.Pedidos.GetItensByPedido.IGetItensByPedido;
+import com.github.guilhermemonte21.Ecommerce.Application.UseCase.Pedidos.ChangePedidoStatus.IChangePedidoStatus;
+import com.github.guilhermemonte21.Ecommerce.Application.UseCase.Pedidos.GetPedidoById.IGetPedidoById;
+import com.github.guilhermemonte21.Ecommerce.Application.UseCase.Pedidos.GetPedidosByComprador.IGetPedidosByComprador;
+import com.github.guilhermemonte21.Ecommerce.Domain.Entity.Pedidos;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.enums.ParameterIn;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -24,14 +26,20 @@ import java.util.UUID;
 @Tag(name = "Pedidos", description = "Gerenciamento de pedidos")
 public class PedidoController {
 
-    private static final Logger log = LoggerFactory.getLogger(PedidoController.class);
-
     private final ICriarPedido criarPedido;
     private final IGetItensByPedido getItensByPedido;
+    private final IChangePedidoStatus changePedidoStatus;
+    private final IGetPedidoById getPedidoById;
+    private final IGetPedidosByComprador getPedidosByComprador;
 
-    public PedidoController(ICriarPedido criarPedido, IGetItensByPedido getItensByPedido) {
+    public PedidoController(ICriarPedido criarPedido, IGetItensByPedido getItensByPedido,
+            IChangePedidoStatus changePedidoStatus, IGetPedidoById getPedidoById,
+            IGetPedidosByComprador getPedidosByComprador) {
         this.criarPedido = criarPedido;
         this.getItensByPedido = getItensByPedido;
+        this.changePedidoStatus = changePedidoStatus;
+        this.getPedidoById = getPedidoById;
+        this.getPedidosByComprador = getPedidosByComprador;
     }
 
     @Operation(summary = "Criar pedido a partir do carrinho")
@@ -52,5 +60,29 @@ public class PedidoController {
             @PathVariable("idPedido") UUID idPedido) {
         List<PedidoDoVendedorResponse> itens = getItensByPedido.get(idPedido);
         return ResponseEntity.ok(itens);
+    }
+
+    @Operation(summary = "Mudar status do pedido")
+    @PreAuthorize("isAuthenticated()")
+    @PatchMapping("/{idPedido}/status")
+    public ResponseEntity<Void> changeStatus(@PathVariable("idPedido") UUID idPedido) {
+        changePedidoStatus.ChangePedidosStatus(idPedido);
+        return ResponseEntity.ok().build();
+    }
+
+    @Operation(summary = "Buscar pedido por ID")
+    @PreAuthorize("isAuthenticated()")
+    @GetMapping("/{idPedido}")
+    public ResponseEntity<PedidoResponse> getPedidoById(@PathVariable("idPedido") UUID idPedido) {
+        PedidoResponse response = getPedidoById.pedidoById(idPedido);
+        return ResponseEntity.ok(response);
+    }
+
+    @Operation(summary = "Buscar pedidos do comprador")
+    @PreAuthorize("isAuthenticated()")
+    @GetMapping("/comprador/{idComprador}")
+    public ResponseEntity<List<Pedidos>> getPedidosByComprador(@PathVariable("idComprador") UUID idComprador) {
+        List<Pedidos> response = getPedidosByComprador.getPedidosByComprador(idComprador);
+        return ResponseEntity.ok(response);
     }
 }
