@@ -1,36 +1,36 @@
 package com.github.guilhermemonte21.Ecommerce.Application.UseCase.Usuarios.CreateSellerAcount;
 
-import com.github.guilhermemonte21.Ecommerce.API.DTO.LoginRequest;
 import com.github.guilhermemonte21.Ecommerce.Application.DTO.Usuarios.UsuarioResponse;
-import com.github.guilhermemonte21.Ecommerce.Application.Exceptions.AcessoNegadoException;
+import com.github.guilhermemonte21.Ecommerce.Application.Gateway.UsuarioAutenticadoGateway;
 import com.github.guilhermemonte21.Ecommerce.Application.Gateway.UsuarioGateway;
 import com.github.guilhermemonte21.Ecommerce.Application.Mappers.UsuarioMapperApl;
-import com.github.guilhermemonte21.Ecommerce.Application.UseCase.Usuarios.Login.ILogin;
+import com.github.guilhermemonte21.Ecommerce.Domain.Entity.UsuarioAutenticado;
 import com.github.guilhermemonte21.Ecommerce.Domain.Entity.Usuarios;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.transaction.annotation.Transactional;
 
 public class CreateSellerAcount implements ICreateSellerAcount {
 
     private static final Logger log = LoggerFactory.getLogger(CreateSellerAcount.class);
 
-    private final ILogin login;
     private final UsuarioGateway gateway;
     private final UsuarioMapperApl mapperApl;
+    private final UsuarioAutenticadoGateway authGateway;
 
-    public CreateSellerAcount(ILogin login, UsuarioGateway gateway, UsuarioMapperApl mapperApl) {
-        this.login = login;
+    public CreateSellerAcount(UsuarioGateway gateway, UsuarioMapperApl mapperApl,
+                              UsuarioAutenticadoGateway authGateway) {
         this.gateway = gateway;
         this.mapperApl = mapperApl;
+        this.authGateway = authGateway;
     }
 
     @Override
-    public UsuarioResponse create(LoginRequest loginRequest, String stripeAccountId) {
-        Boolean autenticado = login.login(loginRequest.email(), loginRequest.senha());
-        if (!autenticado) {
-            throw new AcessoNegadoException();
-        }
-        Usuarios user = gateway.findByEmail(loginRequest.email());
+    @Transactional
+    public UsuarioResponse create(String stripeAccountId) {
+        UsuarioAutenticado auth = authGateway.get();
+        Usuarios user = gateway.findByEmail(auth.getUser().getEmail());
+
         user.setTipoUsuario("Vendedor");
         user.setStripeAccountId(stripeAccountId);
 

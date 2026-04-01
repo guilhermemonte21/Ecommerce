@@ -1,6 +1,5 @@
 package com.github.guilhermemonte21.Ecommerce.API.Controller;
 
-import com.github.guilhermemonte21.Ecommerce.API.DTO.LoginRequest;
 import com.github.guilhermemonte21.Ecommerce.Application.DTO.Usuarios.CreateUserRequest;
 import com.github.guilhermemonte21.Ecommerce.Application.DTO.Usuarios.UsuarioResponse;
 import com.github.guilhermemonte21.Ecommerce.Application.UseCase.Usuarios.CreateSellerAcount.ICreateSellerAcount;
@@ -32,7 +31,7 @@ public class UsuarioController {
     private final ICreateSellerAcount sellerAcount;
 
     public UsuarioController(ICreateUser createUser, IMudarAtividadeDaConta changeActivity,
-                             IGetUserById getUserById, ICreateSellerAcount sellerAcount) {
+            IGetUserById getUserById, ICreateSellerAcount sellerAcount) {
         this.createUser = createUser;
         this.changeActivity = changeActivity;
         this.getUserById = getUserById;
@@ -55,20 +54,21 @@ public class UsuarioController {
         return ResponseEntity.ok(user);
     }
 
-    @Operation(summary = "Ativar/Desativar conta", description = "Alterna o status ativo/inativo da conta")
+    @Operation(summary = "Ativar/Desativar conta", description = "Alterna o status ativo/inativo da conta do usuário autenticado")
     @PreAuthorize("isAuthenticated()")
     @PatchMapping("/status")
-    public ResponseEntity<Boolean> mudarAtividadeDaConta(@RequestBody @Valid LoginRequest login) {
-        Boolean isActive = changeActivity.mudarAtividade(login);
+    public ResponseEntity<Boolean> mudarAtividadeDaConta() {
+        Boolean isActive = changeActivity.mudarAtividade();
         return ResponseEntity.ok(isActive);
     }
 
-    @Operation(summary = "Criar conta de vendedor", description = "Transforma um comprador em vendedor")
+    @Operation(summary = "Criar conta de vendedor", description = "Transforma o usuário autenticado em vendedor")
     @PreAuthorize("isAuthenticated()")
     @PostMapping("/vendedores")
-    public ResponseEntity<UsuarioResponse> createSellerAccount(@RequestBody LoginRequest login,
-                                                                @RequestParam String stripeAccountId) {
-        UsuarioResponse user = sellerAcount.create(login, stripeAccountId);
+    public ResponseEntity<UsuarioResponse> createSellerAccount(
+            @RequestParam String stripeAccountId) {
+
+        UsuarioResponse user = sellerAcount.create(stripeAccountId);
         return ResponseEntity.status(HttpStatus.CREATED).body(user);
     }
 }

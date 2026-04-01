@@ -59,8 +59,9 @@ public class UseCaseConfig {
     }
 
     @Bean
-    public IMudarAtividadeDaConta mudarAtividadeDaConta(UsuarioGateway gateway, ILogin login) {
-        return new MudarAtividadeDaConta(gateway, login);
+    public IMudarAtividadeDaConta mudarAtividadeDaConta(UsuarioGateway gateway,
+                                                        UsuarioAutenticadoGateway authGateway) {
+        return new MudarAtividadeDaConta(gateway, authGateway);
     }
 
     @Bean
@@ -69,8 +70,9 @@ public class UseCaseConfig {
     }
 
     @Bean
-    public ICreateSellerAcount createSellerAcount(ILogin login, UsuarioGateway gateway, UsuarioMapperApl mapper) {
-        return new CreateSellerAcount(login, gateway, mapper);
+    public ICreateSellerAcount createSellerAcount(UsuarioGateway gateway, UsuarioMapperApl mapper,
+                                                   UsuarioAutenticadoGateway authGateway) {
+        return new CreateSellerAcount(gateway, mapper, authGateway);
     }
 
     @Bean
@@ -111,8 +113,8 @@ public class UseCaseConfig {
     }
 
     @Bean
-    public IChangePedidoStatus changePedidoStatus(PedidoGateway gateway) {
-        return new ChangePedidoStatus(gateway);
+    public IChangePedidoStatus changePedidoStatus(PedidoGateway gateway, UsuarioAutenticadoGateway authGateway) {
+        return new ChangePedidoStatus(gateway, authGateway);
     }
 
     @Bean
@@ -135,8 +137,10 @@ public class UseCaseConfig {
     }
 
     @Bean
-    public IGetPedidosByComprador getPedidosByComprador(PedidoGateway gateway, UsuarioAutenticadoGateway authGateway) {
-        return new getPedidosByComprador(gateway, authGateway);
+    public IGetPedidosByComprador getPedidosByComprador(PedidoGateway gateway,
+                                                         UsuarioAutenticadoGateway authGateway,
+                                                         PedidoMapperApl mapperApl) {
+        return new getPedidosByComprador(gateway, authGateway, mapperApl);
     }
 
     @Bean

@@ -25,6 +25,7 @@ public class DeletarProduto implements IDeletarProduto {
     }
 
     @Override
+    @org.springframework.transaction.annotation.Transactional
     public void deletar(UUID id) {
         Produtos produtoById = gateway.getById(id).orElseThrow(() -> new ProdutoNotFoundException(id));
         UsuarioAutenticado user = authGateway.get();

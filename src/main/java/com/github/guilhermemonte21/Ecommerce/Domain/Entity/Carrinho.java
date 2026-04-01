@@ -34,7 +34,14 @@ public class Carrinho {
 
     public void adicionarItem(Produtos produto, Long quantidade) {
         for (int i = 0; i < quantidade; i++) {
-            this.itens.add(produto);
+            Produtos copia = new Produtos(
+                    produto.getId(),
+                    produto.getNomeProduto(),
+                    produto.getDescricao(),
+                    produto.getPreco(),
+                    produto.getEstoque());
+            copia.setVendedor(produto.getVendedor());
+            this.itens.add(copia);
         }
         this.atualizarValorTotal();
         this.atualizadoAgora();

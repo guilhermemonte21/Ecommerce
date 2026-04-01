@@ -29,7 +29,7 @@ public class UsuariosEntity {
     @Column(name = "email_usuario")
     private String Email;
 
-    @Column(name = "cpf_usuario")
+    @Column(name = "cpf_usuario", unique = true)
     private String Cpf;
 
     @Column(name = "senha_usuario")

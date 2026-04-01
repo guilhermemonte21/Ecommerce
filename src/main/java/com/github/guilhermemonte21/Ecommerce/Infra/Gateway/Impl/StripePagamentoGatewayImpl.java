@@ -75,7 +75,9 @@ public class StripePagamentoGatewayImpl implements PagamentoGateway {
     }
 
     public boolean fallbackPagamento(Pedidos pedido, Throwable t) {
-        log.error("Circuit Breaker aberto ou falha na Stripe para o pedido {}. Erro: {}", pedido.getId(), t.getMessage());
-        throw new RuntimeException("Serviço de pagamento (Stripe) temporariamente indisponível. Tente novamente mais tarde.");
+        log.error("Circuit Breaker aberto ou falha na Stripe para o pedido {}. Erro: {}", pedido.getId(),
+                t.getMessage());
+        throw new RuntimeException(
+                "Serviço de pagamento (Stripe) temporariamente indisponível. Tente novamente mais tarde.");
     }
 }

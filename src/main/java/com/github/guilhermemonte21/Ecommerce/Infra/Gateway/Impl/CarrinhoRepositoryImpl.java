@@ -53,6 +53,9 @@ public class CarrinhoRepositoryImpl implements CarrinhoGateway {
     @Override
     public Carrinho getByDono(UUID id) {
         CarrinhoEntity cart = jpaCarrinhoRepository.findByCompradorId(id);
+        if (cart == null) {
+            return null;
+        }
         return carrinhoMapper.toDomain(cart);
     }
 }

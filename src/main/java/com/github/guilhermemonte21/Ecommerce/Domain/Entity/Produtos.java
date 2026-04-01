@@ -19,6 +19,7 @@ public class Produtos {
     private String descricao;
     private BigDecimal preco;
     private Long estoque;
+    private Long version;
 
     public Produtos(UUID id, String nomeProduto, String descricao, BigDecimal preco, Long estoque) {
         this.id = id;
@@ -26,6 +27,15 @@ public class Produtos {
         this.descricao = descricao;
         this.preco = preco;
         this.estoque = estoque;
+    }
+
+    public Produtos(UUID id, String nomeProduto, String descricao, BigDecimal preco, Long estoque, Long version) {
+        this.id = id;
+        this.nomeProduto = nomeProduto;
+        this.descricao = descricao;
+        this.preco = preco;
+        this.estoque = estoque;
+        this.version = version;
     }
 
     public void atualizarEstoque(Long quantity) {

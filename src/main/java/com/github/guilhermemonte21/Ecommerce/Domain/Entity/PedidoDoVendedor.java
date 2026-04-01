@@ -19,14 +19,14 @@ public class PedidoDoVendedor {
 
     private UUID id;
 
-    private Usuarios Vendedor;
+    private Usuarios vendedor;
 
-    private Pedidos Pedido;
+    private Pedidos pedido;
 
     private List<Produtos> produtos = new ArrayList<>();
 
-    private BigDecimal Valor;
+    private BigDecimal valor;
 
-    private StatusPedido Status;
+    private StatusPedido status;
 
 }

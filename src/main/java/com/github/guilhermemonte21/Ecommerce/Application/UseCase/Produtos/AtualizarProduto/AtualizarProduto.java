@@ -12,6 +12,7 @@ import com.github.guilhermemonte21.Ecommerce.Domain.Entity.Produtos;
 import com.github.guilhermemonte21.Ecommerce.Domain.Entity.UsuarioAutenticado;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.UUID;
 
@@ -31,6 +32,7 @@ public class AtualizarProduto implements IAtualizarProduto {
     }
 
     @Override
+    @Transactional
     public ProdutoResponse atualizar(UUID idProduto, CreateProdutoRequest produtos) {
         Produtos prodById = gateway.getById(idProduto)
                 .orElseThrow(() -> new ProdutoNotFoundException(idProduto));
@@ -42,14 +44,12 @@ public class AtualizarProduto implements IAtualizarProduto {
             throw new UsuarioInativoException();
         }
 
-        Produtos atualizado = new Produtos(
-                prodById.getId(),
-                produtos.nomeProduto(),
-                produtos.descricao(),
-                produtos.preco(),
-                produtos.estoque());
-        atualizado.setVendedor(prodById.getVendedor());
-        Produtos salvo = gateway.salvar(atualizado);
+        prodById.setNomeProduto(produtos.nomeProduto());
+        prodById.setDescricao(produtos.descricao());
+        prodById.setPreco(produtos.preco());
+        prodById.setEstoque(produtos.estoque());
+
+        Produtos salvo = gateway.salvar(prodById);
         log.info("Produto atualizado: id={}", idProduto);
         return mapperApl.toResponse(salvo);
     }

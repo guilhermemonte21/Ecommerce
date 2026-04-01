@@ -25,7 +25,7 @@ public class ProdutosEntity {
     @Column(name = "nome_produto")
     private String nomeProduto;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "vendedor_id", nullable = false)
     private UsuariosEntity vendedor;
 

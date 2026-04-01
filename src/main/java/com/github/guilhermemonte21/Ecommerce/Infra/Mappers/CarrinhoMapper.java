@@ -1,7 +1,5 @@
 package com.github.guilhermemonte21.Ecommerce.Infra.Mappers;
 
-import com.github.guilhermemonte21.Ecommerce.Application.Exceptions.ProdutoNotFoundException;
-import com.github.guilhermemonte21.Ecommerce.Application.Exceptions.UsuarioNotFoundException;
 import com.github.guilhermemonte21.Ecommerce.Domain.Entity.Carrinho;
 import com.github.guilhermemonte21.Ecommerce.Infra.Persistence.Entity.Data.CarrinhoEntity;
 import com.github.guilhermemonte21.Ecommerce.Infra.Persistence.Entity.Data.ProdutosEntity;
@@ -10,57 +8,52 @@ import com.github.guilhermemonte21.Ecommerce.Infra.Persistence.JpaRepository.Jpa
 import com.github.guilhermemonte21.Ecommerce.Infra.Persistence.JpaRepository.JpaUsuarioRepository;
 import org.springframework.stereotype.Component;
 
-import java.time.OffsetDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
 @Component
 public class CarrinhoMapper {
-        private final ProdutoMapper produtoMapper;
-        private final JpaUsuarioRepository jpaUsuarioRepository;
-        private final UsuarioMapper userMapper;
-        private final JpaProdutosRepository produtosRepository;
+    private final ProdutoMapper produtoMapper;
+    private final JpaUsuarioRepository jpaUsuarioRepository;
+    private final UsuarioMapper userMapper;
+    private final JpaProdutosRepository produtosRepository;
 
-        public CarrinhoMapper(ProdutoMapper produtoMapper, JpaUsuarioRepository jpaUsuarioRepository,
-                        UsuarioMapper userMapper, JpaProdutosRepository produtosRepository) {
-                this.produtoMapper = produtoMapper;
-                this.jpaUsuarioRepository = jpaUsuarioRepository;
-                this.userMapper = userMapper;
-                this.produtosRepository = produtosRepository;
-        }
+    public CarrinhoMapper(ProdutoMapper produtoMapper, JpaUsuarioRepository jpaUsuarioRepository,
+            UsuarioMapper userMapper, JpaProdutosRepository produtosRepository) {
+        this.produtoMapper = produtoMapper;
+        this.jpaUsuarioRepository = jpaUsuarioRepository;
+        this.userMapper = userMapper;
+        this.produtosRepository = produtosRepository;
+    }
 
-        public Carrinho toDomain(CarrinhoEntity entity) {
-                Carrinho carrinho = new Carrinho();
+    public Carrinho toDomain(CarrinhoEntity entity) {
+        Carrinho carrinho = new Carrinho();
+        carrinho.setId(entity.getId());
+        carrinho.setComprador(userMapper.toDomain(entity.getComprador()));
+        carrinho.setItens(entity.getItens().stream()
+                .map(produtoMapper::toDomain)
+                .collect(Collectors.toList()));
+        carrinho.setValorTotal(entity.getValorTotal());
+        carrinho.setAtualizadoEm(entity.getAtualizadoEm());
+        return carrinho;
+    }
 
-                carrinho.setId(entity.getId());
-                carrinho.setComprador(jpaUsuarioRepository.findById(entity.getComprador().getId())
-                                .map(userMapper::toDomain)
-                                .orElseThrow(() -> new UsuarioNotFoundException(entity.getComprador().getId())));
-                carrinho.setItens(entity.getItens().stream().map(c -> produtoMapper.toDomain(c))
-                                .collect(Collectors.toList()));
-                carrinho.setValorTotal(entity.getValorTotal());
-                carrinho.setAtualizadoEm(OffsetDateTime.now());
-                return carrinho;
-        }
+    public CarrinhoEntity toEntity(Carrinho domain) {
+        CarrinhoEntity entity = new CarrinhoEntity();
+        entity.setId(domain.getId());
 
-        public CarrinhoEntity toEntity(Carrinho entity) {
-                CarrinhoEntity carrinho = new CarrinhoEntity();
+        // P1 fix: use getReferenceById (proxy, no SELECT) instead of findById
+        UsuariosEntity user = jpaUsuarioRepository.getReferenceById(domain.getComprador().getId());
+        entity.setComprador(user);
 
-                carrinho.setId(entity.getId());
-                UsuariosEntity user = jpaUsuarioRepository
-                                .findById(entity.getComprador().getId())
-                                .orElseThrow(() -> new UsuarioNotFoundException(entity.getComprador().getId()));
+        // P1 fix: use getReferenceById for each product (proxy, no SELECT per item)
+        List<ProdutosEntity> produtos = domain.getItens().stream()
+                .map(p -> produtosRepository.getReferenceById(p.getId()))
+                .collect(Collectors.toList());
+        entity.setItens(produtos);
 
-                carrinho.setComprador(user);
-
-                List<ProdutosEntity> produtos = entity.getItens().stream()
-                                .map(p -> produtosRepository.findById(p.getId())
-                                                .orElseThrow(() -> new ProdutoNotFoundException(p.getId())))
-                                .collect(Collectors.toList());
-
-                carrinho.setItens(produtos);
-                carrinho.setValorTotal(entity.getValorTotal());
-                carrinho.setAtualizadoEm(OffsetDateTime.now());
-                return carrinho;
-        }
+        entity.setValorTotal(domain.getValorTotal());
+        entity.setAtualizadoEm(domain.getAtualizadoEm());
+        return entity;
+    }
 }

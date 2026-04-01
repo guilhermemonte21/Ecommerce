@@ -28,6 +28,7 @@ public class AddItemAoCarrinho implements IAddItemAoCarrinho {
     }
 
     @Override
+    @org.springframework.transaction.annotation.Transactional
     public CarrinhoResponse adicionarAoCarrinho(UUID idCarrinho, UUID idProduto, Long quantidade) {
         UsuarioAutenticado user = authGateway.get();
         Produtos produto = produtoGateway.getById(idProduto)

@@ -26,6 +26,7 @@ public class AtualizarEstoque implements IAtualizarEstoque {
     }
 
     @Override
+    @org.springframework.transaction.annotation.Transactional
     public Long atualizarEstoque(UUID idProduto, Long quantity) {
         Produtos produto = gateway.getById(idProduto)
                 .orElseThrow(() -> new ProdutoNotFoundException(idProduto));

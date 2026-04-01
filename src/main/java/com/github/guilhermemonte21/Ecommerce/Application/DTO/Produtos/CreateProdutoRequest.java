@@ -11,6 +11,6 @@ public record CreateProdutoRequest(
         @NotBlank String nomeProduto,
 
         @NotBlank String descricao,
-        @NotNull BigDecimal preco,
+        @NotNull @Positive(message = "Preço deve ser maior que zero") BigDecimal preco,
         @NotNull @Positive(message = "Valor de estoque inválido") Long estoque) {
 }

@@ -23,7 +23,7 @@ public class PedidoDoVendedorEntity {
     @Column(name = "ProdutoVendedorId")
     private UUID id;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "vendedor_id", nullable = false)
     private UsuariosEntity Vendedor;
 
@@ -32,11 +32,7 @@ public class PedidoDoVendedorEntity {
     private PedidosEntity pedido;
 
     @ManyToMany
-    @JoinTable(
-            name = "produto_vendedor_produtos",
-            joinColumns = @JoinColumn(name = "produto_vendedor_id"),
-            inverseJoinColumns = @JoinColumn(name = "produto_id")
-    )
+    @JoinTable(name = "produto_vendedor_produtos", joinColumns = @JoinColumn(name = "produto_vendedor_id"), inverseJoinColumns = @JoinColumn(name = "produto_id"))
     private List<ProdutosEntity> produtos = new ArrayList<>();
 
     @Column(name = "valorDoPedido")
@@ -45,6 +41,5 @@ public class PedidoDoVendedorEntity {
     @Enumerated(EnumType.STRING)
     @Column(name = "StatusDoPedido")
     private StatusPedido status;
-
 
 }

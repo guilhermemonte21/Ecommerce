@@ -1,12 +1,13 @@
 package com.github.guilhermemonte21.Ecommerce.Application.UseCase.Pedidos.GetPedidosByComprador;
 
+import com.github.guilhermemonte21.Ecommerce.Application.DTO.Pedidos.PedidoResponse;
 import com.github.guilhermemonte21.Ecommerce.Application.Exceptions.AcessoNegadoException;
 import com.github.guilhermemonte21.Ecommerce.Application.Exceptions.UsuarioInativoException;
-import com.github.guilhermemonte21.Ecommerce.Application.Exceptions.UsuarioNotFoundException;
 import com.github.guilhermemonte21.Ecommerce.Application.Gateway.PedidoGateway;
 import com.github.guilhermemonte21.Ecommerce.Application.Gateway.UsuarioAutenticadoGateway;
-import com.github.guilhermemonte21.Ecommerce.Domain.Entity.UsuarioAutenticado;
+import com.github.guilhermemonte21.Ecommerce.Application.Mappers.PedidoMapperApl;
 import com.github.guilhermemonte21.Ecommerce.Domain.Entity.Pedidos;
+import com.github.guilhermemonte21.Ecommerce.Domain.Entity.UsuarioAutenticado;
 
 import java.util.List;
 import java.util.UUID;
@@ -14,28 +15,29 @@ import java.util.UUID;
 public class getPedidosByComprador implements IGetPedidosByComprador {
 
     private final PedidoGateway gateway;
-    private final UsuarioAutenticadoGateway AuthGateway;
+    private final UsuarioAutenticadoGateway authGateway;
+    private final PedidoMapperApl mapperApl;
 
-    public getPedidosByComprador(PedidoGateway gateway, UsuarioAutenticadoGateway authGateway) {
+    public getPedidosByComprador(PedidoGateway gateway, UsuarioAutenticadoGateway authGateway,
+            PedidoMapperApl mapperApl) {
         this.gateway = gateway;
-        AuthGateway = authGateway;
+        this.authGateway = authGateway;
+        this.mapperApl = mapperApl;
     }
 
     @Override
-    public List<Pedidos> getPedidosByComprador(UUID IdComprador) {
-        List<Pedidos> pedidos = gateway.getPedidosByComprador(IdComprador);
-        UsuarioAutenticado user = AuthGateway.get();
-        if (!user.getUser().getId().equals(IdComprador)) {
+    public List<PedidoResponse> getPedidosByComprador(UUID idComprador) {
+
+        UsuarioAutenticado user = authGateway.get();
+        if (!user.getUser().getId().equals(idComprador)) {
             throw new AcessoNegadoException();
         }
-        if (user.getUser().getAtivo() == false) {
+        if (Boolean.FALSE.equals(user.getUser().getAtivo())) {
             throw new UsuarioInativoException();
         }
 
-        if (pedidos.isEmpty()) {
-            throw new UsuarioNotFoundException(IdComprador);
-        }
+        List<Pedidos> pedidos = gateway.getPedidosByComprador(idComprador);
 
-        return pedidos;
+        return pedidos.stream().map(mapperApl::toResponse).toList();
     }
 }

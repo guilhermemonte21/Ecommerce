@@ -1,6 +1,5 @@
 package com.github.guilhermemonte21.Ecommerce.API.Controller;
 
-import com.github.guilhermemonte21.Ecommerce.API.Idempotency.Idempotent;
 import com.github.guilhermemonte21.Ecommerce.Application.DTO.Pedidos.PedidoDoVendedorResponse;
 import com.github.guilhermemonte21.Ecommerce.Application.DTO.Pedidos.PedidoResponse;
 import com.github.guilhermemonte21.Ecommerce.Application.UseCase.Pedidos.CriarPedido.ICriarPedido;
@@ -8,7 +7,7 @@ import com.github.guilhermemonte21.Ecommerce.Application.UseCase.Pedidos.GetIten
 import com.github.guilhermemonte21.Ecommerce.Application.UseCase.Pedidos.ChangePedidoStatus.IChangePedidoStatus;
 import com.github.guilhermemonte21.Ecommerce.Application.UseCase.Pedidos.GetPedidoById.IGetPedidoById;
 import com.github.guilhermemonte21.Ecommerce.Application.UseCase.Pedidos.GetPedidosByComprador.IGetPedidosByComprador;
-import com.github.guilhermemonte21.Ecommerce.Domain.Entity.Pedidos;
+import com.github.guilhermemonte21.Ecommerce.API.Idempotency.Idempotent;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.enums.ParameterIn;
@@ -46,9 +45,9 @@ public class PedidoController {
     @PreAuthorize("isAuthenticated()")
     @Idempotent
     @Parameter(name = "Idempotency-Key", in = ParameterIn.HEADER, required = true, description = "Chave única da requisição (UUID)", example = "550e8400-e29b-41d4-a716-446655440000")
-    @PostMapping("/{idCarrinho}")
+    @PostMapping
     public ResponseEntity<PedidoResponse> criarPedido(@RequestBody String endereco) {
-
+        // P5 fix: removed unused {idCarrinho} path variable
         PedidoResponse newPedido = criarPedido.criarPedido(endereco);
         return ResponseEntity.status(HttpStatus.CREATED).body(newPedido);
     }
@@ -81,8 +80,10 @@ public class PedidoController {
     @Operation(summary = "Buscar pedidos do comprador")
     @PreAuthorize("isAuthenticated()")
     @GetMapping("/comprador/{idComprador}")
-    public ResponseEntity<List<Pedidos>> getPedidosByComprador(@PathVariable("idComprador") UUID idComprador) {
-        List<Pedidos> response = getPedidosByComprador.getPedidosByComprador(idComprador);
+    public ResponseEntity<List<PedidoResponse>> getPedidosByComprador(
+            @PathVariable("idComprador") UUID idComprador) {
+        // S5 fix: now returns List<PedidoResponse> instead of List<Pedidos>
+        List<PedidoResponse> response = getPedidosByComprador.getPedidosByComprador(idComprador);
         return ResponseEntity.ok(response);
     }
 }

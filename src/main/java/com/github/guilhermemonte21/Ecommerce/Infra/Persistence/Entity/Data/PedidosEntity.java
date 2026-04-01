@@ -28,13 +28,7 @@ public class PedidosEntity {
     @JoinColumn(name = "comprador_id", nullable = false)
     private UsuariosEntity comprador;
 
-
-    @OneToMany(
-            mappedBy = "pedido",
-            cascade = CascadeType.ALL,
-            orphanRemoval = true,
-            fetch = FetchType.EAGER
-    )
+    @OneToMany(mappedBy = "pedido", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     private List<PedidoDoVendedorEntity> pedidos = new ArrayList<>();
 
     @Column(name = "preco_pedido")
@@ -49,6 +43,5 @@ public class PedidosEntity {
 
     @Column(name = "criado_em")
     private OffsetDateTime criadoEm = OffsetDateTime.now();
-
 
 }
