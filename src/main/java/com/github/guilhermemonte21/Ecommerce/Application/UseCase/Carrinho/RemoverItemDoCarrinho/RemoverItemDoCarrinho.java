@@ -36,5 +36,6 @@ public class RemoverItemDoCarrinho implements IRemoverItemDoCarrinho {
         gateway.deleteItem(carrinho, idProduto);
         carrinho.atualizarValorTotal();
         carrinho.atualizadoAgora();
+        gateway.save(carrinho);
     }
 }

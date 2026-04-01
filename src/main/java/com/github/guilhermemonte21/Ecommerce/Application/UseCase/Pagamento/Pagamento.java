@@ -32,8 +32,8 @@ public class Pagamento implements IPagamento {
     }
 
     @Override
-    @Transactional
     public Boolean pagar(UUID idPedido) {
+
         Pedidos pedido = pedidoGateway.getById(idPedido)
                 .orElseThrow(() -> new PedidoNotFoundException(idPedido));
 
@@ -42,13 +42,20 @@ public class Pagamento implements IPagamento {
 
         if (sucesso) {
             log.info("Pagamento aprovado. Atualizando status do pedido {}", idPedido);
-            pedido.confirmarPagamento();
-            pedidoGateway.save(pedido);
+            confirmarPagamentoNoBanco(idPedido);
             return true;
         }
 
         log.error("Pagamento não foi aprovado no Gateway para o pedido {}", idPedido);
         return false;
+    }
+
+    @Transactional
+    protected void confirmarPagamentoNoBanco(UUID idPedido) {
+        Pedidos pedido = pedidoGateway.getById(idPedido)
+                .orElseThrow(() -> new PedidoNotFoundException(idPedido));
+        pedido.confirmarPagamento();
+        pedidoGateway.save(pedido);
     }
 
     @Override

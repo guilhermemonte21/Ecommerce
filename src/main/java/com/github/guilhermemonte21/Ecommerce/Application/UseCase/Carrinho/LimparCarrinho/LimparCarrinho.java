@@ -21,6 +21,7 @@ public class LimparCarrinho implements ILimparCarrinho {
     }
 
     @Override
+    @org.springframework.transaction.annotation.Transactional
     public void limparCarrinho(UUID idCarrinho) {
         Carrinho carrinho = gateway.getById(idCarrinho)
                 .orElseThrow(() -> new CarrinhoNotFoundException(idCarrinho));

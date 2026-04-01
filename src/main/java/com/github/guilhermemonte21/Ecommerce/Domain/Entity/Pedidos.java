@@ -21,7 +21,7 @@ public class Pedidos {
     private Usuarios comprador;
     private List<PedidoDoVendedor> itens = new ArrayList<>();
     private BigDecimal preco;
-    private String endereço;
+    private String endereco;
     private StatusPedido status = StatusPedido.PENDENTE;
     private OffsetDateTime criadoEm = OffsetDateTime.now();
 

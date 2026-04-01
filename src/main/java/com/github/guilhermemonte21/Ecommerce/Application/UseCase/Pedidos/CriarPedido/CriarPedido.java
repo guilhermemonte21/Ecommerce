@@ -47,7 +47,7 @@ public class CriarPedido implements ICriarPedido {
             throw new IllegalArgumentException("Usuário não autenticado");
         }
         Carrinho cart = carrinhoGateway.getByDono(user.getUser().getId());
-        if (cart.getItens() == null || cart.getItens().isEmpty()) {
+        if (cart == null || cart.getItens() == null || cart.getItens().isEmpty()) {
             throw new CarrinhoVazioException();
         }
         for (Produtos item : cart.getItens()) {
@@ -100,7 +100,7 @@ public class CriarPedido implements ICriarPedido {
         pedido.setPreco(orders.values().stream()
                 .map(PedidoDoVendedor::getValor)
                 .reduce(BigDecimal.ZERO, BigDecimal::add));
-        pedido.setEndereço(endereco);
+        pedido.setEndereco(endereco);
         pedido.setCriadoEm(OffsetDateTime.now());
 
         Pedidos completeOrder = pedidoGateway.save(pedido);

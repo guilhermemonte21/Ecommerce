@@ -1,5 +1,6 @@
 package com.github.guilhermemonte21.Ecommerce.Infra.Security;
 
+import com.github.guilhermemonte21.Ecommerce.Application.Exceptions.AcessoNegadoException;
 import com.github.guilhermemonte21.Ecommerce.Application.Gateway.UsuarioAutenticadoGateway;
 import com.github.guilhermemonte21.Ecommerce.Domain.Entity.UsuarioAutenticado;
 import com.github.guilhermemonte21.Ecommerce.Domain.Entity.Usuarios;
@@ -24,7 +25,7 @@ public class UsuarioAutenticadoImpl implements UsuarioAutenticadoGateway {
         if (auth == null ||
                 !auth.isAuthenticated() ||
                 !(auth.getPrincipal() instanceof UsuarioDetails)) {
-            return null;
+            throw new AcessoNegadoException();
         }
 
         UsuarioDetails details = (UsuarioDetails) auth.getPrincipal();

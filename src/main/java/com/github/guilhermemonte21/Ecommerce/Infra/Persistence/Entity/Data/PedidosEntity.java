@@ -35,7 +35,7 @@ public class PedidosEntity {
     private BigDecimal preco;
 
     @Column(name = "Endereco_entrega")
-    private String Endereço;
+    private String endereco;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "status_pedido")

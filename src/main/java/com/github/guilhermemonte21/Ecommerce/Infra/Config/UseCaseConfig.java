@@ -18,7 +18,7 @@ import com.github.guilhermemonte21.Ecommerce.Application.UseCase.Pedidos.GetIten
 import com.github.guilhermemonte21.Ecommerce.Application.UseCase.Pedidos.GetPedidoById.GetPedidoById;
 import com.github.guilhermemonte21.Ecommerce.Application.UseCase.Pedidos.GetPedidoById.IGetPedidoById;
 import com.github.guilhermemonte21.Ecommerce.Application.UseCase.Pedidos.GetPedidosByComprador.IGetPedidosByComprador;
-import com.github.guilhermemonte21.Ecommerce.Application.UseCase.Pedidos.GetPedidosByComprador.getPedidosByComprador;
+import com.github.guilhermemonte21.Ecommerce.Application.UseCase.Pedidos.GetPedidosByComprador.GetPedidosByComprador;
 import com.github.guilhermemonte21.Ecommerce.Application.UseCase.Produtos.AtualizarEstoque.AtualizarEstoque;
 import com.github.guilhermemonte21.Ecommerce.Application.UseCase.Produtos.AtualizarEstoque.IAtualizarEstoque;
 import com.github.guilhermemonte21.Ecommerce.Application.UseCase.Produtos.AtualizarProduto.AtualizarProduto;
@@ -140,7 +140,7 @@ public class UseCaseConfig {
     public IGetPedidosByComprador getPedidosByComprador(PedidoGateway gateway,
                                                          UsuarioAutenticadoGateway authGateway,
                                                          PedidoMapperApl mapperApl) {
-        return new getPedidosByComprador(gateway, authGateway, mapperApl);
+        return new GetPedidosByComprador(gateway, authGateway, mapperApl);
     }
 
     @Bean

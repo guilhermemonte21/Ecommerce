@@ -1,6 +1,7 @@
 package com.github.guilhermemonte21.Ecommerce.Infra.Mappers;
 
 import com.github.guilhermemonte21.Ecommerce.Domain.Entity.Pedidos;
+import com.github.guilhermemonte21.Ecommerce.Domain.Enum.StatusPedido;
 import com.github.guilhermemonte21.Ecommerce.Infra.Persistence.Entity.Data.PedidosEntity;
 import org.springframework.stereotype.Component;
 
@@ -21,9 +22,12 @@ public class PedidoMapper {
         newPedido.setId(entity.getId());
         newPedido.setPreco(entity.getPreco());
         newPedido.setCriadoEm(entity.getCriadoEm());
-        newPedido.setEndereço(entity.getEndereço());
+        newPedido.setEndereco(entity.getEndereco());
         newPedido.setComprador(usuarioMapper.toDomain(entity.getComprador()));
         newPedido.setItens(new ArrayList<>(entity.getPedidos().stream().map(pedidoDoVendedorMapper::toDomain).toList()));
+        if (entity.getStatus() != null) {
+            newPedido.setStatus(StatusPedido.valueOf(entity.getStatus().name()));
+        }
         return newPedido;
     }
 
@@ -32,10 +36,14 @@ public class PedidoMapper {
 
         newPedido.setId(entity.getId());
         newPedido.setPreco(entity.getPreco());
-        newPedido.setEndereço(entity.getEndereço());
+        newPedido.setEndereco(entity.getEndereco());
         newPedido.setCriadoEm(entity.getCriadoEm());
         newPedido.setComprador(usuarioMapper.toEntity(entity.getComprador()));
         newPedido.setPedidos(new ArrayList<>(entity.getItens().stream().map(pedidoDoVendedorMapper::toEntity).toList()));
+        if (entity.getStatus() != null) {
+            newPedido.setStatus(com.github.guilhermemonte21.Ecommerce.Infra.Persistence.Entity.Enum.StatusPedido
+                    .valueOf(entity.getStatus().name()));
+        }
         return newPedido;
     }
 }

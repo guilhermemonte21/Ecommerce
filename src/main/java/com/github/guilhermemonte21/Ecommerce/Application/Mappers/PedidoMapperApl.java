@@ -12,7 +12,7 @@ public class PedidoMapperApl {
                 pedido.getId(),
                 pedido.getComprador().getNome(),
                 pedido.getItens().stream().map(c -> c.getId()).toList(),
-                pedido.getEndereço(),
+                pedido.getEndereco(),
                 pedido.getPreco(),
                 pedido.getStatus() != null ? pedido.getStatus().name() : null,
                 pedido.getCriadoEm());

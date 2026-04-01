@@ -12,13 +12,13 @@ import com.github.guilhermemonte21.Ecommerce.Domain.Entity.UsuarioAutenticado;
 import java.util.List;
 import java.util.UUID;
 
-public class getPedidosByComprador implements IGetPedidosByComprador {
+public class GetPedidosByComprador implements IGetPedidosByComprador {
 
     private final PedidoGateway gateway;
     private final UsuarioAutenticadoGateway authGateway;
     private final PedidoMapperApl mapperApl;
 
-    public getPedidosByComprador(PedidoGateway gateway, UsuarioAutenticadoGateway authGateway,
+    public GetPedidosByComprador(PedidoGateway gateway, UsuarioAutenticadoGateway authGateway,
             PedidoMapperApl mapperApl) {
         this.gateway = gateway;
         this.authGateway = authGateway;

@@ -37,11 +37,14 @@ public class UsuarioMapper {
         entity.setSenha(usuarios.getSenha());
         entity.setEmail(usuarios.getEmail());
         entity.setAtivo(usuarios.getAtivo());
-        if ("Comprador".equals(usuarios.getTipoUsuario())) {
-            entity.setTipoUsuario(TipoUsuario.Comprador);
-        }
-        if ("Vendedor".equals(usuarios.getTipoUsuario())) {
-            entity.setTipoUsuario(TipoUsuario.Vendedor);
+        // R5 fix: use Enum.valueOf for safe conversion, handles all values
+        if (usuarios.getTipoUsuario() != null) {
+            try {
+                entity.setTipoUsuario(TipoUsuario.valueOf(usuarios.getTipoUsuario()));
+            } catch (IllegalArgumentException e) {
+                throw new IllegalArgumentException(
+                        "Tipo de usuário desconhecido: " + usuarios.getTipoUsuario());
+            }
         }
         entity.setStripeAccountId(usuarios.getStripeAccountId());
         return entity;

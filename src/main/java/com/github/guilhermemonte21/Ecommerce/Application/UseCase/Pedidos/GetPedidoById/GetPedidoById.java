@@ -31,7 +31,7 @@ public class GetPedidoById implements IGetPedidoById {
         if (!user.getUser().getId().equals(pedidos.getComprador().getId())) {
             throw new AcessoNegadoException();
         }
-        if (user.getUser().getAtivo() == false) {
+        if (Boolean.FALSE.equals(user.getUser().getAtivo())) {
             throw new UsuarioInativoException();
         }
         PedidoResponse response = mapperApl.toResponse(pedidos);
