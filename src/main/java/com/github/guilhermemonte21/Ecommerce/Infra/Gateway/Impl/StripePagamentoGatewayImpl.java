@@ -9,6 +9,7 @@ import com.stripe.model.Transfer;
 import com.stripe.param.PaymentIntentCreateParams;
 import com.stripe.param.TransferCreateParams;
 import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
+import io.github.resilience4j.retry.annotation.Retry;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
@@ -22,12 +23,14 @@ public class StripePagamentoGatewayImpl implements PagamentoGateway {
 
     @Override
     @CircuitBreaker(name = "stripeService", fallbackMethod = "fallbackPagamento")
+    @Retry(name = "stripeRetry", fallbackMethod = "fallbackPagamento")
     public boolean processarPagamento(Pedidos pedido) {
         for (PedidoDoVendedor subPedido : pedido.getItens()) {
             String stripeAcc = subPedido.getVendedor().getStripeAccountId();
             if (stripeAcc == null || stripeAcc.trim().isEmpty()) {
                 log.error("Vendedor {} não possui conta Stripe.", subPedido.getVendedor().getId());
-                throw new RuntimeException("O vendedor " + subPedido.getVendedor().getNome()
+
+                throw new IllegalStateException("O vendedor " + subPedido.getVendedor().getNome()
                         + " não possui conta Stripe configurada para receber pagamentos.");
             }
         }
@@ -69,13 +72,13 @@ public class StripePagamentoGatewayImpl implements PagamentoGateway {
             return true;
 
         } catch (StripeException e) {
-            log.error("Erro ao integrar com a Stripe: {}", e.getMessage(), e);
-            throw new RuntimeException("Falha ao processar pagamento com a Stripe: " + e.getUserMessage());
+            log.warn("Erro transiente ao integrar com a Stripe (tentará novamente): {}", e.getMessage());
+            throw new RuntimeException("Falha ao processar pagamento com a Stripe: " + e.getUserMessage(), e);
         }
     }
 
     public boolean fallbackPagamento(Pedidos pedido, Throwable t) {
-        log.error("Circuit Breaker aberto ou falha na Stripe para o pedido {}. Erro: {}", pedido.getId(),
+        log.error("Circuit Breaker aberto ou retries esgotados para o pedido {}. Erro: {}", pedido.getId(),
                 t.getMessage());
         throw new RuntimeException(
                 "Serviço de pagamento (Stripe) temporariamente indisponível. Tente novamente mais tarde.");

@@ -6,6 +6,7 @@ import com.github.guilhermemonte21.Ecommerce.Application.UseCase.Usuarios.Create
 import com.github.guilhermemonte21.Ecommerce.Application.UseCase.Usuarios.CreateUser.ICreateUser;
 import com.github.guilhermemonte21.Ecommerce.Application.UseCase.Usuarios.DesativarConta.IMudarAtividadeDaConta;
 import com.github.guilhermemonte21.Ecommerce.Application.UseCase.Usuarios.GetUserById.IGetUserById;
+import io.github.resilience4j.ratelimiter.annotation.RateLimiter;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
@@ -40,10 +41,16 @@ public class UsuarioController {
 
     @Operation(summary = "Criar novo usuário", description = "Registra um novo usuário comprador na plataforma")
     @PostMapping
+    @RateLimiter(name = "registroRateLimiter", fallbackMethod = "fallbackCriarUsuario")
     public ResponseEntity<UsuarioResponse> criar(@RequestBody @Valid CreateUserRequest usuarios) {
         log.info("Requisição para criar usuário: email={}", usuarios.email());
         UsuarioResponse newUser = createUser.createUser(usuarios);
         return ResponseEntity.status(HttpStatus.CREATED).body(newUser);
+    }
+
+    public ResponseEntity<UsuarioResponse> fallbackCriarUsuario(CreateUserRequest request, Throwable t) {
+        log.warn("Rate limit excedido no registro de usuários: {}", t.getMessage());
+        return ResponseEntity.status(HttpStatus.TOO_MANY_REQUESTS).build();
     }
 
     @Operation(summary = "Buscar usuário por ID")

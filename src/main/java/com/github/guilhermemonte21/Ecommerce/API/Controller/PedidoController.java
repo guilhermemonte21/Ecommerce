@@ -8,10 +8,17 @@ import com.github.guilhermemonte21.Ecommerce.Application.UseCase.Pedidos.ChangeP
 import com.github.guilhermemonte21.Ecommerce.Application.UseCase.Pedidos.GetPedidoById.IGetPedidoById;
 import com.github.guilhermemonte21.Ecommerce.Application.UseCase.Pedidos.GetPedidosByComprador.IGetPedidosByComprador;
 import com.github.guilhermemonte21.Ecommerce.API.Idempotency.Idempotent;
+
+import io.github.resilience4j.bulkhead.BulkheadFullException;
+import io.github.resilience4j.bulkhead.annotation.Bulkhead;
+import io.github.resilience4j.ratelimiter.RequestNotPermitted;
+import io.github.resilience4j.ratelimiter.annotation.RateLimiter;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.enums.ParameterIn;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -24,6 +31,8 @@ import java.util.UUID;
 @RequestMapping("/api/v1/pedidos")
 @Tag(name = "Pedidos", description = "Gerenciamento de pedidos")
 public class PedidoController {
+
+    private static final Logger log = LoggerFactory.getLogger(PedidoController.class);
 
     private final ICriarPedido criarPedido;
     private final IGetItensByPedido getItensByPedido;
@@ -46,10 +55,21 @@ public class PedidoController {
     @Idempotent
     @Parameter(name = "Idempotency-Key", in = ParameterIn.HEADER, required = true, description = "Chave única da requisição (UUID)", example = "550e8400-e29b-41d4-a716-446655440000")
     @PostMapping
+    @RateLimiter(name = "checkoutRateLimiter", fallbackMethod = "fallbackRateLimit")
+    @Bulkhead(name = "checkoutBulkhead", fallbackMethod = "fallbackBulkhead")
     public ResponseEntity<PedidoResponse> criarPedido(@RequestBody String endereco) {
-        // P5 fix: removed unused {idCarrinho} path variable
         PedidoResponse newPedido = criarPedido.criarPedido(endereco);
         return ResponseEntity.status(HttpStatus.CREATED).body(newPedido);
+    }
+
+    public ResponseEntity<PedidoResponse> fallbackRateLimit(String endereco, RequestNotPermitted e) {
+        log.warn("Rate limit atingido no checkout: {}", e.getMessage());
+        return ResponseEntity.status(HttpStatus.TOO_MANY_REQUESTS).build();
+    }
+
+    public ResponseEntity<PedidoResponse> fallbackBulkhead(String endereco, BulkheadFullException e) {
+        log.warn("Bulkhead cheio no checkout: {}", e.getMessage());
+        return ResponseEntity.status(HttpStatus.SERVICE_UNAVAILABLE).build();
     }
 
     @Operation(summary = "Buscar itens de um pedido")
@@ -82,7 +102,6 @@ public class PedidoController {
     @GetMapping("/comprador/{idComprador}")
     public ResponseEntity<List<PedidoResponse>> getPedidosByComprador(
             @PathVariable("idComprador") UUID idComprador) {
-        // S5 fix: now returns List<PedidoResponse> instead of List<Pedidos>
         List<PedidoResponse> response = getPedidosByComprador.getPedidosByComprador(idComprador);
         return ResponseEntity.ok(response);
     }
