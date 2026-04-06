@@ -6,6 +6,7 @@ import com.github.guilhermemonte21.Ecommerce.Infra.Mappers.PedidoMapper;
 import com.github.guilhermemonte21.Ecommerce.Infra.Persistence.Entity.Data.PedidosEntity;
 import com.github.guilhermemonte21.Ecommerce.Infra.Persistence.JpaRepository.JpaPedidosRepository;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
@@ -22,6 +23,7 @@ public class PedidoRepositoryImpl implements PedidoGateway {
     }
 
     @Override
+    @Transactional
     public Pedidos save(Pedidos pedidosEntity) {
         PedidosEntity newPedido = pedidosMapper.toEntity(pedidosEntity);
 

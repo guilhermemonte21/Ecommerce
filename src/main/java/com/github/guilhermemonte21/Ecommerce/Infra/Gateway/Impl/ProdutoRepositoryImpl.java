@@ -13,6 +13,7 @@ import java.util.Optional;
 import java.util.UUID;
 
 @Component
+@org.springframework.transaction.annotation.Transactional
 public class ProdutoRepositoryImpl implements ProdutoGateway {
 
     private final JpaProdutosRepository jpaProdutosRepo;
@@ -25,6 +26,7 @@ public class ProdutoRepositoryImpl implements ProdutoGateway {
     }
 
     @Override
+    @org.springframework.transaction.annotation.Transactional
     public Produtos salvar(Produtos produtos) {
         ProdutosEntity produtosEntity = mapper.toEntity(produtos);
         ProdutosEntity salvo = jpaProdutosRepo.save(produtosEntity);

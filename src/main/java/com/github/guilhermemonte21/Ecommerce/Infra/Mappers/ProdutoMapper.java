@@ -38,9 +38,15 @@ public class ProdutoMapper {
         entity.setDescricao(domain.getDescricao());
         entity.setVersion(domain.getVersion());
 
-        UsuariosEntity vendedor = jpaUsuarioRepository
-                .getReferenceById(domain.getVendedor().getId());
-        entity.setVendedor(vendedor);
+        if (domain.getVendedor() != null) {
+            if (domain.getVendedor().getId() != null) {
+                UsuariosEntity vendedor = jpaUsuarioRepository
+                        .getReferenceById(domain.getVendedor().getId());
+                entity.setVendedor(vendedor);
+            } else {
+                entity.setVendedor(userMapper.toEntity(domain.getVendedor()));
+            }
+        }
         return entity;
     }
 }

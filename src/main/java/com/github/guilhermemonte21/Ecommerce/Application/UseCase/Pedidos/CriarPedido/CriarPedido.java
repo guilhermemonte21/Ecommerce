@@ -7,8 +7,10 @@ import com.github.guilhermemonte21.Ecommerce.Application.Gateway.PedidoGateway;
 import com.github.guilhermemonte21.Ecommerce.Application.Gateway.ProdutoGateway;
 import com.github.guilhermemonte21.Ecommerce.Application.Gateway.UsuarioAutenticadoGateway;
 import com.github.guilhermemonte21.Ecommerce.Application.Mappers.PedidoMapperApl;
+import com.github.guilhermemonte21.Ecommerce.Application.Port.EventPublisher;
 import com.github.guilhermemonte21.Ecommerce.Domain.Entity.*;
 import com.github.guilhermemonte21.Ecommerce.Domain.Enum.StatusPedido;
+import com.github.guilhermemonte21.Ecommerce.Domain.Event.PedidoCriadoEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.transaction.annotation.Transactional;
@@ -26,14 +28,16 @@ public class CriarPedido implements ICriarPedido {
     private final ProdutoGateway produtoGateway;
     private final PedidoMapperApl mapperApl;
     private final UsuarioAutenticadoGateway authGateway;
+    private final EventPublisher eventPublisher;
 
     public CriarPedido(PedidoGateway pedidoGateway, CarrinhoGateway carrinhoGateway, ProdutoGateway produtoGateway,
-            PedidoMapperApl mapperApl, UsuarioAutenticadoGateway authGateway) {
+            PedidoMapperApl mapperApl, UsuarioAutenticadoGateway authGateway, EventPublisher eventPublisher) {
         this.pedidoGateway = pedidoGateway;
         this.carrinhoGateway = carrinhoGateway;
         this.produtoGateway = produtoGateway;
         this.mapperApl = mapperApl;
         this.authGateway = authGateway;
+        this.eventPublisher = eventPublisher;
     }
 
     @Transactional
@@ -104,8 +108,8 @@ public class CriarPedido implements ICriarPedido {
         pedido.setCriadoEm(OffsetDateTime.now());
 
         Pedidos completeOrder = pedidoGateway.save(pedido);
-        cart.limpar();
-        carrinhoGateway.save(cart);
+
+        eventPublisher.publish(new PedidoCriadoEvent(completeOrder.getId(), user.getUser().getId()));
         log.info("Pedido criado com sucesso: id={}, comprador={}", completeOrder.getId(), user.getUser().getId());
         return mapperApl.toResponse(completeOrder);
     }

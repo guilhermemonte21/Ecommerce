@@ -2,6 +2,7 @@ package com.github.guilhermemonte21.Ecommerce.Infra.Config;
 
 import com.github.guilhermemonte21.Ecommerce.Application.Gateway.*;
 import com.github.guilhermemonte21.Ecommerce.Application.Mappers.*;
+import com.github.guilhermemonte21.Ecommerce.Application.Port.EventPublisher;
 import com.github.guilhermemonte21.Ecommerce.Application.UseCase.Carrinho.AddItemAoCarrinho.*;
 import com.github.guilhermemonte21.Ecommerce.Application.UseCase.Carrinho.CriarCarrinho.*;
 import com.github.guilhermemonte21.Ecommerce.Application.UseCase.Carrinho.GetCarrinhoById.*;
@@ -108,8 +109,9 @@ public class UseCaseConfig {
     }
 
     @Bean
-    public IPagamento pagamento(PedidoGateway pedidoGateway, ProdutoGateway produtoGateway, PagamentoGateway pagamentoGateway) {
-        return new Pagamento(pedidoGateway, produtoGateway, pagamentoGateway);
+    public IPagamento pagamento(PedidoGateway pedidoGateway, PagamentoGateway pagamentoGateway,
+                                EventPublisher eventPublisher) {
+        return new Pagamento(pedidoGateway, pagamentoGateway, eventPublisher);
     }
 
     @Bean
@@ -120,8 +122,8 @@ public class UseCaseConfig {
     @Bean
     public ICriarPedido criarPedido(PedidoGateway pedidoGateway, CarrinhoGateway carrinhoGateway,
                                      ProdutoGateway produtoGateway, PedidoMapperApl mapper,
-                                     UsuarioAutenticadoGateway auth) {
-        return new CriarPedido(pedidoGateway, carrinhoGateway, produtoGateway, mapper, auth);
+                                     UsuarioAutenticadoGateway auth, EventPublisher eventPublisher) {
+        return new CriarPedido(pedidoGateway, carrinhoGateway, produtoGateway, mapper, auth, eventPublisher);
     }
 
     @Bean

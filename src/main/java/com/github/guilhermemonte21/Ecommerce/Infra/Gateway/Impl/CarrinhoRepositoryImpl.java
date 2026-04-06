@@ -9,12 +9,16 @@ import com.github.guilhermemonte21.Ecommerce.Infra.Persistence.Entity.Data.Carri
 import com.github.guilhermemonte21.Ecommerce.Infra.Persistence.Entity.Data.ProdutosEntity;
 import com.github.guilhermemonte21.Ecommerce.Infra.Persistence.JpaRepository.JpaCarrinhoRepository;
 import com.github.guilhermemonte21.Ecommerce.Infra.Persistence.JpaRepository.JpaProdutosRepository;
+
+import jakarta.transaction.Transactional;
+
 import org.springframework.stereotype.Component;
 
 import java.util.Optional;
 import java.util.UUID;
 
 @Component
+@Transactional
 public class CarrinhoRepositoryImpl implements CarrinhoGateway {
 
     private final JpaCarrinhoRepository jpaCarrinhoRepository;

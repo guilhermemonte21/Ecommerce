@@ -10,6 +10,7 @@ import lombok.RequiredArgsConstructor;
 import java.util.Optional;
 
 @RequiredArgsConstructor
+@org.springframework.transaction.annotation.Transactional
 public class IdempotencyGatewayImpl implements IdempotencyGateway {
 
     private final JpaIdempotencyRepository repository;

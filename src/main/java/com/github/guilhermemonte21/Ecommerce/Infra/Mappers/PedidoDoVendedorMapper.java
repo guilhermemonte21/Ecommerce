@@ -13,6 +13,7 @@ public class PedidoDoVendedorMapper {
     private final UsuarioMapper usuarioMapper;
     private final ProdutoMapper produtoMapper;
     private final JpaPedidosRepository jpaPedidosRepository;
+
     public PedidoDoVendedorMapper(UsuarioMapper usuarioMapper, ProdutoMapper produtoMapper,
             JpaPedidosRepository jpaPedidosRepository) {
         this.usuarioMapper = usuarioMapper;
@@ -24,7 +25,7 @@ public class PedidoDoVendedorMapper {
         PedidoDoVendedor domain = new PedidoDoVendedor();
         domain.setId(entity.getId());
         domain.setVendedor(usuarioMapper.toDomain(entity.getVendedor()));
-        
+
         if (entity.getPedido() != null) {
             Pedidos shallowPedido = new Pedidos();
             shallowPedido.setId(entity.getPedido().getId());
@@ -45,16 +46,18 @@ public class PedidoDoVendedorMapper {
         PedidoDoVendedorEntity entity = new PedidoDoVendedorEntity();
         entity.setProdutos(domain.getProdutos().stream().map(produtoMapper::toEntity).toList());
 
-        // R10 fix: use getReferenceById (proxy) to avoid extra SELECT for vendedor
         if (domain.getVendedor() != null && domain.getVendedor().getId() != null) {
-            entity.setVendedor(new com.github.guilhermemonte21.Ecommerce.Infra.Persistence.Entity.Data.UsuariosEntity());
+            entity.setVendedor(
+                    new com.github.guilhermemonte21.Ecommerce.Infra.Persistence.Entity.Data.UsuariosEntity());
             entity.getVendedor().setId(domain.getVendedor().getId());
             entity.setVendedor(usuarioMapper.toEntity(domain.getVendedor()));
         }
 
         if (domain.getPedido() != null) {
-            PedidosEntity pedidos = jpaPedidosRepository.getReferenceById(domain.getPedido().getId());
-            entity.setPedido(pedidos);
+            if (domain.getPedido().getId() != null) {
+                PedidosEntity pedidos = jpaPedidosRepository.getReferenceById(domain.getPedido().getId());
+                entity.setPedido(pedidos);
+            }
         }
 
         if (domain.getStatus() != null) {

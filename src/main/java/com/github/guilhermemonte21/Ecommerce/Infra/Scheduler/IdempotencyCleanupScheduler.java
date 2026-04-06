@@ -20,7 +20,7 @@ public class IdempotencyCleanupScheduler {
         this.repository = repository;
     }
 
-    @Scheduled(fixedRate = 3600000) // every hour
+    @Scheduled(fixedRate = 3600000)
     @Transactional
     public void cleanupExpiredRecords() {
         OffsetDateTime cutoff = OffsetDateTime.now().minusHours(24);
