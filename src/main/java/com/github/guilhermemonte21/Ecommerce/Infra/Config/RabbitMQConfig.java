@@ -13,26 +13,19 @@ import java.util.Map;
 @Configuration
 public class RabbitMQConfig {
 
-    // ─── Exchanges ───────────────────────────────────────────────────────────
     public static final String EXCHANGE_EVENTS = "ecommerce.events";
-    public static final String EXCHANGE_DLX    = "ecommerce.dlx";
+    public static final String EXCHANGE_DLX = "ecommerce.dlx";
 
-    // ─── Routing Keys ────────────────────────────────────────────────────────
-    public static final String RK_PEDIDO_CRIADO        = "pedido.criado";
-    public static final String RK_PAGAMENTO_CONCLUIDO  = "pagamento.concluido";
-    public static final String RK_PEDIDO_CANCELADO     = "pedido.cancelado";
+    public static final String RK_PEDIDO_CRIADO = "pedido.criado";
+    public static final String RK_PAGAMENTO_CONCLUIDO = "pagamento.concluido";
+    public static final String RK_PEDIDO_CANCELADO = "pedido.cancelado";
 
-    // ─── Queues ──────────────────────────────────────────────────────────────
-    public static final String QUEUE_LIMPAR_CARRINHO       = "pedido.criado.limpar-carrinho";
-    public static final String QUEUE_CONFIRMAR_PAGAMENTO   = "pagamento.concluido.atualizar-pedido";
-    public static final String QUEUE_ROLLBACK_ESTOQUE      = "pedido.cancelado.rollback-estoque";
-
-    // ─── Dead Letter Queues ──────────────────────────────────────────────────
-    public static final String QUEUE_LIMPAR_CARRINHO_DLQ     = "pedido.criado.limpar-carrinho.dlq";
+    public static final String QUEUE_LIMPAR_CARRINHO = "pedido.criado.limpar-carrinho";
+    public static final String QUEUE_CONFIRMAR_PAGAMENTO = "pagamento.concluido.atualizar-pedido";
+    public static final String QUEUE_ROLLBACK_ESTOQUE = "pedido.cancelado.rollback-estoque";
+    public static final String QUEUE_LIMPAR_CARRINHO_DLQ = "pedido.criado.limpar-carrinho.dlq";
     public static final String QUEUE_CONFIRMAR_PAGAMENTO_DLQ = "pagamento.concluido.atualizar-pedido.dlq";
-    public static final String QUEUE_ROLLBACK_ESTOQUE_DLQ    = "pedido.cancelado.rollback-estoque.dlq";
-
-    // ─── Exchange Beans ──────────────────────────────────────────────────────
+    public static final String QUEUE_ROLLBACK_ESTOQUE_DLQ = "pedido.cancelado.rollback-estoque.dlq";
 
     @Bean
     public TopicExchange eventsExchange() {
@@ -44,8 +37,6 @@ public class RabbitMQConfig {
         return ExchangeBuilder.directExchange(EXCHANGE_DLX).durable(true).build();
     }
 
-    // ─── Queue Builders ──────────────────────────────────────────────────────
-
     private Queue buildQueueWithDlx(String queueName, String dlqName) {
         Map<String, Object> args = new HashMap<>();
         args.put("x-dead-letter-exchange", EXCHANGE_DLX);
@@ -56,8 +47,6 @@ public class RabbitMQConfig {
     private Queue buildDlq(String dlqName) {
         return QueueBuilder.durable(dlqName).build();
     }
-
-    // ─── Queue Beans ─────────────────────────────────────────────────────────
 
     @Bean
     public Queue limparCarrinhoQueue() {
@@ -88,8 +77,6 @@ public class RabbitMQConfig {
     public Queue rollbackEstoqueDlq() {
         return buildDlq(QUEUE_ROLLBACK_ESTOQUE_DLQ);
     }
-
-    // ─── Binding Beans ────────────────────────────────────────────────────────
 
     @Bean
     public Binding bindingLimparCarrinho(Queue limparCarrinhoQueue, TopicExchange eventsExchange) {
@@ -132,8 +119,6 @@ public class RabbitMQConfig {
                 .to(deadLetterExchange)
                 .with(QUEUE_ROLLBACK_ESTOQUE_DLQ);
     }
-
-    // ─── Serialização JSON ───────────────────────────────────────────────────
 
     @Bean
     public Jackson2JsonMessageConverter messageConverter() {
