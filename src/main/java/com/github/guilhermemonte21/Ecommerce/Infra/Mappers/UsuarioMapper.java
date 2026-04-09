@@ -37,7 +37,6 @@ public class UsuarioMapper {
         entity.setSenha(usuarios.getSenha());
         entity.setEmail(usuarios.getEmail());
         entity.setAtivo(usuarios.getAtivo());
-        // R5 fix: use Enum.valueOf for safe conversion, handles all values
         if (usuarios.getTipoUsuario() != null) {
             try {
                 entity.setTipoUsuario(TipoUsuario.valueOf(usuarios.getTipoUsuario()));

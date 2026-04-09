@@ -10,9 +10,8 @@ import com.github.guilhermemonte21.Ecommerce.Infra.Persistence.Entity.Data.Produ
 import com.github.guilhermemonte21.Ecommerce.Infra.Persistence.JpaRepository.JpaCarrinhoRepository;
 import com.github.guilhermemonte21.Ecommerce.Infra.Persistence.JpaRepository.JpaProdutosRepository;
 
-import jakarta.transaction.Transactional;
-
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Optional;
 import java.util.UUID;

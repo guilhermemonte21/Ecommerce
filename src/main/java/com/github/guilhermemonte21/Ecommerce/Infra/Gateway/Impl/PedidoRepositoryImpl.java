@@ -46,4 +46,15 @@ public class PedidoRepositoryImpl implements PedidoGateway {
 
         return pedidos;
     }
+
+    @Override
+    public List<Pedidos> getPedidosByStatusAndCriadoEmBefore(com.github.guilhermemonte21.Ecommerce.Domain.Enum.StatusPedido status, java.time.OffsetDateTime threshold) {
+        com.github.guilhermemonte21.Ecommerce.Infra.Persistence.Entity.Enum.StatusPedido entityStatus = 
+                com.github.guilhermemonte21.Ecommerce.Infra.Persistence.Entity.Enum.StatusPedido.valueOf(status.name());
+        
+        return jpaPedidosRepository.findByStatusAndCriadoEmBefore(entityStatus, threshold)
+                .stream()
+                .map(pedidosMapper::toDomain)
+                .toList();
+    }
 }

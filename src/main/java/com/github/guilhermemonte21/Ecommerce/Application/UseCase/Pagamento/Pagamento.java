@@ -44,7 +44,8 @@ public class Pagamento implements IPagamento {
             return true;
         }
 
-        log.error("Pagamento não foi aprovado no Gateway para o pedido {}", idPedido);
+        log.error("Pagamento não foi aprovado no Gateway para o pedido {}. Publicando cancelamento para Rollback.", idPedido);
+        eventPublisher.publish(new PedidoCanceladoEvent(idPedido, "Falha no processo de pagamento"));
         return false;
     }
 

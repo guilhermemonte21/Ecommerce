@@ -12,4 +12,5 @@ public interface PedidoGateway {
 
     Optional<Pedidos> getById(UUID Id);
     List<Pedidos> getPedidosByComprador(UUID IdComprador);
+    List<Pedidos> getPedidosByStatusAndCriadoEmBefore(com.github.guilhermemonte21.Ecommerce.Domain.Enum.StatusPedido status, java.time.OffsetDateTime threshold);
 }
