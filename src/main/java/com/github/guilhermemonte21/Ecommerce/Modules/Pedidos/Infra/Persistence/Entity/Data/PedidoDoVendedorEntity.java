@@ -1,0 +1,48 @@
+package com.github.guilhermemonte21.Ecommerce.Modules.Pedidos.Infra.Persistence.Entity.Data;
+
+import com.github.guilhermemonte21.Ecommerce.Modules.Usuarios.Infra.Persistence.Entity.Data.UsuariosEntity;
+import com.github.guilhermemonte21.Ecommerce.Modules.Produtos.Infra.Persistence.Entity.Data.ProdutosEntity;
+
+import com.github.guilhermemonte21.Ecommerce.Modules.Pedidos.Infra.Persistence.Entity.Enum.StatusPedido;
+import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.UUID;
+
+@Entity
+@Table(name = "pedidosDoVendedor")
+@Getter
+@Setter
+@NoArgsConstructor
+public class PedidoDoVendedorEntity {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.UUID)
+    @Column(name = "ProdutoVendedorId")
+    private UUID id;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "vendedor_id", nullable = false)
+    private UsuariosEntity Vendedor;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "id_Pedido")
+    private PedidosEntity pedido;
+
+    @ManyToMany
+    @JoinTable(name = "produto_vendedor_produtos", joinColumns = @JoinColumn(name = "produto_vendedor_id"), inverseJoinColumns = @JoinColumn(name = "produto_id"))
+    private List<ProdutosEntity> produtos = new ArrayList<>();
+
+    @Column(name = "valorDoPedido")
+    private BigDecimal Valor;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "StatusDoPedido")
+    private StatusPedido status;
+
+}

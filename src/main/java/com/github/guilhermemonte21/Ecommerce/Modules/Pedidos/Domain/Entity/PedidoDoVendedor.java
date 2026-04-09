@@ -1,0 +1,35 @@
+package com.github.guilhermemonte21.Ecommerce.Modules.Pedidos.Domain.Entity;
+
+import com.github.guilhermemonte21.Ecommerce.Modules.Usuarios.Domain.Entity.Usuarios;
+import com.github.guilhermemonte21.Ecommerce.Modules.Produtos.Domain.Entity.Produtos;
+
+import com.github.guilhermemonte21.Ecommerce.Modules.Pedidos.Domain.Enum.StatusPedido;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.UUID;
+
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
+public class PedidoDoVendedor {
+
+    private UUID id;
+
+    private Usuarios vendedor;
+
+    private Pedidos pedido;
+
+    private List<Produtos> produtos = new ArrayList<>();
+
+    private BigDecimal valor;
+
+    private StatusPedido status;
+
+}

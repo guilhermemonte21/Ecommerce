@@ -1,0 +1,47 @@
+package com.github.guilhermemonte21.Ecommerce.Modules.Produtos.Infra.Persistence.Entity.Data;
+
+import com.github.guilhermemonte21.Ecommerce.Modules.Usuarios.Infra.Persistence.Entity.Data.UsuariosEntity;
+
+import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
+import java.math.BigDecimal;
+import java.util.UUID;
+
+@Entity
+@Table(name = "produtos", indexes = {
+        @Index(name = "idx_produto_nome", columnList = "nome_produto")
+})
+@Getter
+@Setter
+@NoArgsConstructor
+public class ProdutosEntity {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.UUID)
+    @Column(name = "id_produto")
+    private UUID id;
+
+    @Column(name = "nome_produto")
+    private String nomeProduto;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "vendedor_id", nullable = false)
+    private UsuariosEntity vendedor;
+
+    @Column(name = "descricao_produto")
+    private String descricao;
+
+    @Column(name = "preco_produto")
+    private BigDecimal preco;
+
+    @Column(name = "estoque_produto")
+    private Long estoque;
+
+    @Version
+    @Column(name = "version")
+    private Long version;
+
+}

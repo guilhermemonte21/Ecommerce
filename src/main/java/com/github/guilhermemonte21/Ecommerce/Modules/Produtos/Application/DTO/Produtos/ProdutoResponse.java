@@ -1,0 +1,13 @@
+package com.github.guilhermemonte21.Ecommerce.Modules.Produtos.Application.DTO.Produtos;
+
+import java.math.BigDecimal;
+import java.util.UUID;
+
+public record ProdutoResponse(
+          UUID IdProduto,
+          String NomeProduto,
+          String NomeVendedor,
+          BigDecimal Preco,
+          String Descricao,
+          Long Estoque) {
+}

@@ -1,0 +1,8 @@
+package com.github.guilhermemonte21.Ecommerce.Modules.Pagamento.Application.UseCase.Pagamento;
+
+import java.util.UUID;
+
+public interface IPagamento {
+    Boolean pagar(UUID IdPedido);
+    void cancelarPagamento(UUID idPedido);
+}

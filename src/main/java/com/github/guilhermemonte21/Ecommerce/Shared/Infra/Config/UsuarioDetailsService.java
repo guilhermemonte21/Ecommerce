@@ -1,0 +1,27 @@
+package com.github.guilhermemonte21.Ecommerce.Shared.Infra.Config;
+
+import com.github.guilhermemonte21.Ecommerce.Modules.Usuarios.Infra.Persistence.Entity.Data.UsuariosEntity;
+import com.github.guilhermemonte21.Ecommerce.Modules.Usuarios.Infra.Persistence.JpaRepository.JpaUsuarioRepository;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.stereotype.Service;
+
+@Service
+public class UsuarioDetailsService implements UserDetailsService {
+
+    private final JpaUsuarioRepository repository;
+
+    public UsuarioDetailsService(JpaUsuarioRepository repository) {
+        this.repository = repository;
+    }
+
+    @Override
+    public UserDetails loadUserByUsername(String email)
+            throws UsernameNotFoundException {
+
+        UsuariosEntity user = repository.findByEmail(email);
+
+        return new UsuarioDetails(user);
+    }
+}
