@@ -55,19 +55,14 @@ public class CriarPedido implements ICriarPedido {
             throw new IllegalArgumentException("Usuário não autenticado");
         }
         Carrinho cart = carrinhoGateway.getByDono(user.getUser().getId());
-        if (cart == null || cart.getItens() == null || cart.getItens().isEmpty()) {
+        if (cart == null || cart.getProdutoIds() == null || cart.getProdutoIds().isEmpty()) {
             throw new CarrinhoVazioException();
         }
-        for (Produtos item : cart.getItens()) {
-            if (item.getVendedor().getId().equals(user.getUser().getId())) {
-                throw new IllegalArgumentException(
-                        "Não é possível comprar o próprio produto: " + item.getNomeProduto());
-            }
-        }
+        
         Map<UUID, Long> productQuantities = new HashMap<>();
-        for (Produtos itemCarrinho : cart.getItens()) {
-            productQuantities.put(itemCarrinho.getId(),
-                    productQuantities.getOrDefault(itemCarrinho.getId(), 0L) + 1);
+        for (UUID itemCarrinho : cart.getProdutoIds()) {
+            productQuantities.put(itemCarrinho,
+                    productQuantities.getOrDefault(itemCarrinho, 0L) + 1);
         }
         Map<UUID, Produtos> productDetails = new HashMap<>();
         for (Map.Entry<UUID, Long> entry : productQuantities.entrySet()) {
@@ -75,6 +70,11 @@ public class CriarPedido implements ICriarPedido {
             Long quantidade = entry.getValue();
             Produtos produtoComLock = produtoGateway.getByIdComLock(idProduto)
                     .orElseThrow(() -> new ProdutoNotFoundException(idProduto));
+
+            if (produtoComLock.getVendedorId().equals(user.getUser().getId())) {
+                throw new IllegalArgumentException(
+                        "Não é possível comprar o próprio produto: " + produtoComLock.getNomeProduto());
+            }
 
             if (produtoComLock.getEstoque() == null || produtoComLock.getEstoque() < quantidade) {
                 throw new EstoqueInsuficienteException(produtoComLock.getNomeProduto());
@@ -85,22 +85,22 @@ public class CriarPedido implements ICriarPedido {
             productDetails.put(idProduto, produtoComLock);
         }
         Pedidos pedido = new Pedidos();
-        pedido.setComprador(user.getUser());
+        pedido.setCompradorId(user.getUser().getId());
 
         Map<UUID, PedidoDoVendedor> orders = new HashMap<>();
-        for (Produtos itemCarrinho : cart.getItens()) {
-            Produtos dbProduct = productDetails.get(itemCarrinho.getId());
-            UUID vendedorId = dbProduct.getVendedor().getId();
+        for (UUID itemCarrinhoId : cart.getProdutoIds()) {
+            Produtos dbProduct = productDetails.get(itemCarrinhoId);
+            UUID vendedorId = dbProduct.getVendedorId();
             PedidoDoVendedor pedidoVendedor = orders.computeIfAbsent(vendedorId, id -> {
                 PedidoDoVendedor novo = new PedidoDoVendedor();
-                novo.setVendedor(dbProduct.getVendedor());
+                novo.setVendedorId(vendedorId);
                 novo.setPedido(pedido);
                 novo.setValor(BigDecimal.ZERO);
                 novo.setStatus(StatusPedido.PENDENTE);
                 return novo;
             });
 
-            pedidoVendedor.getProdutos().add(dbProduct);
+            pedidoVendedor.getProdutoIds().add(itemCarrinhoId);
             pedidoVendedor.setValor(pedidoVendedor.getValor().add(dbProduct.getPreco()));
         }
 

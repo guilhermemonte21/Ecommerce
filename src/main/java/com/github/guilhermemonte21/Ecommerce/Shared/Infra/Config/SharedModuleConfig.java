@@ -2,7 +2,6 @@ package com.github.guilhermemonte21.Ecommerce.Shared.Infra.Config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import com.github.guilhermemonte21.Ecommerce.Shared.Application.Gateway.*;
 
 @Configuration

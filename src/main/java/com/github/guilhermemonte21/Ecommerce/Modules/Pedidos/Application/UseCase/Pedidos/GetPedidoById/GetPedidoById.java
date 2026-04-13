@@ -10,7 +10,6 @@ import com.github.guilhermemonte21.Ecommerce.Modules.Pedidos.Application.Mappers
 import com.github.guilhermemonte21.Ecommerce.Modules.Usuarios.Domain.Entity.UsuarioAutenticado;
 import com.github.guilhermemonte21.Ecommerce.Modules.Pedidos.Domain.Entity.Pedidos;
 
-
 import java.util.UUID;
 
 public class GetPedidoById implements IGetPedidoById {
@@ -28,7 +27,7 @@ public class GetPedidoById implements IGetPedidoById {
     public PedidoResponse pedidoById(UUID IdPedido) {
         Pedidos pedidos = gateway.getById(IdPedido).orElseThrow(() -> new PedidoNotFoundException(IdPedido));
         UsuarioAutenticado user = AuthGateway.get();
-        if (!user.getUser().getId().equals(pedidos.getComprador().getId())) {
+        if (!user.getUser().getId().equals(pedidos.getCompradorId())) {
             throw new AcessoNegadoException();
         }
         if (Boolean.FALSE.equals(user.getUser().getAtivo())) {

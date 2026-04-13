@@ -1,22 +1,13 @@
 package com.github.guilhermemonte21.Ecommerce.Modules.Produtos.Infra.Mappers;
 
-import com.github.guilhermemonte21.Ecommerce.Modules.Usuarios.Infra.Mappers.UsuarioMapper;
+import org.springframework.stereotype.Component;
 
 import com.github.guilhermemonte21.Ecommerce.Modules.Produtos.Domain.Entity.Produtos;
 import com.github.guilhermemonte21.Ecommerce.Modules.Produtos.Infra.Persistence.Entity.Data.ProdutosEntity;
-import com.github.guilhermemonte21.Ecommerce.Modules.Usuarios.Infra.Persistence.Entity.Data.UsuariosEntity;
-import com.github.guilhermemonte21.Ecommerce.Modules.Usuarios.Infra.Persistence.JpaRepository.JpaUsuarioRepository;
-import org.springframework.stereotype.Component;
 
 @Component
 public class ProdutoMapper {
-    private final JpaUsuarioRepository jpaUsuarioRepository;
-    private final UsuarioMapper userMapper;
-
-    public ProdutoMapper(JpaUsuarioRepository jpaUsuarioRepository,
-            UsuarioMapper userMapper) {
-        this.jpaUsuarioRepository = jpaUsuarioRepository;
-        this.userMapper = userMapper;
+    public ProdutoMapper() {
     }
 
     public Produtos toDomain(ProdutosEntity entity) {
@@ -25,7 +16,7 @@ public class ProdutoMapper {
         produtos.setNomeProduto(entity.getNomeProduto());
         produtos.setPreco(entity.getPreco());
         produtos.setEstoque(entity.getEstoque());
-        produtos.setVendedor(userMapper.toDomain(entity.getVendedor()));
+        produtos.setVendedorId(entity.getVendedorId());
         produtos.setDescricao(entity.getDescricao());
         produtos.setVersion(entity.getVersion());
         return produtos;
@@ -40,15 +31,7 @@ public class ProdutoMapper {
         entity.setDescricao(domain.getDescricao());
         entity.setVersion(domain.getVersion());
 
-        if (domain.getVendedor() != null) {
-            if (domain.getVendedor().getId() != null) {
-                UsuariosEntity vendedor = jpaUsuarioRepository
-                        .getReferenceById(domain.getVendedor().getId());
-                entity.setVendedor(vendedor);
-            } else {
-                entity.setVendedor(userMapper.toEntity(domain.getVendedor()));
-            }
-        }
+        entity.setVendedorId(domain.getVendedorId());
         return entity;
     }
 }

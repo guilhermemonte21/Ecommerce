@@ -1,6 +1,6 @@
 package com.github.guilhermemonte21.Ecommerce.Modules.Pedidos.Infra.Persistence.Entity.Data;
 
-import com.github.guilhermemonte21.Ecommerce.Modules.Usuarios.Infra.Persistence.Entity.Data.UsuariosEntity;
+
 
 import com.github.guilhermemonte21.Ecommerce.Modules.Pedidos.Infra.Persistence.Entity.Enum.StatusPedido;
 import jakarta.persistence.*;
@@ -26,9 +26,8 @@ public class PedidosEntity {
     @Column(name = "id_pedido")
     private UUID id;
 
-    @ManyToOne
-    @JoinColumn(name = "comprador_id", nullable = false)
-    private UsuariosEntity comprador;
+    @Column(name = "comprador_id", nullable = false)
+    private UUID compradorId;
 
     @OneToMany(mappedBy = "pedido", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     private List<PedidoDoVendedorEntity> pedidos = new ArrayList<>();

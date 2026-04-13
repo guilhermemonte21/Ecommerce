@@ -1,6 +1,6 @@
 package com.github.guilhermemonte21.Ecommerce.Modules.Pedidos.Domain.Entity;
 
-import com.github.guilhermemonte21.Ecommerce.Modules.Usuarios.Domain.Entity.Usuarios;
+
 
 import com.github.guilhermemonte21.Ecommerce.Modules.Pedidos.Domain.Enum.StatusPedido;
 import lombok.AllArgsConstructor;
@@ -20,7 +20,7 @@ import java.util.UUID;
 @AllArgsConstructor
 public class Pedidos {
     private UUID id;
-    private Usuarios comprador;
+    private UUID compradorId;
     private List<PedidoDoVendedor> itens = new ArrayList<>();
     private BigDecimal preco;
     private String endereco;

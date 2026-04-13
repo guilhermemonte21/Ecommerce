@@ -2,7 +2,6 @@ package com.github.guilhermemonte21.Ecommerce.Modules.Pedidos.Infra.Config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import com.github.guilhermemonte21.Ecommerce.Modules.Produtos.Application.Gateway.*;
 import com.github.guilhermemonte21.Ecommerce.Shared.Application.Port.EventPublisher;
 import com.github.guilhermemonte21.Ecommerce.Modules.Usuarios.Application.Gateway.*;

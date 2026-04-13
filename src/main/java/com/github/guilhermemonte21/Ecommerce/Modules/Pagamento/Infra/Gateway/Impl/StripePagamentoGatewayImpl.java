@@ -14,23 +14,35 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
+import com.github.guilhermemonte21.Ecommerce.Modules.Usuarios.Application.Gateway.UsuarioGateway;
+import com.github.guilhermemonte21.Ecommerce.Modules.Usuarios.Domain.Entity.Usuarios;
+import com.github.guilhermemonte21.Ecommerce.Shared.Application.Exceptions.UsuarioNotFoundException;
+
 import java.math.BigDecimal;
 
 @Component
 public class StripePagamentoGatewayImpl implements PagamentoGateway {
 
     private static final Logger log = LoggerFactory.getLogger(StripePagamentoGatewayImpl.class);
+    
+    private final UsuarioGateway usuarioGateway;
+
+    public StripePagamentoGatewayImpl(UsuarioGateway usuarioGateway) {
+        this.usuarioGateway = usuarioGateway;
+    }
 
     @Override
     @CircuitBreaker(name = "stripeService", fallbackMethod = "fallbackPagamento")
     @Retry(name = "stripeRetry", fallbackMethod = "fallbackPagamento")
     public boolean processarPagamento(Pedidos pedido) {
         for (PedidoDoVendedor subPedido : pedido.getItens()) {
-            String stripeAcc = subPedido.getVendedor().getStripeAccountId();
+            Usuarios vendedor = usuarioGateway.getById(subPedido.getVendedorId())
+                    .orElseThrow(() -> new UsuarioNotFoundException(subPedido.getVendedorId()));
+            String stripeAcc = vendedor.getStripeAccountId();
             if (stripeAcc == null || stripeAcc.trim().isEmpty()) {
-                log.error("Vendedor {} não possui conta Stripe.", subPedido.getVendedor().getId());
+                log.error("Vendedor {} não possui conta Stripe.", vendedor.getId());
 
-                throw new IllegalStateException("O vendedor " + subPedido.getVendedor().getNome()
+                throw new IllegalStateException("O vendedor " + vendedor.getNome()
                         + " não possui conta Stripe configurada para receber pagamentos.");
             }
         }
@@ -55,7 +67,9 @@ public class StripePagamentoGatewayImpl implements PagamentoGateway {
 
             for (PedidoDoVendedor subPedido : pedido.getItens()) {
                 long valorVendedorCents = subPedido.getValor().multiply(new BigDecimal("100")).longValue();
-                String stripeAccountId = subPedido.getVendedor().getStripeAccountId();
+                Usuarios vendedor = usuarioGateway.getById(subPedido.getVendedorId())
+                        .orElseThrow(() -> new UsuarioNotFoundException(subPedido.getVendedorId()));
+                String stripeAccountId = vendedor.getStripeAccountId();
 
                 TransferCreateParams transferParams = TransferCreateParams.builder()
                         .setAmount(valorVendedorCents)

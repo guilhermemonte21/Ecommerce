@@ -16,8 +16,8 @@ import java.util.UUID;
 @Setter
 public class CarrinhoResponse {
     private UUID idCarrinho;
-    private List<String> produtos;
-    private String comprador;
+    private List<UUID> produtoIds;
+    private UUID compradorId;
     private BigDecimal valorTotal;
     private OffsetDateTime atualizadoEm;
 }

@@ -31,7 +31,7 @@ public class AtualizarEstoque implements IAtualizarEstoque {
         Produtos produto = gateway.getById(idProduto)
                 .orElseThrow(() -> new ProdutoNotFoundException(idProduto));
         UsuarioAutenticado user = authGateway.get();
-        if (!user.getUser().getId().equals(produto.getVendedor().getId())) {
+        if (!user.getUser().getId().equals(produto.getVendedorId())) {
             throw new AcessoNegadoException();
         }
         if (Boolean.FALSE.equals(user.getUser().getAtivo())) {

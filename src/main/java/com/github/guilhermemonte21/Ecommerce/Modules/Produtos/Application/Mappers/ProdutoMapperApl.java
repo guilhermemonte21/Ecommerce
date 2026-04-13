@@ -24,8 +24,8 @@ public class ProdutoMapperApl {
         newProduto.setPreco(produtoRequest.preco());
         newProduto.setEstoque(produtoRequest.estoque());
         newProduto.setDescricao(produtoRequest.descricao());
-        newProduto.setVendedor(gateway.getById(idVendedor)
-                .orElseThrow(() -> new UsuarioNotFoundException(idVendedor)));
+        gateway.getById(idVendedor).orElseThrow(() -> new UsuarioNotFoundException(idVendedor));
+        newProduto.setVendedorId(idVendedor);
         return newProduto;
     }
 
@@ -33,10 +33,11 @@ public class ProdutoMapperApl {
         return new ProdutoResponse(
                 produtos.getId(),
                 produtos.getNomeProduto(),
-                produtos.getVendedor() != null ? produtos.getVendedor().getNome() : null,
+                produtos.getVendedorId() != null
+                        ? gateway.getById(produtos.getVendedorId()).map(u -> u.getNome()).orElse(null)
+                        : null,
                 produtos.getPreco(),
                 produtos.getDescricao(),
-                produtos.getEstoque()
-        );
+                produtos.getEstoque());
     }
 }

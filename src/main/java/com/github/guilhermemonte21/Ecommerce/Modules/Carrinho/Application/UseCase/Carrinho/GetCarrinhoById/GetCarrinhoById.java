@@ -19,7 +19,7 @@ public class GetCarrinhoById implements IGetCarrinhoById {
     private final UsuarioAutenticadoGateway authGateway;
 
     public GetCarrinhoById(CarrinhoGateway gateway, CarrinhoMapperApl mapper,
-                           UsuarioAutenticadoGateway authGateway) {
+            UsuarioAutenticadoGateway authGateway) {
         this.gateway = gateway;
         this.mapper = mapper;
         this.authGateway = authGateway;
@@ -30,7 +30,7 @@ public class GetCarrinhoById implements IGetCarrinhoById {
         Carrinho carrinho = gateway.getById(id)
                 .orElseThrow(() -> new CarrinhoNotFoundException(id));
         UsuarioAutenticado user = authGateway.get();
-        if (!user.getUser().getId().equals(carrinho.getComprador().getId())) {
+        if (!user.getUser().getId().equals(carrinho.getCompradorId())) {
             throw new AcessoNegadoException();
         }
         if (Boolean.FALSE.equals(user.getUser().getAtivo())) {

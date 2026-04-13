@@ -1,41 +1,19 @@
 package com.github.guilhermemonte21.Ecommerce.Modules.Carrinho.Infra.Mappers;
 
-import com.github.guilhermemonte21.Ecommerce.Modules.Produtos.Infra.Mappers.ProdutoMapper;
-import com.github.guilhermemonte21.Ecommerce.Modules.Usuarios.Infra.Mappers.UsuarioMapper;
-
 import com.github.guilhermemonte21.Ecommerce.Modules.Carrinho.Domain.Entity.Carrinho;
 import com.github.guilhermemonte21.Ecommerce.Modules.Carrinho.Infra.Persistence.Entity.Data.CarrinhoEntity;
-import com.github.guilhermemonte21.Ecommerce.Modules.Produtos.Infra.Persistence.Entity.Data.ProdutosEntity;
-import com.github.guilhermemonte21.Ecommerce.Modules.Usuarios.Infra.Persistence.Entity.Data.UsuariosEntity;
-import com.github.guilhermemonte21.Ecommerce.Modules.Produtos.Infra.Persistence.JpaRepository.JpaProdutosRepository;
-import com.github.guilhermemonte21.Ecommerce.Modules.Usuarios.Infra.Persistence.JpaRepository.JpaUsuarioRepository;
 import org.springframework.stereotype.Component;
-
-import java.util.List;
-import java.util.stream.Collectors;
 
 @Component
 public class CarrinhoMapper {
-    private final ProdutoMapper produtoMapper;
-    private final JpaUsuarioRepository jpaUsuarioRepository;
-    private final UsuarioMapper userMapper;
-    private final JpaProdutosRepository produtosRepository;
-
-    public CarrinhoMapper(ProdutoMapper produtoMapper, JpaUsuarioRepository jpaUsuarioRepository,
-            UsuarioMapper userMapper, JpaProdutosRepository produtosRepository) {
-        this.produtoMapper = produtoMapper;
-        this.jpaUsuarioRepository = jpaUsuarioRepository;
-        this.userMapper = userMapper;
-        this.produtosRepository = produtosRepository;
+    public CarrinhoMapper() {
     }
 
     public Carrinho toDomain(CarrinhoEntity entity) {
         Carrinho carrinho = new Carrinho();
         carrinho.setId(entity.getId());
-        carrinho.setComprador(userMapper.toDomain(entity.getComprador()));
-        carrinho.setItens(entity.getItens().stream()
-                .map(produtoMapper::toDomain)
-                .collect(Collectors.toList()));
+        carrinho.setCompradorId(entity.getCompradorId());
+        carrinho.setProdutoIds(entity.getProdutoIds());
         carrinho.setValorTotal(entity.getValorTotal());
         carrinho.setAtualizadoEm(entity.getAtualizadoEm());
         return carrinho;
@@ -44,17 +22,8 @@ public class CarrinhoMapper {
     public CarrinhoEntity toEntity(Carrinho domain) {
         CarrinhoEntity entity = new CarrinhoEntity();
         entity.setId(domain.getId());
-
-        // P1 fix: use getReferenceById (proxy, no SELECT) instead of findById
-        UsuariosEntity user = jpaUsuarioRepository.getReferenceById(domain.getComprador().getId());
-        entity.setComprador(user);
-
-        // P1 fix: use getReferenceById for each product (proxy, no SELECT per item)
-        List<ProdutosEntity> produtos = domain.getItens().stream()
-                .map(p -> produtosRepository.getReferenceById(p.getId()))
-                .collect(Collectors.toList());
-        entity.setItens(produtos);
-
+        entity.setCompradorId(domain.getCompradorId());
+        entity.setProdutoIds(domain.getProdutoIds());
         entity.setValorTotal(domain.getValorTotal());
         entity.setAtualizadoEm(domain.getAtualizadoEm());
         return entity;

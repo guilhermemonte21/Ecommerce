@@ -1,6 +1,6 @@
 package com.github.guilhermemonte21.Ecommerce.Modules.Produtos.Infra.Persistence.Entity.Data;
 
-import com.github.guilhermemonte21.Ecommerce.Modules.Usuarios.Infra.Persistence.Entity.Data.UsuariosEntity;
+
 
 import jakarta.persistence.*;
 import lombok.Getter;
@@ -27,9 +27,8 @@ public class ProdutosEntity {
     @Column(name = "nome_produto")
     private String nomeProduto;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "vendedor_id", nullable = false)
-    private UsuariosEntity vendedor;
+    @Column(name = "vendedor_id", nullable = false)
+    private UUID vendedorId;
 
     @Column(name = "descricao_produto")
     private String descricao;

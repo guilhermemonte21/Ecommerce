@@ -1,7 +1,5 @@
 package com.github.guilhermemonte21.Ecommerce.Modules.Pedidos.Infra.Mappers;
 
-import com.github.guilhermemonte21.Ecommerce.Modules.Usuarios.Infra.Mappers.UsuarioMapper;
-
 import com.github.guilhermemonte21.Ecommerce.Modules.Pedidos.Domain.Entity.Pedidos;
 import com.github.guilhermemonte21.Ecommerce.Modules.Pedidos.Domain.Enum.StatusPedido;
 import com.github.guilhermemonte21.Ecommerce.Modules.Pedidos.Infra.Persistence.Entity.Data.PedidoDoVendedorEntity;
@@ -13,11 +11,10 @@ import java.util.List;
 
 @Component
 public class PedidoMapper {
-    private final UsuarioMapper usuarioMapper;
+
     private final PedidoDoVendedorMapper pedidoDoVendedorMapper;
 
-    public PedidoMapper(UsuarioMapper usuarioMapper, PedidoDoVendedorMapper pedidoDoVendedorMapper) {
-        this.usuarioMapper = usuarioMapper;
+    public PedidoMapper(PedidoDoVendedorMapper pedidoDoVendedorMapper) {
         this.pedidoDoVendedorMapper = pedidoDoVendedorMapper;
     }
 
@@ -27,7 +24,7 @@ public class PedidoMapper {
         newPedido.setPreco(entity.getPreco());
         newPedido.setCriadoEm(entity.getCriadoEm());
         newPedido.setEndereco(entity.getEndereco());
-        newPedido.setComprador(usuarioMapper.toDomain(entity.getComprador()));
+        newPedido.setCompradorId(entity.getCompradorId());
         newPedido
                 .setItens(new ArrayList<>(entity.getPedidos().stream().map(pedidoDoVendedorMapper::toDomain).toList()));
         if (entity.getStatus() != null) {
@@ -43,7 +40,7 @@ public class PedidoMapper {
         newPedido.setPreco(entity.getPreco());
         newPedido.setEndereco(entity.getEndereco());
         newPedido.setCriadoEm(entity.getCriadoEm());
-        newPedido.setComprador(usuarioMapper.toEntity(entity.getComprador()));
+        newPedido.setCompradorId(entity.getCompradorId());
         List<PedidoDoVendedorEntity> childs = new ArrayList<>(
                 entity.getItens().stream().map(pedidoDoVendedorMapper::toEntity).toList());
         for (PedidoDoVendedorEntity child : childs) {
@@ -51,8 +48,9 @@ public class PedidoMapper {
         }
         newPedido.setPedidos(childs);
         if (entity.getStatus() != null) {
-            newPedido.setStatus(com.github.guilhermemonte21.Ecommerce.Modules.Pedidos.Infra.Persistence.Entity.Enum.StatusPedido
-                    .valueOf(entity.getStatus().name()));
+            newPedido.setStatus(
+                    com.github.guilhermemonte21.Ecommerce.Modules.Pedidos.Infra.Persistence.Entity.Enum.StatusPedido
+                            .valueOf(entity.getStatus().name()));
         }
         return newPedido;
     }

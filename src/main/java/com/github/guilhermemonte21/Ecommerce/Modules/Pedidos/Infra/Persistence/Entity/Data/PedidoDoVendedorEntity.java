@@ -1,7 +1,6 @@
 package com.github.guilhermemonte21.Ecommerce.Modules.Pedidos.Infra.Persistence.Entity.Data;
 
-import com.github.guilhermemonte21.Ecommerce.Modules.Usuarios.Infra.Persistence.Entity.Data.UsuariosEntity;
-import com.github.guilhermemonte21.Ecommerce.Modules.Produtos.Infra.Persistence.Entity.Data.ProdutosEntity;
+
 
 import com.github.guilhermemonte21.Ecommerce.Modules.Pedidos.Infra.Persistence.Entity.Enum.StatusPedido;
 import jakarta.persistence.*;
@@ -26,17 +25,17 @@ public class PedidoDoVendedorEntity {
     @Column(name = "ProdutoVendedorId")
     private UUID id;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "vendedor_id", nullable = false)
-    private UsuariosEntity Vendedor;
+    @Column(name = "vendedor_id", nullable = false)
+    private UUID vendedorId;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_Pedido")
     private PedidosEntity pedido;
 
-    @ManyToMany
-    @JoinTable(name = "produto_vendedor_produtos", joinColumns = @JoinColumn(name = "produto_vendedor_id"), inverseJoinColumns = @JoinColumn(name = "produto_id"))
-    private List<ProdutosEntity> produtos = new ArrayList<>();
+    @ElementCollection(fetch = FetchType.LAZY)
+    @CollectionTable(name = "produto_vendedor_produtos", joinColumns = @JoinColumn(name = "produto_vendedor_id"))
+    @Column(name = "produto_id")
+    private List<UUID> produtoIds = new ArrayList<>();
 
     @Column(name = "valorDoPedido")
     private BigDecimal Valor;

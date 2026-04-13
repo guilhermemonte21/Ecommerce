@@ -44,11 +44,11 @@ public class AddItemAoCarrinho implements IAddItemAoCarrinho {
 
         Carrinho carrinho = gateway.getById(idCarrinho)
                 .orElseThrow(() -> new CarrinhoNotFoundException(idCarrinho));
-        if (!user.getUser().getId().equals(carrinho.getComprador().getId())) {
+        if (!user.getUser().getId().equals(carrinho.getCompradorId())) {
             throw new AcessoNegadoException();
         }
 
-        carrinho.adicionarItem(produto, quantidade);
+        carrinho.adicionarItem(produto.getId(), quantidade, produto.getPreco());
         Carrinho salvamento = gateway.save(carrinho);
         return mapperApl.domainToResponse(salvamento);
     }

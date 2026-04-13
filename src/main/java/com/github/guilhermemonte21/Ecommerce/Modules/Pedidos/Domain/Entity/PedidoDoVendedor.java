@@ -1,7 +1,6 @@
 package com.github.guilhermemonte21.Ecommerce.Modules.Pedidos.Domain.Entity;
 
-import com.github.guilhermemonte21.Ecommerce.Modules.Usuarios.Domain.Entity.Usuarios;
-import com.github.guilhermemonte21.Ecommerce.Modules.Produtos.Domain.Entity.Produtos;
+
 
 import com.github.guilhermemonte21.Ecommerce.Modules.Pedidos.Domain.Enum.StatusPedido;
 import lombok.AllArgsConstructor;
@@ -22,11 +21,11 @@ public class PedidoDoVendedor {
 
     private UUID id;
 
-    private Usuarios vendedor;
+    private UUID vendedorId;
 
     private Pedidos pedido;
 
-    private List<Produtos> produtos = new ArrayList<>();
+    private List<UUID> produtoIds = new ArrayList<>();
 
     private BigDecimal valor;
 

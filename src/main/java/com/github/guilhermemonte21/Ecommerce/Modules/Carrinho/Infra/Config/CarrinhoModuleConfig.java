@@ -2,7 +2,6 @@ package com.github.guilhermemonte21.Ecommerce.Modules.Carrinho.Infra.Config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import com.github.guilhermemonte21.Ecommerce.Modules.Produtos.Application.Gateway.*;
 import com.github.guilhermemonte21.Ecommerce.Modules.Usuarios.Application.Gateway.*;
 import com.github.guilhermemonte21.Ecommerce.Modules.Carrinho.Application.UseCase.Carrinho.LimparCarrinho.*;
@@ -18,13 +17,13 @@ public class CarrinhoModuleConfig {
 
 
     @Bean
-    public ICriarCarrinho criarCarrinho(CarrinhoGateway gateway, CarrinhoMapperApl mapper, UsuarioAutenticadoGateway auth) {
-        return new CriarCarrinho(gateway, mapper, auth);
+    public ICriarCarrinho criarCarrinho(CarrinhoGateway gateway, CarrinhoMapperApl mapper, UsuarioAutenticadoGateway auth, ProdutoGateway produtoGateway) {
+        return new CriarCarrinho(gateway, mapper, auth, produtoGateway);
     }
 
     @Bean
-    public IRemoverItemDoCarrinho removerItemDoCarrinho(CarrinhoGateway gateway, UsuarioAutenticadoGateway auth) {
-        return new RemoverItemDoCarrinho(gateway, auth);
+    public IRemoverItemDoCarrinho removerItemDoCarrinho(CarrinhoGateway gateway, UsuarioAutenticadoGateway auth, ProdutoGateway produtoGateway) {
+        return new RemoverItemDoCarrinho(gateway, auth, produtoGateway);
     }
 
     @Bean

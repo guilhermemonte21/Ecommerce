@@ -26,7 +26,7 @@ public class ChangePedidoStatus implements IChangePedidoStatus {
                 .orElseThrow(() -> new PedidoNotFoundException(idPedido));
 
         UsuarioAutenticado user = authGateway.get();
-        if (!user.getUser().getId().equals(pedidos.getComprador().getId())) {
+        if (!user.getUser().getId().equals(pedidos.getCompradorId())) {
             throw new AcessoNegadoException();
         }
 

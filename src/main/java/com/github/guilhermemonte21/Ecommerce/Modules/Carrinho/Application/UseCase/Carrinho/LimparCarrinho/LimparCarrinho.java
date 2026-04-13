@@ -26,7 +26,7 @@ public class LimparCarrinho implements ILimparCarrinho {
         Carrinho carrinho = gateway.getById(idCarrinho)
                 .orElseThrow(() -> new CarrinhoNotFoundException(idCarrinho));
         UsuarioAutenticado user = authGateway.get();
-        if (!user.getUser().getId().equals(carrinho.getComprador().getId())) {
+        if (!user.getUser().getId().equals(carrinho.getCompradorId())) {
             throw new AcessoNegadoException();
         }
         if (Boolean.FALSE.equals(user.getUser().getAtivo())) {

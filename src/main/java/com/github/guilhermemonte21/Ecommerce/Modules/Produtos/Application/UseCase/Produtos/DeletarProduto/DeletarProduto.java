@@ -29,7 +29,7 @@ public class DeletarProduto implements IDeletarProduto {
     public void deletar(UUID id) {
         Produtos produtoById = gateway.getById(id).orElseThrow(() -> new ProdutoNotFoundException(id));
         UsuarioAutenticado user = authGateway.get();
-        if (!user.getUser().getId().equals(produtoById.getVendedor().getId())) {
+        if (!user.getUser().getId().equals(produtoById.getVendedorId())) {
             throw new AcessoNegadoException();
         }
         if (Boolean.FALSE.equals(user.getUser().getAtivo())) {

@@ -5,7 +5,6 @@ import com.github.guilhermemonte21.Ecommerce.Modules.Pedidos.Application.Gateway
 import com.github.guilhermemonte21.Ecommerce.Modules.Produtos.Application.Gateway.ProdutoGateway;
 import com.github.guilhermemonte21.Ecommerce.Modules.Pedidos.Domain.Entity.PedidoDoVendedor;
 import com.github.guilhermemonte21.Ecommerce.Modules.Pedidos.Domain.Entity.Pedidos;
-import com.github.guilhermemonte21.Ecommerce.Modules.Produtos.Domain.Entity.Produtos;
 import com.github.guilhermemonte21.Ecommerce.Modules.Pedidos.Domain.Enum.StatusPedido;
 import com.github.guilhermemonte21.Ecommerce.Modules.Pedidos.Domain.Event.PedidoCanceladoEvent;
 import com.github.guilhermemonte21.Ecommerce.Shared.Infra.Config.RabbitMQConfig;
@@ -48,8 +47,8 @@ public class RollbackEstoqueConsumer {
 
         Map<UUID, Long> quantidadePorProduto = new HashMap<>();
         for (PedidoDoVendedor subPedido : pedido.getItens()) {
-            for (Produtos produto : subPedido.getProdutos()) {
-                quantidadePorProduto.merge(produto.getId(), 1L, Long::sum);
+            for (UUID produtoId : subPedido.getProdutoIds()) {
+                quantidadePorProduto.merge(produtoId, 1L, Long::sum);
             }
         }
 

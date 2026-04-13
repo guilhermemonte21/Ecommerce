@@ -40,7 +40,7 @@ public class PedidoRepositoryImpl implements PedidoGateway {
     }
 
     public List<Pedidos> getPedidosByComprador(UUID IdComprador) {
-        List<PedidosEntity> pedidoById = jpaPedidosRepository.getPedidosByComprador(IdComprador);
+        List<PedidosEntity> pedidoById = jpaPedidosRepository.findByCompradorId(IdComprador);
 
         List<Pedidos> pedidos = pedidoById.stream().map(pedidosMapper::toDomain).toList();
 
@@ -48,6 +48,7 @@ public class PedidoRepositoryImpl implements PedidoGateway {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<Pedidos> getPedidosByStatusAndCriadoEmBefore(com.github.guilhermemonte21.Ecommerce.Modules.Pedidos.Domain.Enum.StatusPedido status, java.time.OffsetDateTime threshold) {
         com.github.guilhermemonte21.Ecommerce.Modules.Pedidos.Infra.Persistence.Entity.Enum.StatusPedido entityStatus = 
                 com.github.guilhermemonte21.Ecommerce.Modules.Pedidos.Infra.Persistence.Entity.Enum.StatusPedido.valueOf(status.name());

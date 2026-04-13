@@ -1,7 +1,6 @@
 package com.github.guilhermemonte21.Ecommerce.Modules.Carrinho.Infra.Persistence.Entity.Data;
 
-import com.github.guilhermemonte21.Ecommerce.Modules.Usuarios.Infra.Persistence.Entity.Data.UsuariosEntity;
-import com.github.guilhermemonte21.Ecommerce.Modules.Produtos.Infra.Persistence.Entity.Data.ProdutosEntity;
+
 
 import jakarta.persistence.*;
 import lombok.Getter;
@@ -26,18 +25,17 @@ public class CarrinhoEntity {
     @Column(name = "id_carrinho")
     private UUID id;
 
-    @OneToOne
-    @JoinColumn(name = "comprador_id", nullable = false, unique = true)
-    private UsuariosEntity comprador;
+    @Column(name = "comprador_id", nullable = false, unique = true)
+    private UUID compradorId;
 
 
-    @ManyToMany
-    @JoinTable(
+    @ElementCollection(fetch = FetchType.LAZY)
+    @CollectionTable(
             name = "carrinho_produtos",
-            joinColumns = @JoinColumn(name = "carrinho_id"),
-            inverseJoinColumns = @JoinColumn(name = "produto_id")
+            joinColumns = @JoinColumn(name = "carrinho_id")
     )
-    private List<ProdutosEntity> itens = new ArrayList<>();
+    @Column(name = "produto_id")
+    private List<UUID> produtoIds = new ArrayList<>();
 
     @Column(name = "valor_total")
     private BigDecimal valorTotal;

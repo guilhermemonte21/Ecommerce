@@ -37,7 +37,7 @@ public class AtualizarProduto implements IAtualizarProduto {
         Produtos prodById = gateway.getById(idProduto)
                 .orElseThrow(() -> new ProdutoNotFoundException(idProduto));
         UsuarioAutenticado user = authGateway.get();
-        if (!user.getUser().getId().equals(prodById.getVendedor().getId())) {
+        if (!user.getUser().getId().equals(prodById.getVendedorId())) {
             throw new AcessoNegadoException();
         }
         if (Boolean.FALSE.equals(user.getUser().getAtivo())) {

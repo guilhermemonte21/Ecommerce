@@ -1,6 +1,6 @@
 package com.github.guilhermemonte21.Ecommerce.Modules.Produtos.Domain.Entity;
 
-import com.github.guilhermemonte21.Ecommerce.Modules.Usuarios.Domain.Entity.Usuarios;
+
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -17,7 +17,7 @@ import java.util.UUID;
 public class Produtos {
     private UUID id;
     private String nomeProduto;
-    private Usuarios vendedor;
+    private UUID vendedorId;
     private String descricao;
     private BigDecimal preco;
     private Long estoque;

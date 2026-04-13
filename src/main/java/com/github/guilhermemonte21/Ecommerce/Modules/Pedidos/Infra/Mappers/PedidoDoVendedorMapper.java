@@ -1,8 +1,5 @@
 package com.github.guilhermemonte21.Ecommerce.Modules.Pedidos.Infra.Mappers;
 
-import com.github.guilhermemonte21.Ecommerce.Modules.Usuarios.Infra.Mappers.UsuarioMapper;
-import com.github.guilhermemonte21.Ecommerce.Modules.Produtos.Infra.Mappers.ProdutoMapper;
-
 import com.github.guilhermemonte21.Ecommerce.Modules.Pedidos.Domain.Entity.PedidoDoVendedor;
 import com.github.guilhermemonte21.Ecommerce.Modules.Pedidos.Domain.Entity.Pedidos;
 import com.github.guilhermemonte21.Ecommerce.Modules.Pedidos.Domain.Enum.StatusPedido;
@@ -13,21 +10,17 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class PedidoDoVendedorMapper {
-    private final UsuarioMapper usuarioMapper;
-    private final ProdutoMapper produtoMapper;
+
     private final JpaPedidosRepository jpaPedidosRepository;
 
-    public PedidoDoVendedorMapper(UsuarioMapper usuarioMapper, ProdutoMapper produtoMapper,
-            JpaPedidosRepository jpaPedidosRepository) {
-        this.usuarioMapper = usuarioMapper;
-        this.produtoMapper = produtoMapper;
+    public PedidoDoVendedorMapper(JpaPedidosRepository jpaPedidosRepository) {
         this.jpaPedidosRepository = jpaPedidosRepository;
     }
 
     public PedidoDoVendedor toDomain(PedidoDoVendedorEntity entity) {
         PedidoDoVendedor domain = new PedidoDoVendedor();
         domain.setId(entity.getId());
-        domain.setVendedor(usuarioMapper.toDomain(entity.getVendedor()));
+        domain.setVendedorId(entity.getVendedorId());
 
         if (entity.getPedido() != null) {
             Pedidos shallowPedido = new Pedidos();
@@ -35,7 +28,7 @@ public class PedidoDoVendedorMapper {
             domain.setPedido(shallowPedido);
         }
 
-        domain.setProdutos(entity.getProdutos().stream().map(produtoMapper::toDomain).toList());
+        domain.setProdutoIds(entity.getProdutoIds());
         domain.setValor(entity.getValor());
 
         if (entity.getStatus() != null) {
@@ -47,14 +40,8 @@ public class PedidoDoVendedorMapper {
 
     public PedidoDoVendedorEntity toEntity(PedidoDoVendedor domain) {
         PedidoDoVendedorEntity entity = new PedidoDoVendedorEntity();
-        entity.setProdutos(domain.getProdutos().stream().map(produtoMapper::toEntity).toList());
-
-        if (domain.getVendedor() != null && domain.getVendedor().getId() != null) {
-            entity.setVendedor(
-                    new com.github.guilhermemonte21.Ecommerce.Modules.Usuarios.Infra.Persistence.Entity.Data.UsuariosEntity());
-            entity.getVendedor().setId(domain.getVendedor().getId());
-            entity.setVendedor(usuarioMapper.toEntity(domain.getVendedor()));
-        }
+        entity.setProdutoIds(domain.getProdutoIds());
+        entity.setVendedorId(domain.getVendedorId());
 
         if (domain.getPedido() != null) {
             if (domain.getPedido().getId() != null) {
@@ -64,8 +51,9 @@ public class PedidoDoVendedorMapper {
         }
 
         if (domain.getStatus() != null) {
-            entity.setStatus(com.github.guilhermemonte21.Ecommerce.Modules.Pedidos.Infra.Persistence.Entity.Enum.StatusPedido
-                    .valueOf(domain.getStatus().name()));
+            entity.setStatus(
+                    com.github.guilhermemonte21.Ecommerce.Modules.Pedidos.Infra.Persistence.Entity.Enum.StatusPedido
+                            .valueOf(domain.getStatus().name()));
         }
 
         entity.setValor(domain.getValor());

@@ -11,14 +11,10 @@ import java.util.List;
 public class PedidoDoVendedorMapperApl {
 
     public PedidoDoVendedorResponse toResponse(PedidoDoVendedor domain) {
-        List<String> produtos = domain.getProdutos().stream()
-                .map(Produtos::getNomeProduto)
-                .toList();
-
         return new PedidoDoVendedorResponse(
                 domain.getId(),
-                domain.getVendedor().getNome(),
-                produtos,
+                domain.getVendedorId(),
+                domain.getProdutoIds(),
                 domain.getValor(),
                 domain.getStatus() != null ? domain.getStatus().name() : null
         );

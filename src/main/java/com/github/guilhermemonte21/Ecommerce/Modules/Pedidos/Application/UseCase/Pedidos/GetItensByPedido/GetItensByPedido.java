@@ -24,7 +24,7 @@ public class GetItensByPedido implements IGetItensByPedido {
     private final PedidoDoVendedorMapperApl mapperApl;
 
     public GetItensByPedido(PedidoGateway pedidoGateway, UsuarioAutenticadoGateway authGateway,
-                            PedidoDoVendedorMapperApl mapperApl) {
+            PedidoDoVendedorMapperApl mapperApl) {
         this.pedidoGateway = pedidoGateway;
         this.authGateway = authGateway;
         this.mapperApl = mapperApl;
@@ -36,7 +36,7 @@ public class GetItensByPedido implements IGetItensByPedido {
                 .orElseThrow(() -> new PedidoNotFoundException(idPedido));
         UsuarioAutenticado user = authGateway.get();
 
-        if (!user.getUser().getId().equals(pedido.getComprador().getId())) {
+        if (!user.getUser().getId().equals(pedido.getCompradorId())) {
             throw new AcessoNegadoException();
         }
         if (Boolean.FALSE.equals(user.getUser().getAtivo())) {
