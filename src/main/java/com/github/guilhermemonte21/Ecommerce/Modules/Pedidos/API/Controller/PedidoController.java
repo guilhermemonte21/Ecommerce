@@ -97,12 +97,11 @@ public class PedidoController {
         return ResponseEntity.ok(response);
     }
 
-    @Operation(summary = "Buscar pedidos do comprador")
+    @Operation(summary = "Buscar pedidos do comprador autenticado")
     @PreAuthorize("isAuthenticated()")
-    @GetMapping("/comprador/{idComprador}")
-    public ResponseEntity<List<PedidoResponse>> getPedidosByComprador(
-            @PathVariable("idComprador") UUID idComprador) {
-        List<PedidoResponse> response = getPedidosByComprador.getPedidosByComprador(idComprador);
+    @GetMapping("/meus-pedidos")
+    public ResponseEntity<List<PedidoResponse>> getMeusPedidos() {
+        List<PedidoResponse> response = getPedidosByComprador.getPedidosByComprador();
         return ResponseEntity.ok(response);
     }
 }

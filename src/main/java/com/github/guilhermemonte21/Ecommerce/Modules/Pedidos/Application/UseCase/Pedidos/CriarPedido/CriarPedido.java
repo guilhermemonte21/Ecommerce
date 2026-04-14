@@ -6,6 +6,7 @@ import com.github.guilhermemonte21.Ecommerce.Modules.Carrinho.Application.Gatewa
 import com.github.guilhermemonte21.Ecommerce.Modules.Pedidos.Application.Gateway.PedidoGateway;
 import com.github.guilhermemonte21.Ecommerce.Modules.Produtos.Application.Gateway.ProdutoGateway;
 import com.github.guilhermemonte21.Ecommerce.Modules.Usuarios.Application.Gateway.UsuarioAutenticadoGateway;
+import com.github.guilhermemonte21.Ecommerce.Modules.Usuarios.Application.Gateway.UsuarioGateway;
 import com.github.guilhermemonte21.Ecommerce.Modules.Pedidos.Application.Mappers.PedidoMapperApl;
 import com.github.guilhermemonte21.Ecommerce.Shared.Application.Port.EventPublisher;
 import com.github.guilhermemonte21.Ecommerce.Modules.Carrinho.Domain.Entity.Carrinho;
@@ -33,15 +34,18 @@ public class CriarPedido implements ICriarPedido {
     private final PedidoMapperApl mapperApl;
     private final UsuarioAutenticadoGateway authGateway;
     private final EventPublisher eventPublisher;
+    private final UsuarioGateway usuarioGateway;
 
     public CriarPedido(PedidoGateway pedidoGateway, CarrinhoGateway carrinhoGateway, ProdutoGateway produtoGateway,
-            PedidoMapperApl mapperApl, UsuarioAutenticadoGateway authGateway, EventPublisher eventPublisher) {
+            PedidoMapperApl mapperApl, UsuarioAutenticadoGateway authGateway, EventPublisher eventPublisher,
+            UsuarioGateway usuarioGateway) {
         this.pedidoGateway = pedidoGateway;
         this.carrinhoGateway = carrinhoGateway;
         this.produtoGateway = produtoGateway;
         this.mapperApl = mapperApl;
         this.authGateway = authGateway;
         this.eventPublisher = eventPublisher;
+        this.usuarioGateway = usuarioGateway;
     }
 
     @Transactional
@@ -58,7 +62,7 @@ public class CriarPedido implements ICriarPedido {
         if (cart == null || cart.getProdutoIds() == null || cart.getProdutoIds().isEmpty()) {
             throw new CarrinhoVazioException();
         }
-        
+
         Map<UUID, Long> productQuantities = new HashMap<>();
         for (UUID itemCarrinho : cart.getProdutoIds()) {
             productQuantities.put(itemCarrinho,
@@ -97,6 +101,11 @@ public class CriarPedido implements ICriarPedido {
                 novo.setPedido(pedido);
                 novo.setValor(BigDecimal.ZERO);
                 novo.setStatus(StatusPedido.PENDENTE);
+
+                usuarioGateway.getById(vendedorId).ifPresent(vendedor -> {
+                    novo.setStripeAccountId(vendedor.getStripeAccountId());
+                });
+
                 return novo;
             });
 

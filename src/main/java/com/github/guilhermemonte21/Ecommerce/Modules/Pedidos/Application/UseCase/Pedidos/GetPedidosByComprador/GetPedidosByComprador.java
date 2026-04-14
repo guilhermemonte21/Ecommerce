@@ -1,7 +1,6 @@
 package com.github.guilhermemonte21.Ecommerce.Modules.Pedidos.Application.UseCase.Pedidos.GetPedidosByComprador;
 
 import com.github.guilhermemonte21.Ecommerce.Modules.Pedidos.Application.DTO.Pedidos.PedidoResponse;
-import com.github.guilhermemonte21.Ecommerce.Shared.Application.Exceptions.AcessoNegadoException;
 import com.github.guilhermemonte21.Ecommerce.Shared.Application.Exceptions.UsuarioInativoException;
 import com.github.guilhermemonte21.Ecommerce.Modules.Pedidos.Application.Gateway.PedidoGateway;
 import com.github.guilhermemonte21.Ecommerce.Modules.Usuarios.Application.Gateway.UsuarioAutenticadoGateway;
@@ -10,7 +9,6 @@ import com.github.guilhermemonte21.Ecommerce.Modules.Pedidos.Domain.Entity.Pedid
 import com.github.guilhermemonte21.Ecommerce.Modules.Usuarios.Domain.Entity.UsuarioAutenticado;
 
 import java.util.List;
-import java.util.UUID;
 
 public class GetPedidosByComprador implements IGetPedidosByComprador {
 
@@ -26,17 +24,13 @@ public class GetPedidosByComprador implements IGetPedidosByComprador {
     }
 
     @Override
-    public List<PedidoResponse> getPedidosByComprador(UUID idComprador) {
-
+    public List<PedidoResponse> getPedidosByComprador() {
         UsuarioAutenticado user = authGateway.get();
-        if (!user.getUser().getId().equals(idComprador)) {
-            throw new AcessoNegadoException();
-        }
         if (Boolean.FALSE.equals(user.getUser().getAtivo())) {
             throw new UsuarioInativoException();
         }
 
-        List<Pedidos> pedidos = gateway.getPedidosByComprador(idComprador);
+        List<Pedidos> pedidos = gateway.getPedidosByComprador(user.getUser().getId());
 
         return pedidos.stream().map(mapperApl::toResponse).toList();
     }

@@ -26,11 +26,12 @@ public class CreateUser implements ICreateUser {
 
     @Override
     public UsuarioResponse createUser(CreateUserRequest newUser) {
-        if (gateway.findByEmail(newUser.email()) != null) {
+        if (gateway.findByEmail(newUser.email()).isPresent()) {
             throw new UsuarioJaExisteException(newUser.email());
         }
         Usuarios user = mapperApl.requestToDomain(newUser);
         user.setSenha(encoder.encode(newUser.senha()));
+        user.setAtivo(true);
         user.setTipoUsuario("Comprador");
 
         Usuarios salvo = gateway.salvar(user);

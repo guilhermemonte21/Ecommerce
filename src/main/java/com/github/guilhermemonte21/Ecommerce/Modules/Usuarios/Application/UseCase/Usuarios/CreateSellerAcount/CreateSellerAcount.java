@@ -29,7 +29,8 @@ public class CreateSellerAcount implements ICreateSellerAcount {
     @Transactional
     public UsuarioResponse create(String stripeAccountId) {
         UsuarioAutenticado auth = authGateway.get();
-        Usuarios user = gateway.findByEmail(auth.getUser().getEmail());
+        Usuarios user = gateway.findByEmail(auth.getUser().getEmail())
+                .orElseThrow(() -> new com.github.guilhermemonte21.Ecommerce.Shared.Application.Exceptions.UsuarioNotFoundException(auth.getUser().getId()));
 
         user.setTipoUsuario("Vendedor");
         user.setStripeAccountId(stripeAccountId);

@@ -40,7 +40,6 @@ public class RemoverItemDoCarrinho implements IRemoverItemDoCarrinho {
         }
         Produtos produto = produtoGateway.getById(idProduto)
                 .orElseThrow(() -> new ProdutoNotFoundException(idProduto));
-        gateway.deleteItem(carrinho, idProduto);
         carrinho.removerItem(idProduto, produto.getPreco());
         gateway.save(carrinho);
     }

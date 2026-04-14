@@ -1,9 +1,11 @@
 package com.github.guilhermemonte21.Ecommerce.Modules.Pedidos.Infra.Jobs;
 
 import com.github.guilhermemonte21.Ecommerce.Modules.Pedidos.Application.Gateway.PedidoGateway;
-import com.github.guilhermemonte21.Ecommerce.Modules.Pagamento.Application.UseCase.Pagamento.IPagamento;
+import com.github.guilhermemonte21.Ecommerce.Modules.Pedidos.Domain.Entity.PedidoDoVendedor;
 import com.github.guilhermemonte21.Ecommerce.Modules.Pedidos.Domain.Entity.Pedidos;
 import com.github.guilhermemonte21.Ecommerce.Modules.Pedidos.Domain.Enum.StatusPedido;
+import com.github.guilhermemonte21.Ecommerce.Modules.Pedidos.Domain.Event.PedidoCanceladoEvent;
+import com.github.guilhermemonte21.Ecommerce.Shared.Application.Port.EventPublisher;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -11,19 +13,26 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.OffsetDateTime;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.UUID;
 
+/**
+ * ARCH-04: Job agendado para cancelar pedidos expirados (saga de timeout).
+ * Removida dependência do módulo de Pagamento. Agora publica diretamente o evento de cancelamento.
+ */
 @Component
 public class ScheduledCancelamentoPedidos {
 
     private static final Logger log = LoggerFactory.getLogger(ScheduledCancelamentoPedidos.class);
 
     private final PedidoGateway pedidoGateway;
-    private final IPagamento pagamentoUseCase;
+    private final EventPublisher eventPublisher;
 
-    public ScheduledCancelamentoPedidos(PedidoGateway pedidoGateway, IPagamento pagamentoUseCase) {
+    public ScheduledCancelamentoPedidos(PedidoGateway pedidoGateway, EventPublisher eventPublisher) {
         this.pedidoGateway = pedidoGateway;
-        this.pagamentoUseCase = pagamentoUseCase;
+        this.eventPublisher = eventPublisher;
     }
 
     @Scheduled(fixedRate = 120000)
@@ -40,14 +49,28 @@ public class ScheduledCancelamentoPedidos {
             return;
         }
 
-        log.info("Encontrados {} pedidos expirados. Iniciando SAGA de cancelamento.", pedidosAtrasados.size());
+        log.info("Encontrados {} pedidos expirados. Disparando eventos de cancelamento.", pedidosAtrasados.size());
 
         for (Pedidos pedido : pedidosAtrasados) {
             try {
-                pagamentoUseCase.cancelarPagamento(pedido.getId());
-                log.info("Cancelamento via SAGA acionado para o pedido ID {}", pedido.getId());
+                // Monta payload para rollback de estoque (ARCH-01)
+                Map<UUID, Long> produtosParaRollback = new HashMap<>();
+                for (PedidoDoVendedor items : pedido.getItens()) {
+                    for (UUID prodId : items.getProdutoIds()) {
+                        produtosParaRollback.merge(prodId, 1L, Long::sum);
+                    }
+                }
+
+                // Publica diretamente o evento para disparar a SAGA de cancelamento
+                eventPublisher.publish(new PedidoCanceladoEvent(
+                        pedido.getId(), 
+                        "Timeout: Pagamento não realizado em tempo hábil",
+                        produtosParaRollback
+                ));
+
+                log.info("Evento de cancelamento publicado para o pedido ID {}", pedido.getId());
             } catch (Exception e) {
-                log.error("Erro ao tentar acionar o cancelamento do pedido ID {}: {}", pedido.getId(), e.getMessage());
+                log.error("Erro ao tentar cancelar o pedido ID {}: {}", pedido.getId(), e.getMessage());
             }
         }
     }

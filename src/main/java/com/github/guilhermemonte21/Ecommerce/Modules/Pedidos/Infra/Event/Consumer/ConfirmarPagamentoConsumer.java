@@ -1,4 +1,4 @@
-package com.github.guilhermemonte21.Ecommerce.Modules.Pagamento.Infra.Event.Consumer;
+package com.github.guilhermemonte21.Ecommerce.Modules.Pedidos.Infra.Event.Consumer;
 
 import com.github.guilhermemonte21.Ecommerce.Shared.Application.Exceptions.PedidoNotFoundException;
 import com.github.guilhermemonte21.Ecommerce.Modules.Pedidos.Application.Gateway.PedidoGateway;
@@ -12,6 +12,11 @@ import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
+/**
+ * ARCH-02: Consumer movido para o módulo Pedidos, que é o dono da entidade Pedidos.
+ * O módulo Pagamento apenas publica o evento PagamentoConcluidoEvent — a atualização
+ * do status do pedido é responsabilidade deste módulo, não do Pagamento.
+ */
 @Component
 public class ConfirmarPagamentoConsumer {
 

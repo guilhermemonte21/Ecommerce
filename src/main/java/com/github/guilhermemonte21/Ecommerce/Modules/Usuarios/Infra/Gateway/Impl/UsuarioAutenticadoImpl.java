@@ -1,4 +1,4 @@
-package com.github.guilhermemonte21.Ecommerce.Shared.Infra.Security;
+package com.github.guilhermemonte21.Ecommerce.Modules.Usuarios.Infra.Gateway.Impl;
 
 import com.github.guilhermemonte21.Ecommerce.Shared.Application.Exceptions.AcessoNegadoException;
 import com.github.guilhermemonte21.Ecommerce.Modules.Usuarios.Application.Gateway.UsuarioAutenticadoGateway;
@@ -10,6 +10,9 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 
+/**
+ * ARCH-05: Implementação de recuperação do usuário autenticado movida para o módulo Usuarios.
+ */
 @Component
 public class UsuarioAutenticadoImpl implements UsuarioAutenticadoGateway {
     private final UsuarioMapper mapper;

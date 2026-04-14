@@ -29,6 +29,8 @@ public class PedidoDoVendedor {
 
     private BigDecimal valor;
 
+    private String stripeAccountId;
+
     private StatusPedido status;
 
 }

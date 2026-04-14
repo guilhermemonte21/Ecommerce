@@ -34,8 +34,8 @@ public class UsuarioRepositoryImpl implements UsuarioGateway {
     }
 
     @Override
-    public Usuarios findByEmail(String email) {
+    public Optional<Usuarios> findByEmail(String email) {
         UsuariosEntity entity = jpaRepo.findByEmail(email);
-        return mapper.toDomain(entity);
+        return Optional.ofNullable(mapper.toDomain(entity));
     }
 }

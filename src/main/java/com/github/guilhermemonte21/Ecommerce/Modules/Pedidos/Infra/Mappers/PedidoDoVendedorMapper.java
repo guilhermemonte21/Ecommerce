@@ -30,6 +30,7 @@ public class PedidoDoVendedorMapper {
 
         domain.setProdutoIds(entity.getProdutoIds());
         domain.setValor(entity.getValor());
+        domain.setStripeAccountId(entity.getStripeAccountId());
 
         if (entity.getStatus() != null) {
             domain.setStatus(StatusPedido.valueOf(entity.getStatus().name()));
@@ -57,6 +58,7 @@ public class PedidoDoVendedorMapper {
         }
 
         entity.setValor(domain.getValor());
+        entity.setStripeAccountId(domain.getStripeAccountId());
         entity.setId(domain.getId());
         return entity;
     }

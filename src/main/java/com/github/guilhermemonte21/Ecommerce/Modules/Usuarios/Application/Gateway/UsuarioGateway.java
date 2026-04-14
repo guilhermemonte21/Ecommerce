@@ -11,5 +11,5 @@ public interface UsuarioGateway {
 
     Optional<Usuarios> getById(UUID id);
 
-    Usuarios findByEmail(String Email);
+    Optional<Usuarios> findByEmail(String Email);
 }

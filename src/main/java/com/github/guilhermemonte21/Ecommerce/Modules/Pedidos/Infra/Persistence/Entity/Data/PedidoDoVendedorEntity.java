@@ -40,6 +40,9 @@ public class PedidoDoVendedorEntity {
     @Column(name = "valorDoPedido")
     private BigDecimal Valor;
 
+    @Column(name = "stripe_account_id")
+    private String stripeAccountId;
+
     @Enumerated(EnumType.STRING)
     @Column(name = "StatusDoPedido")
     private StatusPedido status;

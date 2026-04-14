@@ -4,6 +4,8 @@ import com.github.guilhermemonte21.Ecommerce.Modules.Usuarios.Application.Gatewa
 import com.github.guilhermemonte21.Ecommerce.Modules.Usuarios.Domain.Entity.Usuarios;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
+import java.util.Optional;
+
 public class Login implements ILogin {
 
     private final UsuarioGateway gateway;
@@ -16,8 +18,12 @@ public class Login implements ILogin {
 
     @Override
     public Boolean login(String email, String senha) {
-        Usuarios usuario = gateway.findByEmail(email);
-        if (usuario == null) {
+        Optional<Usuarios> optUsuario = gateway.findByEmail(email);
+        if (optUsuario.isEmpty()) {
+            return false;
+        }
+        Usuarios usuario = optUsuario.get();
+        if (Boolean.FALSE.equals(usuario.getAtivo())) {
             return false;
         }
         return encoder.matches(senha, usuario.getSenha());

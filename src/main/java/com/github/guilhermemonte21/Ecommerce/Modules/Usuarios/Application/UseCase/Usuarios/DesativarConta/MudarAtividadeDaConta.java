@@ -19,7 +19,8 @@ public class MudarAtividadeDaConta implements IMudarAtividadeDaConta {
     @Transactional
     public Boolean mudarAtividade() {
         UsuarioAutenticado user = authGateway.get();
-        Usuarios usuario = gateway.findByEmail(user.getUser().getEmail());
+        Usuarios usuario = gateway.findByEmail(user.getUser().getEmail())
+                .orElseThrow(() -> new com.github.guilhermemonte21.Ecommerce.Shared.Application.Exceptions.UsuarioNotFoundException(user.getUser().getId()));
         usuario.setAtivo(!usuario.getAtivo());
         gateway.salvar(usuario);
         return usuario.getAtivo();

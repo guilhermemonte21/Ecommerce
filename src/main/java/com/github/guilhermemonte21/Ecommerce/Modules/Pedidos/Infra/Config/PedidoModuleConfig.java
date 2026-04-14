@@ -24,8 +24,8 @@ public class PedidoModuleConfig {
     }
 
     @Bean
-    public ICriarPedido criarPedido(PedidoGateway pedidoGateway, CarrinhoGateway carrinhoGateway, ProdutoGateway produtoGateway, PedidoMapperApl mapper, UsuarioAutenticadoGateway auth, EventPublisher eventPublisher) {
-        return new CriarPedido(pedidoGateway, carrinhoGateway, produtoGateway, mapper, auth, eventPublisher);
+    public ICriarPedido criarPedido(PedidoGateway pedidoGateway, CarrinhoGateway carrinhoGateway, ProdutoGateway produtoGateway, PedidoMapperApl mapper, UsuarioAutenticadoGateway auth, EventPublisher eventPublisher, UsuarioGateway usuarioGateway) {
+        return new CriarPedido(pedidoGateway, carrinhoGateway, produtoGateway, mapper, auth, eventPublisher, usuarioGateway);
     }
 
     @Bean
