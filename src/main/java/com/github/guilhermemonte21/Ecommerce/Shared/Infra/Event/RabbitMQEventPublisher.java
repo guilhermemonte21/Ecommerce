@@ -6,6 +6,8 @@ import com.github.guilhermemonte21.Ecommerce.Shared.Application.Port.EventPublis
 import com.github.guilhermemonte21.Ecommerce.Shared.Domain.Event.DomainEvent;
 import com.github.guilhermemonte21.Ecommerce.Shared.Infra.Persistence.Entity.Data.OutboxEventEntity;
 import com.github.guilhermemonte21.Ecommerce.Shared.Infra.Persistence.JpaRepository.JpaOutboxEventRepository;
+import io.micrometer.tracing.Span;
+import io.micrometer.tracing.Tracer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
@@ -17,10 +19,14 @@ public class RabbitMQEventPublisher implements EventPublisher {
 
     private final JpaOutboxEventRepository outboxRepository;
     private final ObjectMapper objectMapper;
+    private final Tracer tracer;
 
-    public RabbitMQEventPublisher(JpaOutboxEventRepository outboxRepository, ObjectMapper objectMapper) {
+    public RabbitMQEventPublisher(JpaOutboxEventRepository outboxRepository,
+            ObjectMapper objectMapper,
+            Tracer tracer) {
         this.outboxRepository = outboxRepository;
         this.objectMapper = objectMapper;
+        this.tracer = tracer;
     }
 
     @Override
@@ -33,6 +39,12 @@ public class RabbitMQEventPublisher implements EventPublisher {
             outboxEvent.setPayload(payload);
             outboxEvent.setOccurredOn(event.occurredOn());
             outboxEvent.setProcessed(false);
+
+            Span currentSpan = tracer.currentSpan();
+            if (currentSpan != null) {
+                outboxEvent.setTraceId(currentSpan.context().traceId());
+                outboxEvent.setSpanId(currentSpan.context().spanId());
+            }
 
             outboxRepository.save(outboxEvent);
             log.info("Evento '{}' gravado na tabela Outbox para processamento assíncrono.", event.eventType());

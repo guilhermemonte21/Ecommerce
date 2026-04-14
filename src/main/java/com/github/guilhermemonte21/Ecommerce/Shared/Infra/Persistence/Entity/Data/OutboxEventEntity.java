@@ -38,4 +38,10 @@ public class OutboxEventEntity {
 
     @Column(name = "error_message", columnDefinition = "TEXT")
     private String errorMessage;
+
+    @Column(name = "trace_id")
+    private String traceId;
+
+    @Column(name = "span_id")
+    private String spanId;
 }
