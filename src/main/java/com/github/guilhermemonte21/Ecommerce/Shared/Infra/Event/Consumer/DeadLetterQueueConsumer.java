@@ -1,5 +1,6 @@
 package com.github.guilhermemonte21.Ecommerce.Shared.Infra.Event.Consumer;
 
+import com.github.guilhermemonte21.Ecommerce.Shared.Application.Port.AlertGateway;
 import com.github.guilhermemonte21.Ecommerce.Shared.Infra.Config.RabbitMQConfig;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -11,11 +12,20 @@ import org.springframework.stereotype.Component;
 public class DeadLetterQueueConsumer {
 
     private static final Logger log = LoggerFactory.getLogger(DeadLetterQueueConsumer.class);
+    
+    private final AlertGateway alertGateway;
+
+    public DeadLetterQueueConsumer(AlertGateway alertGateway) {
+        this.alertGateway = alertGateway;
+    }
 
     @RabbitListener(queues = {
             RabbitMQConfig.QUEUE_LIMPAR_CARRINHO_DLQ,
             RabbitMQConfig.QUEUE_CONFIRMAR_PAGAMENTO_DLQ,
-            RabbitMQConfig.QUEUE_ROLLBACK_ESTOQUE_DLQ
+            RabbitMQConfig.QUEUE_ROLLBACK_ESTOQUE_DLQ,
+            RabbitMQConfig.QUEUE_NOTIF_PEDIDO_CRIADO_DLQ,
+            RabbitMQConfig.QUEUE_NOTIF_PAGAMENTO_CONCLUIDO_DLQ,
+            RabbitMQConfig.QUEUE_NOTIF_PEDIDO_CANCELADO_DLQ
     })
     public void processFailedEvents(Message failedMessage) {
         String queue = failedMessage.getMessageProperties().getConsumerQueue();
@@ -23,6 +33,10 @@ public class DeadLetterQueueConsumer {
 
         log.error("CRITICAL: Mensagem falhou definitivamente e foi movida para a DLQ: '{}'.", queue);
         log.error("Conteúdo da mensagem falha: {}", body);
-        log.error("Detalhes das propriedades: {}", failedMessage.getMessageProperties());
+
+        alertGateway.enviarAlertaCritico(
+                "Falha Crítica: Mensagem em DLQ (" + queue + ")",
+                body
+        );
     }
 }

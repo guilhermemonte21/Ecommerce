@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Pedido Recebido</title>
+    <style>
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f4f7f6; color: #333; margin: 0; padding: 0; }
+        .container { max-width: 600px; margin: 20px auto; background-color: #ffffff; padding: 40px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); }
+        .header { text-align: center; padding-bottom: 30px; border-bottom: 2px solid #eee; }
+        .header h1 { color: #2c3e50; font-size: 24px; margin: 0; }
+        .content { padding: 30px 0; line-height: 1.6; }
+        .order-details { background-color: #f8faf9; padding: 20px; border-radius: 8px; margin-top: 20px; border-left: 4px solid #27ae60; }
+        .footer { text-align: center; color: #7f8c8d; font-size: 13px; padding-top: 30px; border-top: 1px solid #eee; }
+        .btn { display: inline-block; padding: 12px 24px; background-color: #27ae60; color: #fff; text-decoration: none; border-radius: 6px; font-weight: bold; margin-top: 25px; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Ecommerce - Pedido Recebido!</h1>
+        </div>
+        <div class="content">
+            <p>Olá, <strong th:text="${nome}">Cliente</strong>!</p>
+            <p>Temos o prazer de informar que recebemos o seu pedido. Estamos agora aguardando a confirmação do pagamento para dar continuidade ao processo.</p>
+            
+            <div class="order-details">
+                <p><strong>ID do Pedido:</strong> <span th:text="${pedidoId}">#123</span></p>
+                <p><strong>Valor Total:</strong> R$ <span th:text="${valorTotal}">0,00</span></p>
+            </div>
+
+            <p>Você receberá um novo e-mail assim que o seu pagamento for processado.</p>
+            
+            <a href="#" class="btn">Acompanhar Pedido</a>
+        </div>
+        <div class="footer">
+            <p>&copy; 2026 Ecommerce Inc. Todos os direitos reservados.</p>
+        </div>
+    </div>
+</body>
+</html>

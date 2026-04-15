@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>ALERTA CRÍTICO - SISTEMA</title>
+    <style>
+        body { font-family: 'Courier New', Courier, monospace; background-color: #f8d7da; color: #721c24; margin: 0; padding: 0; }
+        .container { max-width: 800px; margin: 20px auto; background-color: #ffffff; padding: 30px; border: 4px solid #dc3545; border-radius: 8px; }
+        .header { text-align: center; border-bottom: 2px solid #dc3545; padding-bottom: 20px; }
+        .header h1 { margin: 0; font-size: 28px; text-transform: uppercase; }
+        .content { padding: 20px 0; }
+        .payload-box { background-color: #f1f1f1; color: #333; padding: 15px; border-radius: 5px; border: 1px solid #ccc; font-family: monospace; font-size: 14px; white-space: pre-wrap; margin-top: 15px; overflow-x: auto; }
+        .footer { margin-top: 30px; font-size: 12px; color: #6c757d; border-top: 1px solid #dee2e6; padding-top: 10px; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>ALERTA: Mensagem em DLQ</h1>
+        </div>
+        <div class="content">
+            <p><strong>Evento Crítico Detectado:</strong></p>
+            <p><span th:text="${titulo}">Título do Erro</span></p>
+
+            <p><strong>Conteúdo da Mensagem (Payload):</strong></p>
+            <div class="payload-box" th:text="${payload}">
+                { "error": "payload here" }
+            </div>
+
+            <p style="margin-top: 20px;"><strong>Ação Necessária:</strong> Verifique os logs do sistema e o estado do RabbitMQ imediatamente para evitar perda de dados ou inconsistência.</p>
+        </div>
+        <div class="footer">
+            <p>Este é um e-mail automático gerado pelo módulo de Notificações do Ecommerce.</p>
+        </div>
+    </div>
+</body>
+</html>

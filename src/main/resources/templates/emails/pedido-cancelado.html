@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Pedido Cancelado</title>
+    <style>
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f4f7f6; color: #333; margin: 0; padding: 0; }
+        .container { max-width: 600px; margin: 20px auto; background-color: #ffffff; padding: 40px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); }
+        .header { text-align: center; padding-bottom: 30px; border-bottom: 2px solid #eee; }
+        .header h1 { color: #c0392b; font-size: 24px; margin: 0; }
+        .content { padding: 30px 0; line-height: 1.6; }
+        .cancel-info { background-color: #fdf2f2; padding: 20px; border-radius: 8px; margin-top: 20px; border-left: 4px solid #e74c3c; }
+        .footer { text-align: center; color: #7f8c8d; font-size: 13px; padding-top: 30px; border-top: 1px solid #eee; }
+        .btn { display: inline-block; padding: 12px 24px; background-color: #eee; color: #333; text-decoration: none; border-radius: 6px; font-weight: bold; margin-top: 25px; border: 1px solid #ddd; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Ecommerce - Pedido Cancelado</h1>
+        </div>
+        <div class="content">
+            <p>Olá, <strong th:text="${nome}">Cliente</strong>.</p>
+            <p>Informamos que o seu pedido foi cancelado em nosso sistema.</p>
+            
+            <div class="cancel-info">
+                <p><strong>Número do Pedido:</strong> <span th:text="${pedidoId}">#123</span></p>
+                <p><strong>Motivo do Cancelamento:</strong> <span th:text="${motivo}">Motivo não informado</span></p>
+            </div>
+
+            <p>Caso tenha ocorrido um engano ou se houver cobranças indevidas, entre em contato com nosso suporte imediatamente.</p>
+            
+            <a href="#" class="btn">Falar com Suporte</a>
+        </div>
+        <div class="footer">
+            <p>&copy; 2026 Ecommerce Inc. Todos os direitos reservados.</p>
+        </div>
+    </div>
+</body>
+</html>

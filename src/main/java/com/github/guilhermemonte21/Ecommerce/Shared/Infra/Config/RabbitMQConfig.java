@@ -26,6 +26,14 @@ public class RabbitMQConfig {
     public static final String QUEUE_LIMPAR_CARRINHO_DLQ = "pedido.criado.limpar-carrinho.dlq";
     public static final String QUEUE_CONFIRMAR_PAGAMENTO_DLQ = "pagamento.concluido.atualizar-pedido.dlq";
     public static final String QUEUE_ROLLBACK_ESTOQUE_DLQ = "pedido.cancelado.rollback-estoque.dlq";
+ 
+    public static final String QUEUE_NOTIF_PEDIDO_CRIADO = "pedido.criado.notificacao";
+    public static final String QUEUE_NOTIF_PAGAMENTO_CONCLUIDO = "pagamento.concluido.notificacao";
+    public static final String QUEUE_NOTIF_PEDIDO_CANCELADO = "pedido.cancelado.notificacao";
+    public static final String QUEUE_NOTIF_PEDIDO_CRIADO_DLQ = "pedido.criado.notificacao.dlq";
+    public static final String QUEUE_NOTIF_PAGAMENTO_CONCLUIDO_DLQ = "pagamento.concluido.notificacao.dlq";
+    public static final String QUEUE_NOTIF_PEDIDO_CANCELADO_DLQ = "pedido.cancelado.notificacao.dlq";
+
 
     @Bean
     public TopicExchange eventsExchange() {
@@ -77,6 +85,37 @@ public class RabbitMQConfig {
     public Queue rollbackEstoqueDlq() {
         return buildDlq(QUEUE_ROLLBACK_ESTOQUE_DLQ);
     }
+ 
+    @Bean
+    public Queue notifPedidoCriadoQueue() {
+        return buildQueueWithDlx(QUEUE_NOTIF_PEDIDO_CRIADO, QUEUE_NOTIF_PEDIDO_CRIADO_DLQ);
+    }
+ 
+    @Bean
+    public Queue notifPagamentoConcluidoQueue() {
+        return buildQueueWithDlx(QUEUE_NOTIF_PAGAMENTO_CONCLUIDO, QUEUE_NOTIF_PAGAMENTO_CONCLUIDO_DLQ);
+    }
+ 
+    @Bean
+    public Queue notifPedidoCanceladoQueue() {
+        return buildQueueWithDlx(QUEUE_NOTIF_PEDIDO_CANCELADO, QUEUE_NOTIF_PEDIDO_CANCELADO_DLQ);
+    }
+ 
+    @Bean
+    public Queue notifPedidoCriadoDlq() {
+        return buildDlq(QUEUE_NOTIF_PEDIDO_CRIADO_DLQ);
+    }
+ 
+    @Bean
+    public Queue notifPagamentoConcluidoDlq() {
+        return buildDlq(QUEUE_NOTIF_PAGAMENTO_CONCLUIDO_DLQ);
+    }
+ 
+    @Bean
+    public Queue notifPedidoCanceladoDlq() {
+        return buildDlq(QUEUE_NOTIF_PEDIDO_CANCELADO_DLQ);
+    }
+
 
     @Bean
     public Binding bindingLimparCarrinho(Queue limparCarrinhoQueue, TopicExchange eventsExchange) {
@@ -98,6 +137,28 @@ public class RabbitMQConfig {
                 .to(eventsExchange)
                 .with(RK_PEDIDO_CANCELADO);
     }
+ 
+    @Bean
+    public Binding bindingNotifPedidoCriado(Queue notifPedidoCriadoQueue, TopicExchange eventsExchange) {
+        return BindingBuilder.bind(notifPedidoCriadoQueue)
+                .to(eventsExchange)
+                .with(RK_PEDIDO_CRIADO);
+    }
+ 
+    @Bean
+    public Binding bindingNotifPagamentoConcluido(Queue notifPagamentoConcluidoQueue, TopicExchange eventsExchange) {
+        return BindingBuilder.bind(notifPagamentoConcluidoQueue)
+                .to(eventsExchange)
+                .with(RK_PAGAMENTO_CONCLUIDO);
+    }
+ 
+    @Bean
+    public Binding bindingNotifPedidoCancelado(Queue notifPedidoCanceladoQueue, TopicExchange eventsExchange) {
+        return BindingBuilder.bind(notifPedidoCanceladoQueue)
+                .to(eventsExchange)
+                .with(RK_PEDIDO_CANCELADO);
+    }
+
 
     @Bean
     public Binding bindingLimparCarrinhoDlq(Queue limparCarrinhoDlq, DirectExchange deadLetterExchange) {
@@ -119,6 +180,28 @@ public class RabbitMQConfig {
                 .to(deadLetterExchange)
                 .with(QUEUE_ROLLBACK_ESTOQUE_DLQ);
     }
+ 
+    @Bean
+    public Binding bindingNotifPedidoCriadoDlq(Queue notifPedidoCriadoDlq, DirectExchange deadLetterExchange) {
+        return BindingBuilder.bind(notifPedidoCriadoDlq)
+                .to(deadLetterExchange)
+                .with(QUEUE_NOTIF_PEDIDO_CRIADO_DLQ);
+    }
+ 
+    @Bean
+    public Binding bindingNotifPagamentoConcluidoDlq(Queue notifPagamentoConcluidoDlq, DirectExchange deadLetterExchange) {
+        return BindingBuilder.bind(notifPagamentoConcluidoDlq)
+                .to(deadLetterExchange)
+                .with(QUEUE_NOTIF_PAGAMENTO_CONCLUIDO_DLQ);
+    }
+ 
+    @Bean
+    public Binding bindingNotifPedidoCanceladoDlq(Queue notifPedidoCanceladoDlq, DirectExchange deadLetterExchange) {
+        return BindingBuilder.bind(notifPedidoCanceladoDlq)
+                .to(deadLetterExchange)
+                .with(QUEUE_NOTIF_PEDIDO_CANCELADO_DLQ);
+    }
+
 
     @Bean
     public Jackson2JsonMessageConverter messageConverter() {

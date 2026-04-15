@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Pagamento Confirmado</title>
+    <style>
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f4f7f6; color: #333; margin: 0; padding: 0; }
+        .container { max-width: 600px; margin: 20px auto; background-color: #ffffff; padding: 40px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); }
+        .header { text-align: center; padding-bottom: 30px; border-bottom: 2px solid #eee; }
+        .header h1 { color: #2c3e50; font-size: 24px; margin: 0; }
+        .content { padding: 30px 0; line-height: 1.6; }
+        .success-box { background-color: #e8f5e9; padding: 20px; border-radius: 8px; margin-top: 20px; text-align: center; border: 1px solid #c8e6c9; }
+        .footer { text-align: center; color: #7f8c8d; font-size: 13px; padding-top: 30px; border-top: 1px solid #eee; }
+        .btn { display: inline-block; padding: 12px 24px; background-color: #2c3e50; color: #fff; text-decoration: none; border-radius: 6px; font-weight: bold; margin-top: 25px; }
+        .icon { font-size: 40px; color: #4caf50; display: block; margin-bottom: 10px; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Ecommerce - Pagamento Aprovado!</h1>
+        </div>
+        <div class="content">
+            <p>Boas notícias, <strong th:text="${nome}">Cliente</strong>!</p>
+            <p>O pagamento do seu pedido foi confirmado com sucesso. Agora nossa equipe começará a preparar o envio o mais rápido possível.</p>
+            
+            <div class="success-box">
+                <span class="icon">✔</span>
+                <p><strong>Pedido:</strong> <span th:text="${pedidoId}">#123</span></p>
+                <p>Status: <strong>Pagamento Confirmado</strong></p>
+            </div>
+
+            <p>Você receberá um novo aviso assim que os produtos forem despachados.</p>
+            
+            <a href="#" class="btn">Gerenciar Meus Pedidos</a>
+        </div>
+        <div class="footer">
+            <p>&copy; 2026 Ecommerce Inc. Todos os direitos reservados.</p>
+        </div>
+    </div>
+</body>
+</html>
