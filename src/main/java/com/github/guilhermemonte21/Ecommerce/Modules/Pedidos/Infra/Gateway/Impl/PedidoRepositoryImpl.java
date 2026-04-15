@@ -34,6 +34,7 @@ public class PedidoRepositoryImpl implements PedidoGateway {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public Optional<Pedidos> getById(UUID Id) {
         Optional<Pedidos> PedidosById = jpaPedidosRepository.findById(Id).map(pedidosMapper::toDomain);
 
