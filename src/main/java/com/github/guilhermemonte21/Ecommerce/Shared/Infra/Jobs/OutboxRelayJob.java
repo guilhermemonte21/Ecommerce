@@ -7,6 +7,8 @@ import io.micrometer.tracing.Span;
 import io.micrometer.tracing.Tracer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.amqp.core.Message;
+import org.springframework.amqp.core.MessageProperties;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -56,10 +58,16 @@ public class OutboxRelayJob {
             relaySpan.tag("outbox.eventType", entity.getEventType());
 
             try (Tracer.SpanInScope ws = tracer.withSpan(relaySpan)) {
-                rabbitTemplate.convertAndSend(
+                MessageProperties props = new MessageProperties();
+                props.setContentType(MessageProperties.CONTENT_TYPE_JSON);
+                Message message = new Message(
+                        entity.getPayload().getBytes(java.nio.charset.StandardCharsets.UTF_8),
+                        props);
+
+                rabbitTemplate.send(
                         RabbitMQConfig.EXCHANGE_EVENTS,
                         entity.getEventType(),
-                        entity.getPayload());
+                        message);
 
                 entity.setProcessed(true);
                 entity.setProcessedAt(OffsetDateTime.now());

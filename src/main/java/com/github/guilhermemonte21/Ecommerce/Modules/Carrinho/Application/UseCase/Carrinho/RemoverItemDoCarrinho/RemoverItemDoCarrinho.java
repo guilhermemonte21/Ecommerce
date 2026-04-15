@@ -38,9 +38,7 @@ public class RemoverItemDoCarrinho implements IRemoverItemDoCarrinho {
         if (Boolean.FALSE.equals(user.getUser().getAtivo())) {
             throw new UsuarioInativoException();
         }
-        Produtos produto = produtoGateway.getById(idProduto)
-                .orElseThrow(() -> new ProdutoNotFoundException(idProduto));
-        carrinho.removerItem(idProduto, produto.getPreco());
+        carrinho.removerItem(idProduto);
         gateway.save(carrinho);
     }
 }

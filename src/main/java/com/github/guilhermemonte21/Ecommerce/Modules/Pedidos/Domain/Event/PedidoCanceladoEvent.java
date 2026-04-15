@@ -1,5 +1,6 @@
 package com.github.guilhermemonte21.Ecommerce.Modules.Pedidos.Domain.Event;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.github.guilhermemonte21.Ecommerce.Shared.Domain.Event.DomainEvent;
 
 import java.time.OffsetDateTime;
@@ -10,11 +11,14 @@ public class PedidoCanceladoEvent implements DomainEvent {
 
     private final UUID pedidoId;
     private final String motivo;
-
     private final Map<UUID, Long> produtosParaRollback;
     private final OffsetDateTime occurredOn;
 
-    public PedidoCanceladoEvent(UUID pedidoId, String motivo, Map<UUID, Long> produtosParaRollback) {
+    @com.fasterxml.jackson.annotation.JsonCreator
+    public PedidoCanceladoEvent(
+            @JsonProperty("pedidoId") UUID pedidoId,
+            @JsonProperty("motivo") String motivo,
+            @JsonProperty("produtosParaRollback") Map<UUID, Long> produtosParaRollback) {
         this.pedidoId = pedidoId;
         this.motivo = motivo;
         this.produtosParaRollback = produtosParaRollback;

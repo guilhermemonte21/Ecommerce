@@ -48,7 +48,7 @@ public class AddItemAoCarrinho implements IAddItemAoCarrinho {
             throw new AcessoNegadoException();
         }
 
-        carrinho.adicionarItem(produto.getId(), quantidade, produto.getPreco());
+        carrinho.adicionarItem(produto.getId(), produto.getNomeProduto(), quantidade, produto.getPreco());
         Carrinho salvamento = gateway.save(carrinho);
         return mapperApl.domainToResponse(salvamento);
     }

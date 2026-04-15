@@ -1,6 +1,7 @@
 package com.github.guilhermemonte21.Ecommerce.Modules.Pedidos.Infra.Gateway.Impl;
 
 import com.github.guilhermemonte21.Ecommerce.Modules.Pedidos.Domain.Entity.Pedidos;
+import com.github.guilhermemonte21.Ecommerce.Modules.Pedidos.Domain.Enum.StatusPedido;
 import com.github.guilhermemonte21.Ecommerce.Modules.Pedidos.Application.Gateway.PedidoGateway;
 import com.github.guilhermemonte21.Ecommerce.Modules.Pedidos.Infra.Mappers.PedidoMapper;
 import com.github.guilhermemonte21.Ecommerce.Modules.Pedidos.Infra.Persistence.Entity.Data.PedidosEntity;
@@ -49,10 +50,10 @@ public class PedidoRepositoryImpl implements PedidoGateway {
 
     @Override
     @Transactional(readOnly = true)
-    public List<Pedidos> getPedidosByStatusAndCriadoEmBefore(com.github.guilhermemonte21.Ecommerce.Modules.Pedidos.Domain.Enum.StatusPedido status, java.time.OffsetDateTime threshold) {
+    public List<Pedidos> getPedidosByStatusAndCriadoEmBefore(StatusPedido status, java.time.OffsetDateTime threshold) {
         com.github.guilhermemonte21.Ecommerce.Modules.Pedidos.Infra.Persistence.Entity.Enum.StatusPedido entityStatus = 
                 com.github.guilhermemonte21.Ecommerce.Modules.Pedidos.Infra.Persistence.Entity.Enum.StatusPedido.valueOf(status.name());
-        
+
         return jpaPedidosRepository.findByStatusAndCriadoEmBefore(entityStatus, threshold)
                 .stream()
                 .map(pedidosMapper::toDomain)

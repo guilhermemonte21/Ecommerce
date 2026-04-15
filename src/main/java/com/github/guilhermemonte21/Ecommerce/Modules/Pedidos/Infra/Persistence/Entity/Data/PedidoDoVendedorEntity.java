@@ -32,10 +32,17 @@ public class PedidoDoVendedorEntity {
     @JoinColumn(name = "id_Pedido")
     private PedidosEntity pedido;
 
-    @ElementCollection(fetch = FetchType.LAZY)
-    @CollectionTable(name = "produto_vendedor_produtos", joinColumns = @JoinColumn(name = "produto_vendedor_id"))
-    @Column(name = "produto_id")
-    private List<UUID> produtoIds = new ArrayList<>();
+    @Column(name = "produto_id", nullable = false)
+    private UUID produtoId;
+
+    @Column(name = "nome_produto_snapshot")
+    private String nomeProduto;
+
+    @Column(name = "preco_snapshot")
+    private BigDecimal precoUnitario;
+
+    @Column(name = "quantidade")
+    private Long quantidade;
 
     @Column(name = "valorDoPedido")
     private BigDecimal Valor;

@@ -6,6 +6,8 @@ import com.github.guilhermemonte21.Ecommerce.Modules.Usuarios.Application.UseCas
 import com.github.guilhermemonte21.Ecommerce.Modules.Usuarios.Application.UseCase.Usuarios.CreateUser.ICreateUser;
 import com.github.guilhermemonte21.Ecommerce.Modules.Usuarios.Application.UseCase.Usuarios.DesativarConta.IMudarAtividadeDaConta;
 import com.github.guilhermemonte21.Ecommerce.Modules.Usuarios.Application.UseCase.Usuarios.GetUserById.IGetUserById;
+
+import io.github.resilience4j.ratelimiter.RequestNotPermitted;
 import io.github.resilience4j.ratelimiter.annotation.RateLimiter;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -48,7 +50,7 @@ public class UsuarioController {
         return ResponseEntity.status(HttpStatus.CREATED).body(newUser);
     }
 
-    public ResponseEntity<UsuarioResponse> fallbackCriarUsuario(CreateUserRequest request, Throwable t) {
+    public ResponseEntity<UsuarioResponse> fallbackCriarUsuario(CreateUserRequest request, RequestNotPermitted t) {
         log.warn("Rate limit excedido no registro de usuários: {}", t.getMessage());
         return ResponseEntity.status(HttpStatus.TOO_MANY_REQUESTS).build();
     }

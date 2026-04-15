@@ -25,7 +25,10 @@ public class PedidoDoVendedor {
 
     private Pedidos pedido;
 
-    private List<UUID> produtoIds = new ArrayList<>();
+    private UUID produtoId;
+    private String nomeProduto;
+    private BigDecimal precoUnitario;
+    private Long quantidade;
 
     private BigDecimal valor;
 

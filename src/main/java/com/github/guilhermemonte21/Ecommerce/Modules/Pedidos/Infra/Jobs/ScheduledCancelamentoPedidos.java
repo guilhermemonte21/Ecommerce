@@ -18,10 +18,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
-/**
- * ARCH-04: Job agendado para cancelar pedidos expirados (saga de timeout).
- * Removida dependência do módulo de Pagamento. Agora publica diretamente o evento de cancelamento.
- */
 @Component
 public class ScheduledCancelamentoPedidos {
 
@@ -53,20 +49,16 @@ public class ScheduledCancelamentoPedidos {
 
         for (Pedidos pedido : pedidosAtrasados) {
             try {
-                // Monta payload para rollback de estoque (ARCH-01)
+
                 Map<UUID, Long> produtosParaRollback = new HashMap<>();
-                for (PedidoDoVendedor items : pedido.getItens()) {
-                    for (UUID prodId : items.getProdutoIds()) {
-                        produtosParaRollback.merge(prodId, 1L, Long::sum);
-                    }
+                for (PedidoDoVendedor item : pedido.getItens()) {
+                    produtosParaRollback.merge(item.getProdutoId(), item.getQuantidade(), Long::sum);
                 }
 
-                // Publica diretamente o evento para disparar a SAGA de cancelamento
                 eventPublisher.publish(new PedidoCanceladoEvent(
-                        pedido.getId(), 
+                        pedido.getId(),
                         "Timeout: Pagamento não realizado em tempo hábil",
-                        produtosParaRollback
-                ));
+                        produtosParaRollback));
 
                 log.info("Evento de cancelamento publicado para o pedido ID {}", pedido.getId());
             } catch (Exception e) {

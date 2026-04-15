@@ -29,7 +29,7 @@ public class LimparCarrinhoConsumer {
 
         Carrinho carrinho = carrinhoGateway.getByDono(event.getCompradorId());
 
-        if (carrinho == null || carrinho.getProdutoIds() == null || carrinho.getProdutoIds().isEmpty()) {
+        if (carrinho == null || carrinho.getItens() == null || carrinho.getItens().isEmpty()) {
             log.warn("Carrinho do comprador {} já está vazio ou não encontrado. Nada a fazer.",
                     event.getCompradorId());
             return;

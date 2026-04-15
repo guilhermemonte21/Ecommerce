@@ -16,6 +16,7 @@ import com.github.guilhermemonte21.Ecommerce.Modules.Pedidos.Domain.Entity.Pedid
 import com.github.guilhermemonte21.Ecommerce.Modules.Usuarios.Domain.Entity.UsuarioAutenticado;
 import com.github.guilhermemonte21.Ecommerce.Modules.Pedidos.Domain.Enum.StatusPedido;
 import com.github.guilhermemonte21.Ecommerce.Modules.Pedidos.Domain.Event.PedidoCriadoEvent;
+import com.github.guilhermemonte21.Ecommerce.Modules.Carrinho.Domain.Entity.CarrinhoItem;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.transaction.annotation.Transactional;
@@ -59,14 +60,14 @@ public class CriarPedido implements ICriarPedido {
             throw new IllegalArgumentException("Usuário não autenticado");
         }
         Carrinho cart = carrinhoGateway.getByDono(user.getUser().getId());
-        if (cart == null || cart.getProdutoIds() == null || cart.getProdutoIds().isEmpty()) {
+        if (cart == null || cart.getItens() == null || cart.getItens().isEmpty()) {
             throw new CarrinhoVazioException();
         }
 
         Map<UUID, Long> productQuantities = new HashMap<>();
-        for (UUID itemCarrinho : cart.getProdutoIds()) {
-            productQuantities.put(itemCarrinho,
-                    productQuantities.getOrDefault(itemCarrinho, 0L) + 1);
+        for (CarrinhoItem itemCarrinho : cart.getItens()) {
+            productQuantities.put(itemCarrinho.getProdutoId(),
+                    productQuantities.getOrDefault(itemCarrinho.getProdutoId(), 0L) + itemCarrinho.getQuantidade());
         }
         Map<UUID, Produtos> productDetails = new HashMap<>();
         for (Map.Entry<UUID, Long> entry : productQuantities.entrySet()) {
@@ -91,30 +92,30 @@ public class CriarPedido implements ICriarPedido {
         Pedidos pedido = new Pedidos();
         pedido.setCompradorId(user.getUser().getId());
 
-        Map<UUID, PedidoDoVendedor> orders = new HashMap<>();
-        for (UUID itemCarrinhoId : cart.getProdutoIds()) {
-            Produtos dbProduct = productDetails.get(itemCarrinhoId);
+        List<PedidoDoVendedor> orderItems = new ArrayList<>();
+        for (CarrinhoItem item : cart.getItens()) {
+            Produtos dbProduct = productDetails.get(item.getProdutoId());
             UUID vendedorId = dbProduct.getVendedorId();
-            PedidoDoVendedor pedidoVendedor = orders.computeIfAbsent(vendedorId, id -> {
-                PedidoDoVendedor novo = new PedidoDoVendedor();
-                novo.setVendedorId(vendedorId);
-                novo.setPedido(pedido);
-                novo.setValor(BigDecimal.ZERO);
-                novo.setStatus(StatusPedido.PENDENTE);
+            
+            PedidoDoVendedor pedidoItem = new PedidoDoVendedor();
+            pedidoItem.setVendedorId(vendedorId);
+            pedidoItem.setPedido(pedido);
+            pedidoItem.setProdutoId(item.getProdutoId());
+            pedidoItem.setNomeProduto(dbProduct.getNomeProduto());
+            pedidoItem.setPrecoUnitario(dbProduct.getPreco());
+            pedidoItem.setQuantidade(item.getQuantidade());
+            pedidoItem.setValor(dbProduct.getPreco().multiply(BigDecimal.valueOf(item.getQuantidade())));
+            pedidoItem.setStatus(StatusPedido.PENDENTE);
 
-                usuarioGateway.getById(vendedorId).ifPresent(vendedor -> {
-                    novo.setStripeAccountId(vendedor.getStripeAccountId());
-                });
-
-                return novo;
+            usuarioGateway.getById(vendedorId).ifPresent(vendedor -> {
+                pedidoItem.setStripeAccountId(vendedor.getStripeAccountId());
             });
 
-            pedidoVendedor.getProdutoIds().add(itemCarrinhoId);
-            pedidoVendedor.setValor(pedidoVendedor.getValor().add(dbProduct.getPreco()));
+            orderItems.add(pedidoItem);
         }
 
-        pedido.getItens().addAll(orders.values());
-        pedido.setPreco(orders.values().stream()
+        pedido.setItens(orderItems);
+        pedido.setPreco(orderItems.stream()
                 .map(PedidoDoVendedor::getValor)
                 .reduce(BigDecimal.ZERO, BigDecimal::add));
         pedido.setEndereco(endereco);

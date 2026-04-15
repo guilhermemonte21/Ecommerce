@@ -26,7 +26,8 @@ public class CriarCarrinho implements ICriarCarrinho {
     private final UsuarioAutenticadoGateway authGateway;
     private final ProdutoGateway produtoGateway;
 
-    public CriarCarrinho(CarrinhoGateway gateway, CarrinhoMapperApl mapper, UsuarioAutenticadoGateway authGateway, ProdutoGateway produtoGateway) {
+    public CriarCarrinho(CarrinhoGateway gateway, CarrinhoMapperApl mapper, UsuarioAutenticadoGateway authGateway,
+            ProdutoGateway produtoGateway) {
         this.gateway = gateway;
         this.mapper = mapper;
         this.authGateway = authGateway;
@@ -39,19 +40,34 @@ public class CriarCarrinho implements ICriarCarrinho {
         if (Boolean.FALSE.equals(user.getUser().getAtivo())) {
             throw new UsuarioInativoException();
         }
-        Carrinho novoCar = mapper.createRequestToDomain(carrinho, user.getUser().getId());
-        BigDecimal total = BigDecimal.ZERO;
-        for (UUID pId : novoCar.getProdutoIds()) {
-            Produtos p = produtoGateway.getById(pId).orElseThrow(() -> new ProdutoNotFoundException(pId));
-            if (p.getEstoque() <= 0) {
-                throw new EstoqueInsuficienteException(p.getNomeProduto());
-            }
-            total = total.add(p.getPreco());
+
+        Carrinho carDomain = gateway.getByDono(user.getUser().getId());
+
+        if (carDomain == null) {
+            carDomain = new Carrinho();
+            carDomain.setCompradorId(user.getUser().getId());
+        } else {
+            carDomain.limpar();
         }
-        novoCar.setValorTotal(total);
-        novoCar.atualizadoAgora();
-        Carrinho salvo = gateway.save(novoCar);
-        log.info("Carrinho criado: id={}", salvo.getId());
+
+        if (carrinho.getProdutosIds() != null) {
+            for (UUID pId : carrinho.getProdutosIds()) {
+                Produtos p = produtoGateway.getById(pId)
+                        .orElseThrow(() -> new ProdutoNotFoundException(pId));
+
+                if (p.getEstoque() <= 0) {
+                    throw new EstoqueInsuficienteException(p.getNomeProduto());
+                }
+
+                carDomain.adicionarItem(p.getId(), p.getNomeProduto(), 1L, p.getPreco());
+            }
+        }
+
+        carDomain.atualizadoAgora();
+        Carrinho salvo = gateway.save(carDomain);
+
+        log.info("Carrinho processado para o comprador: {}, itens: {}", user.getUser().getId(),
+                carDomain.getItens().size());
         return mapper.domainToResponse(salvo);
     }
 }

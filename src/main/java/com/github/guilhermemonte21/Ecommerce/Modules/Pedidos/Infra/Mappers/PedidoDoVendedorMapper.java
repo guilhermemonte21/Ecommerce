@@ -28,7 +28,11 @@ public class PedidoDoVendedorMapper {
             domain.setPedido(shallowPedido);
         }
 
-        domain.setProdutoIds(entity.getProdutoIds());
+        domain.setProdutoId(entity.getProdutoId());
+        domain.setNomeProduto(entity.getNomeProduto());
+        domain.setPrecoUnitario(entity.getPrecoUnitario());
+        domain.setQuantidade(entity.getQuantidade());
+
         domain.setValor(entity.getValor());
         domain.setStripeAccountId(entity.getStripeAccountId());
 
@@ -41,7 +45,6 @@ public class PedidoDoVendedorMapper {
 
     public PedidoDoVendedorEntity toEntity(PedidoDoVendedor domain) {
         PedidoDoVendedorEntity entity = new PedidoDoVendedorEntity();
-        entity.setProdutoIds(domain.getProdutoIds());
         entity.setVendedorId(domain.getVendedorId());
 
         if (domain.getPedido() != null) {
@@ -50,6 +53,11 @@ public class PedidoDoVendedorMapper {
                 entity.setPedido(pedidos);
             }
         }
+
+        entity.setProdutoId(domain.getProdutoId());
+        entity.setNomeProduto(domain.getNomeProduto());
+        entity.setPrecoUnitario(domain.getPrecoUnitario());
+        entity.setQuantidade(domain.getQuantidade());
 
         if (domain.getStatus() != null) {
             entity.setStatus(

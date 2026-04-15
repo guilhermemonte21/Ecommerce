@@ -43,7 +43,6 @@ public class Pagamento implements IPagamento {
         Pedidos pedido = pedidoGateway.getById(idPedido)
                 .orElseThrow(() -> new PedidoNotFoundException(idPedido));
 
-        // SEC-03: valida que o usuário autenticado é o dono do pedido
         UsuarioAutenticado user = authGateway.get();
         if (!pedido.getCompradorId().equals(user.getUser().getId())) {
             throw new AcessoNegadoException();
@@ -61,13 +60,9 @@ public class Pagamento implements IPagamento {
         log.error("Pagamento não foi aprovado no Gateway para o pedido {}. Publicando cancelamento para Rollback.",
                 idPedido);
 
-        // ARCH-01: Enriquecendo evento com dados para rollback sem query extra no
-        // consumer
         java.util.Map<UUID, Long> produtos = new java.util.HashMap<>();
         pedido.getItens().forEach(item -> {
-            item.getProdutoIds().forEach(prodId -> {
-                produtos.merge(prodId, 1L, Long::sum);
-            });
+            produtos.merge(item.getProdutoId(), item.getQuantidade(), Long::sum);
         });
 
         eventPublisher.publish(new PedidoCanceladoEvent(idPedido, "Falha no processo de pagamento", produtos));
@@ -95,9 +90,7 @@ public class Pagamento implements IPagamento {
 
         Map<UUID, Long> produtos = new HashMap<>();
         pedido.getItens().forEach(item -> {
-            item.getProdutoIds().forEach(prodId -> {
-                produtos.merge(prodId, 1L, Long::sum);
-            });
+            produtos.merge(item.getProdutoId(), item.getQuantidade(), Long::sum);
         });
 
         eventPublisher.publish(new PedidoCanceladoEvent(idPedido, "Cancelado pelo usuário", produtos));

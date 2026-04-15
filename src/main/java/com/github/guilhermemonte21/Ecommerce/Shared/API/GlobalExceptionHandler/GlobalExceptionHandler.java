@@ -3,8 +3,11 @@ package com.github.guilhermemonte21.Ecommerce.Shared.API.GlobalExceptionHandler;
 import com.github.guilhermemonte21.Ecommerce.Shared.Application.Exceptions.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ProblemDetail;
+import org.springframework.web.HttpMediaTypeNotSupportedException;
+import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -102,6 +105,30 @@ public class GlobalExceptionHandler {
                 .map(e -> java.util.Map.of("field", e.getField(), "message", e.getDefaultMessage()))
                 .toList());
         return problem;
+    }
+
+    @ExceptionHandler(HttpMediaTypeNotSupportedException.class)
+    public ProblemDetail handleMediaTypeNotSupported(HttpMediaTypeNotSupportedException ex) {
+        log.warn("Media type não suportado: {}", ex.getMessage());
+        return createProblemDetail(HttpStatus.UNSUPPORTED_MEDIA_TYPE, "Formato de requisição não suportado",
+                "O Content-Type deve ser 'application/json'");
+    }
+
+    @ExceptionHandler(HttpRequestMethodNotSupportedException.class)
+    public ProblemDetail handleMethodNotSupported(HttpRequestMethodNotSupportedException ex) {
+        log.warn("Método HTTP não suportado: {}", ex.getMessage());
+        return createProblemDetail(HttpStatus.METHOD_NOT_ALLOWED, "Método não permitido",
+                "O método " + ex.getMethod() + " não é permitido para este endpoint");
+    }
+
+    @ExceptionHandler(DataIntegrityViolationException.class)
+    public ProblemDetail handleDataIntegrity(DataIntegrityViolationException ex) {
+        log.error("Erro de integridade de dados: {}", ex.getMessage());
+        String detail = "Violação de regra de negócio no banco de dados.";
+        if (ex.getMessage().contains("duplicate key")) {
+            detail = "Já existe um registro com os mesmos dados (Chave Duplicada).";
+        }
+        return createProblemDetail(HttpStatus.CONFLICT, "Conflito de dados", detail);
     }
 
     @ExceptionHandler(Exception.class)

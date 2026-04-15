@@ -34,9 +34,13 @@ public class DeadLetterQueueConsumer {
         log.error("CRITICAL: Mensagem falhou definitivamente e foi movida para a DLQ: '{}'.", queue);
         log.error("Conteúdo da mensagem falha: {}", body);
 
-        alertGateway.enviarAlertaCritico(
-                "Falha Crítica: Mensagem em DLQ (" + queue + ")",
-                body
-        );
+        try {
+            alertGateway.enviarAlertaCritico(
+                    "Falha Crítica: Mensagem em DLQ (" + queue + ")",
+                    body
+            );
+        } catch (Exception e) {
+            log.error("FALHA AO ENVIAR ALERTA DE DLQ: {}. A mensagem permanecerá em log para auditoria.", e.getMessage());
+        }
     }
 }

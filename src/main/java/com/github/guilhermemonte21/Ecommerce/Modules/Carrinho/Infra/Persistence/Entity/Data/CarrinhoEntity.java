@@ -29,13 +29,8 @@ public class CarrinhoEntity {
     private UUID compradorId;
 
 
-    @ElementCollection(fetch = FetchType.LAZY)
-    @CollectionTable(
-            name = "carrinho_produtos",
-            joinColumns = @JoinColumn(name = "carrinho_id")
-    )
-    @Column(name = "produto_id")
-    private List<UUID> produtoIds = new ArrayList<>();
+    @OneToMany(mappedBy = "carrinho", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<CarrinhoItemEntity> itens = new ArrayList<>();
 
     @Column(name = "valor_total")
     private BigDecimal valorTotal;

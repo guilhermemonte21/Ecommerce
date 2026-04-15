@@ -2,10 +2,7 @@ package com.github.guilhermemonte21.Ecommerce.Modules.Pedidos.Application.Mapper
 
 import com.github.guilhermemonte21.Ecommerce.Modules.Pedidos.Application.DTO.Pedidos.PedidoDoVendedorResponse;
 import com.github.guilhermemonte21.Ecommerce.Modules.Pedidos.Domain.Entity.PedidoDoVendedor;
-import com.github.guilhermemonte21.Ecommerce.Modules.Produtos.Domain.Entity.Produtos;
 import org.springframework.stereotype.Component;
-
-import java.util.List;
 
 @Component
 public class PedidoDoVendedorMapperApl {
@@ -14,9 +11,11 @@ public class PedidoDoVendedorMapperApl {
         return new PedidoDoVendedorResponse(
                 domain.getId(),
                 domain.getVendedorId(),
-                domain.getProdutoIds(),
+                domain.getProdutoId(),
+                domain.getNomeProduto(),
+                domain.getPrecoUnitario(),
+                domain.getQuantidade(),
                 domain.getValor(),
-                domain.getStatus() != null ? domain.getStatus().name() : null
-        );
+                domain.getStatus() != null ? domain.getStatus().name() : null);
     }
 }

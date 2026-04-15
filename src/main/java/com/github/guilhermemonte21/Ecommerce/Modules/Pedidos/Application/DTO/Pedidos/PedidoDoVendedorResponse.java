@@ -7,7 +7,10 @@ import java.util.UUID;
 public record PedidoDoVendedorResponse(
         UUID id,
         UUID vendedorId,
-        List<UUID> produtoIds,
-        BigDecimal valor,
+        UUID produtoId,
+        String nomeProduto,
+        BigDecimal precoUnitario,
+        Long quantidade,
+        BigDecimal valorTotal,
         String status
 ) {}

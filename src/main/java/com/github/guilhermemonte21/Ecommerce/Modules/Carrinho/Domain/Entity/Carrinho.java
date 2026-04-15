@@ -18,7 +18,7 @@ import java.util.UUID;
 public class Carrinho {
     private UUID id;
     private UUID compradorId;
-    private List<UUID> produtoIds = new ArrayList<>();
+    private List<CarrinhoItem> itens = new ArrayList<>();
     private BigDecimal valorTotal;
     private OffsetDateTime atualizadoEm;
 
@@ -26,10 +26,15 @@ public class Carrinho {
         this.atualizadoEm = OffsetDateTime.now();
     }
 
-    public void adicionarItem(UUID produtoId, Long quantidade, BigDecimal precoUnitario) {
-        for (int i = 0; i < quantidade; i++) {
-            this.produtoIds.add(produtoId);
-        }
+    public void adicionarItem(UUID produtoId, String nome, Long quantidade, BigDecimal precoUnitario) {
+        this.itens.stream()
+            .filter(i -> i.getProdutoId().equals(produtoId))
+            .findFirst()
+            .ifPresentOrElse(
+                item -> item.setQuantidade(item.getQuantidade() + quantidade),
+                () -> this.itens.add(new CarrinhoItem(produtoId, nome, precoUnitario, quantidade))
+            );
+
         if (this.valorTotal == null) {
             this.valorTotal = BigDecimal.ZERO;
         }
@@ -38,18 +43,30 @@ public class Carrinho {
         this.atualizadoAgora();
     }
 
-    public void removerItem(UUID produtoId, BigDecimal precoUnitario) {
-        if (this.produtoIds.remove(produtoId)) {
-            this.valorTotal = this.valorTotal.subtract(precoUnitario);
-            if (this.valorTotal.compareTo(BigDecimal.ZERO) < 0) {
-                this.valorTotal = BigDecimal.ZERO;
-            }
-            this.atualizadoAgora();
-        }
+    public void removerItem(UUID produtoId) {
+        this.itens.stream()
+            .filter(i -> i.getProdutoId().equals(produtoId))
+            .findFirst()
+            .ifPresent(item -> {
+                BigDecimal precoItem = item.getPreco();
+                if (item.getQuantidade() > 1) {
+                    item.setQuantidade(item.getQuantidade() - 1);
+                } else {
+                    this.itens.remove(item);
+                }
+                
+                if (this.valorTotal != null) {
+                    this.valorTotal = this.valorTotal.subtract(precoItem);
+                    if (this.valorTotal.compareTo(BigDecimal.ZERO) < 0) {
+                        this.valorTotal = BigDecimal.ZERO;
+                    }
+                }
+                this.atualizadoAgora();
+            });
     }
 
     public void limpar() {
-        this.getProdutoIds().clear();
+        this.itens.clear();
         this.valorTotal = BigDecimal.ZERO;
         this.atualizadoAgora();
     }

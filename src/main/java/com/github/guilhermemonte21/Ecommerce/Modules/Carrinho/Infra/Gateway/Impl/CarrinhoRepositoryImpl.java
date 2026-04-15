@@ -41,7 +41,7 @@ public class CarrinhoRepositoryImpl implements CarrinhoGateway {
     public void deleteItem(Carrinho carrinho, UUID id) {
         CarrinhoEntity carrinhoEntity = jpaCarrinhoRepository.findById(carrinho.getId())
                 .orElseThrow(() -> new CarrinhoNotFoundException(carrinho.getId()));
-        carrinhoEntity.getProdutoIds().remove(id);
+        carrinhoEntity.getItens().removeIf(item -> item.getProdutoId().equals(id));
         jpaCarrinhoRepository.save(carrinhoEntity);
     }
 
