@@ -107,9 +107,7 @@ public class CriarPedido implements ICriarPedido {
             pedidoItem.setValor(dbProduct.getPreco().multiply(BigDecimal.valueOf(item.getQuantidade())));
             pedidoItem.setStatus(StatusPedido.PENDENTE);
 
-            usuarioGateway.getById(vendedorId).ifPresent(vendedor -> {
-                pedidoItem.setStripeAccountId(vendedor.getStripeAccountId());
-            });
+            usuarioGateway.getById(vendedorId).ifPresent(vendedor -> pedidoItem.setStripeAccountId(vendedor.getStripeAccountId()));
 
             orderItems.add(pedidoItem);
         }

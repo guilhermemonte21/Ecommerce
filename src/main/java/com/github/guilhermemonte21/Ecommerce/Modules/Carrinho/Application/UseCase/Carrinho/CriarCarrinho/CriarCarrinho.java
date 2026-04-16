@@ -14,7 +14,6 @@ import com.github.guilhermemonte21.Ecommerce.Modules.Produtos.Application.Gatewa
 import com.github.guilhermemonte21.Ecommerce.Shared.Application.Exceptions.ProdutoNotFoundException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import java.math.BigDecimal;
 import java.util.UUID;
 
 public class CriarCarrinho implements ICriarCarrinho {

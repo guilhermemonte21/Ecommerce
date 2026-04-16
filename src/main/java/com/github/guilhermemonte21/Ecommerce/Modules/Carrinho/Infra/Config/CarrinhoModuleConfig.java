@@ -15,29 +15,31 @@ import com.github.guilhermemonte21.Ecommerce.Modules.Carrinho.Application.UseCas
 @Configuration
 public class CarrinhoModuleConfig {
 
-
     @Bean
-    public ICriarCarrinho criarCarrinho(CarrinhoGateway gateway, CarrinhoMapperApl mapper, UsuarioAutenticadoGateway auth, ProdutoGateway produtoGateway) {
+    ICriarCarrinho criarCarrinho(CarrinhoGateway gateway, CarrinhoMapperApl mapper,
+            UsuarioAutenticadoGateway auth, ProdutoGateway produtoGateway) {
         return new CriarCarrinho(gateway, mapper, auth, produtoGateway);
     }
 
     @Bean
-    public IRemoverItemDoCarrinho removerItemDoCarrinho(CarrinhoGateway gateway, UsuarioAutenticadoGateway auth, ProdutoGateway produtoGateway) {
-        return new RemoverItemDoCarrinho(gateway, auth, produtoGateway);
+    IRemoverItemDoCarrinho removerItemDoCarrinho(CarrinhoGateway gateway, UsuarioAutenticadoGateway auth) {
+        return new RemoverItemDoCarrinho(gateway, auth);
     }
 
     @Bean
-    public ILimparCarrinho limparCarrinho(CarrinhoGateway gateway, UsuarioAutenticadoGateway auth) {
+    ILimparCarrinho limparCarrinho(CarrinhoGateway gateway, UsuarioAutenticadoGateway auth) {
         return new LimparCarrinho(gateway, auth);
     }
 
     @Bean
-    public IGetCarrinhoById getCarrinhoById(CarrinhoGateway gateway, CarrinhoMapperApl mapper, UsuarioAutenticadoGateway auth) {
+    public IGetCarrinhoById getCarrinhoById(CarrinhoGateway gateway, CarrinhoMapperApl mapper,
+            UsuarioAutenticadoGateway auth) {
         return new GetCarrinhoById(gateway, mapper, auth);
     }
 
     @Bean
-    public IAddItemAoCarrinho addItemAoCarrinho(CarrinhoGateway gateway, ProdutoGateway produtoGateway, CarrinhoMapperApl mapper, UsuarioAutenticadoGateway auth) {
+    IAddItemAoCarrinho addItemAoCarrinho(CarrinhoGateway gateway, ProdutoGateway produtoGateway,
+            CarrinhoMapperApl mapper, UsuarioAutenticadoGateway auth) {
         return new AddItemAoCarrinho(gateway, produtoGateway, mapper, auth);
     }
 }

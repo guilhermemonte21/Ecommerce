@@ -6,9 +6,6 @@ import com.github.guilhermemonte21.Ecommerce.Shared.Application.Exceptions.Usuar
 import com.github.guilhermemonte21.Ecommerce.Modules.Carrinho.Application.Gateway.CarrinhoGateway;
 import com.github.guilhermemonte21.Ecommerce.Modules.Usuarios.Application.Gateway.UsuarioAutenticadoGateway;
 import com.github.guilhermemonte21.Ecommerce.Modules.Carrinho.Domain.Entity.Carrinho;
-import com.github.guilhermemonte21.Ecommerce.Modules.Produtos.Application.Gateway.ProdutoGateway;
-import com.github.guilhermemonte21.Ecommerce.Modules.Produtos.Domain.Entity.Produtos;
-import com.github.guilhermemonte21.Ecommerce.Shared.Application.Exceptions.ProdutoNotFoundException;
 import com.github.guilhermemonte21.Ecommerce.Modules.Usuarios.Domain.Entity.UsuarioAutenticado;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -18,12 +15,10 @@ public class RemoverItemDoCarrinho implements IRemoverItemDoCarrinho {
 
     private final CarrinhoGateway gateway;
     private final UsuarioAutenticadoGateway authGateway;
-    private final ProdutoGateway produtoGateway;
 
-    public RemoverItemDoCarrinho(CarrinhoGateway gateway, UsuarioAutenticadoGateway authGateway, ProdutoGateway produtoGateway) {
+    public RemoverItemDoCarrinho(CarrinhoGateway gateway, UsuarioAutenticadoGateway authGateway) {
         this.gateway = gateway;
         this.authGateway = authGateway;
-        this.produtoGateway = produtoGateway;
     }
 
     @Override

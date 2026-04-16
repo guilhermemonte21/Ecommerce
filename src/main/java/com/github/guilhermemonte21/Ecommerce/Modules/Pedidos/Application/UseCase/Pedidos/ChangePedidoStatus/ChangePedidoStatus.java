@@ -7,7 +7,6 @@ import com.github.guilhermemonte21.Ecommerce.Modules.Usuarios.Application.Gatewa
 import com.github.guilhermemonte21.Ecommerce.Modules.Pedidos.Domain.Entity.Pedidos;
 import com.github.guilhermemonte21.Ecommerce.Modules.Usuarios.Domain.Entity.UsuarioAutenticado;
 import org.springframework.transaction.annotation.Transactional;
-
 import java.util.UUID;
 
 public class ChangePedidoStatus implements IChangePedidoStatus {

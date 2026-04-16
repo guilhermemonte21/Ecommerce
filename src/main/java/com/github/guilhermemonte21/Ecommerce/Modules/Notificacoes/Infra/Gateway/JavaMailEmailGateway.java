@@ -5,6 +5,7 @@ import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.mail.javamail.JavaMailSenderImpl;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Component;
@@ -23,6 +24,12 @@ public class JavaMailEmailGateway implements EmailGateway {
     @Override
     public void enviarEmail(String to, String subject, String body, boolean isHtml) {
         try {
+                if (mailSender instanceof JavaMailSenderImpl senderImpl) {
+                senderImpl.getJavaMailProperties().put("mail.smtp.starttls.enable", "true");
+                senderImpl.getJavaMailProperties().put("mail.smtp.starttls.required", "true");
+                senderImpl.getJavaMailProperties().put("mail.smtp.ssl.enable", "false");
+            }
+
             MimeMessage message = mailSender.createMimeMessage();
             MimeMessageHelper helper = new MimeMessageHelper(message, true, "UTF-8");
 

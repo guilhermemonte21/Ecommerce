@@ -12,8 +12,8 @@ import com.github.guilhermemonte21.Ecommerce.Modules.Pedidos.Application.Gateway
 public class PagamentoModuleConfig {
 
     @Bean
-    public IPagamento pagamento(PedidoGateway pedidoGateway, PagamentoGateway pagamentoGateway,
-                                EventPublisher eventPublisher, UsuarioAutenticadoGateway authGateway) {
+    IPagamento pagamento(PedidoGateway pedidoGateway, PagamentoGateway pagamentoGateway,
+            EventPublisher eventPublisher, UsuarioAutenticadoGateway authGateway) {
         return new Pagamento(pedidoGateway, pagamentoGateway, eventPublisher, authGateway);
     }
 }

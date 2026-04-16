@@ -12,6 +12,8 @@ import com.github.guilhermemonte21.Ecommerce.Modules.Usuarios.Domain.Entity.Usua
 
 import java.util.UUID;
 
+import org.springframework.transaction.annotation.Transactional;
+
 public class AddItemAoCarrinho implements IAddItemAoCarrinho {
 
     private final CarrinhoGateway gateway;
@@ -20,7 +22,7 @@ public class AddItemAoCarrinho implements IAddItemAoCarrinho {
     private final UsuarioAutenticadoGateway authGateway;
 
     public AddItemAoCarrinho(CarrinhoGateway gateway, ProdutoGateway produtoGateway,
-                             CarrinhoMapperApl mapperApl, UsuarioAutenticadoGateway authGateway) {
+            CarrinhoMapperApl mapperApl, UsuarioAutenticadoGateway authGateway) {
         this.gateway = gateway;
         this.produtoGateway = produtoGateway;
         this.mapperApl = mapperApl;
@@ -28,7 +30,7 @@ public class AddItemAoCarrinho implements IAddItemAoCarrinho {
     }
 
     @Override
-    @org.springframework.transaction.annotation.Transactional
+    @Transactional
     public CarrinhoResponse adicionarAoCarrinho(UUID idCarrinho, UUID idProduto, Long quantidade) {
         UsuarioAutenticado user = authGateway.get();
         Produtos produto = produtoGateway.getById(idProduto)
