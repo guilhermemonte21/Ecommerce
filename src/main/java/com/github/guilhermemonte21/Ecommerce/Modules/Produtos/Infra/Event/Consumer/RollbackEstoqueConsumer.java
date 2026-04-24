@@ -1,27 +1,19 @@
 package com.github.guilhermemonte21.Ecommerce.Modules.Produtos.Infra.Event.Consumer;
 
 import com.github.guilhermemonte21.Ecommerce.Modules.Produtos.Application.Gateway.ProdutoGateway;
-import com.github.guilhermemonte21.Ecommerce.Modules.Pedidos.Domain.Event.PedidoCanceladoEvent;
+import com.github.guilhermemonte21.Ecommerce.Shared.Infra.Config.CacheNames;
+import com.github.guilhermemonte21.Ecommerce.Shared.Domain.Event.PedidoCanceladoEvent;
 import com.github.guilhermemonte21.Ecommerce.Shared.Infra.Config.RabbitMQConfig;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Map;
 import java.util.UUID;
 
-/**
- * ARCH-01: Consumer de rollback de estoque.
- * Depende apenas do módulo Produtos e do evento PedidoCanceladoEvent (Shared/Pedidos domain).
- * NÃO importa mais PedidoGateway, Pedidos, PedidoDoVendedor, StatusPedido — eliminando acoplamento cross-module.
- *
- * Quando o evento carrega produtosParaRollback (payload self-contained), o rollback
- * é feito diretamente. Quando o campo é null (cancelamento pelo usuário/scheduler),
- * o evento ainda precisa de um lookup — neste caso apenas logamos que não há dados de produto
- * (a implementação do Outbox Pattern resolveria isso completamente futuramente).
- */
 @Component
 public class RollbackEstoqueConsumer {
 
@@ -33,6 +25,7 @@ public class RollbackEstoqueConsumer {
         this.produtoGateway = produtoGateway;
     }
 
+    @CacheEvict(value = {CacheNames.PRODUTOS, CacheNames.PRODUTO}, allEntries = true)
     @RabbitListener(queues = RabbitMQConfig.QUEUE_ROLLBACK_ESTOQUE)
     @Transactional
     public void onPedidoCancelado(PedidoCanceladoEvent event) {
@@ -48,7 +41,7 @@ public class RollbackEstoqueConsumer {
             return;
         }
 
-        // BUG-03: usa lock pessimista para evitar race condition no rollback de estoque
+
         for (Map.Entry<UUID, Long> entry : produtosParaRollback.entrySet()) {
             UUID produtoId = entry.getKey();
             Long quantidade = entry.getValue();

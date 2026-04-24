@@ -2,7 +2,7 @@ package com.github.guilhermemonte21.Ecommerce.Modules.Carrinho.Infra.Event.Consu
 
 import com.github.guilhermemonte21.Ecommerce.Modules.Carrinho.Application.Gateway.CarrinhoGateway;
 import com.github.guilhermemonte21.Ecommerce.Modules.Carrinho.Domain.Entity.Carrinho;
-import com.github.guilhermemonte21.Ecommerce.Modules.Pedidos.Domain.Event.PedidoCriadoEvent;
+import com.github.guilhermemonte21.Ecommerce.Shared.Domain.Event.PedidoCriadoEvent;
 import com.github.guilhermemonte21.Ecommerce.Shared.Infra.Config.RabbitMQConfig;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

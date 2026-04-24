@@ -15,7 +15,7 @@ import com.github.guilhermemonte21.Ecommerce.Modules.Pedidos.Domain.Entity.Pedid
 import com.github.guilhermemonte21.Ecommerce.Modules.Pedidos.Domain.Entity.PedidoDoVendedor;
 import com.github.guilhermemonte21.Ecommerce.Modules.Usuarios.Domain.Entity.UsuarioAutenticado;
 import com.github.guilhermemonte21.Ecommerce.Modules.Pedidos.Domain.Enum.StatusPedido;
-import com.github.guilhermemonte21.Ecommerce.Modules.Pedidos.Domain.Event.PedidoCriadoEvent;
+import com.github.guilhermemonte21.Ecommerce.Shared.Domain.Event.PedidoCriadoEvent;
 import com.github.guilhermemonte21.Ecommerce.Modules.Carrinho.Domain.Entity.CarrinhoItem;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -92,11 +92,20 @@ public class CriarPedido implements ICriarPedido {
         Pedidos pedido = new Pedidos();
         pedido.setCompradorId(user.getUser().getId());
 
+        List<UUID> allVendedorIds = cart.getItens().stream()
+                .map(item -> productDetails.get(item.getProdutoId()).getVendedorId())
+                .distinct()
+                .toList();
+
+        Map<UUID, String> sellerStripeAccounts = usuarioGateway.findAllByIds(allVendedorIds).stream()
+                .filter(u -> u.getStripeAccountId() != null)
+                .collect(Collectors.toMap(Usuarios::getId, Usuarios::getStripeAccountId));
+
         List<PedidoDoVendedor> orderItems = new ArrayList<>();
         for (CarrinhoItem item : cart.getItens()) {
             Produtos dbProduct = productDetails.get(item.getProdutoId());
             UUID vendedorId = dbProduct.getVendedorId();
-            
+
             PedidoDoVendedor pedidoItem = new PedidoDoVendedor();
             pedidoItem.setVendedorId(vendedorId);
             pedidoItem.setPedido(pedido);
@@ -107,7 +116,7 @@ public class CriarPedido implements ICriarPedido {
             pedidoItem.setValor(dbProduct.getPreco().multiply(BigDecimal.valueOf(item.getQuantidade())));
             pedidoItem.setStatus(StatusPedido.PENDENTE);
 
-            usuarioGateway.getById(vendedorId).ifPresent(vendedor -> pedidoItem.setStripeAccountId(vendedor.getStripeAccountId()));
+            pedidoItem.setStripeAccountId(sellerStripeAccounts.get(vendedorId));
 
             orderItems.add(pedidoItem);
         }

@@ -4,7 +4,7 @@ import com.github.guilhermemonte21.Ecommerce.Modules.Pedidos.Application.Gateway
 import com.github.guilhermemonte21.Ecommerce.Modules.Pedidos.Domain.Entity.PedidoDoVendedor;
 import com.github.guilhermemonte21.Ecommerce.Modules.Pedidos.Domain.Entity.Pedidos;
 import com.github.guilhermemonte21.Ecommerce.Modules.Pedidos.Domain.Enum.StatusPedido;
-import com.github.guilhermemonte21.Ecommerce.Modules.Pedidos.Domain.Event.PedidoCanceladoEvent;
+import com.github.guilhermemonte21.Ecommerce.Shared.Domain.Event.PedidoCanceladoEvent;
 import com.github.guilhermemonte21.Ecommerce.Shared.Application.Port.EventPublisher;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -60,7 +60,10 @@ public class ScheduledCancelamentoPedidos {
                         "Timeout: Pagamento não realizado em tempo hábil",
                         produtosParaRollback));
 
-                log.info("Evento de cancelamento publicado para o pedido ID {}", pedido.getId());
+                pedido.cancelar();
+                pedidoGateway.save(pedido);
+
+                log.info("Pedido ID {} cancelado por timeout e evento de rollback publicado.", pedido.getId());
             } catch (Exception e) {
                 log.error("Erro ao tentar cancelar o pedido ID {}: {}", pedido.getId(), e.getMessage());
             }

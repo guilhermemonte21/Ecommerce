@@ -21,8 +21,8 @@ public class UsuarioModuleConfig {
     }
 
     @Bean
-    public IGetUserById getUserById(UsuarioGateway gateway, UsuarioMapperApl mapper) {
-        return new GetUserById(gateway, mapper);
+    public IGetUserById getUserById(UsuarioGateway gateway, UsuarioMapperApl mapper, UsuarioAutenticadoGateway authGateway) {
+        return new GetUserById(gateway, mapper, authGateway);
     }
 
     @Bean

@@ -59,7 +59,6 @@ public class ProdutoController {
     @Idempotent
     @Parameter(name = "Idempotency-Key", in = ParameterIn.HEADER, required = true, description = "Chave única da requisição (UUID)", example = "550e8400-e29b-41d4-a716-446655440000")
     @PostMapping
-    @CacheEvict(value = "produtos", allEntries = true)
     public ResponseEntity<ProdutoResponse> criar(@RequestBody @Valid CreateProdutoRequest produtos) {
         log.info("Registrando novo produto: {}", produtos.nomeProduto());
         ProdutoResponse prod = registrarProduto.create(produtos);
@@ -68,7 +67,6 @@ public class ProdutoController {
 
     @Operation(summary = "Listar todos os produtos", description = "Listagem paginada de produtos")
     @GetMapping
-    @Cacheable(value = "produtos", key = "#page + '-' + #size + '-' + #sortBy")
     public ResponseEntity<Page<ProdutoResponse>> findAll(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "20") int size,
@@ -80,7 +78,6 @@ public class ProdutoController {
 
     @Operation(summary = "Buscar produto por ID")
     @GetMapping("/{idProduto}")
-    @Cacheable(value = "produto", key = "#idProduto")
     public ResponseEntity<ProdutoResponse> findById(@PathVariable("idProduto") UUID idProduto) {
         ProdutoResponse response = getProdutoById.getProdutoById(idProduto);
         return ResponseEntity.ok(response);
@@ -89,7 +86,6 @@ public class ProdutoController {
     @Operation(summary = "Atualizar produto")
     @PreAuthorize("isAuthenticated()")
     @PutMapping("/{idProduto}")
-    @CacheEvict(value = {"produtos", "produto"}, allEntries = true)
     public ResponseEntity<ProdutoResponse> atualizar(@PathVariable("idProduto") UUID idProduto,
                                                       @RequestBody @Valid CreateProdutoRequest request) {
         ProdutoResponse response = atualizarProduto.atualizar(idProduto, request);
@@ -99,7 +95,6 @@ public class ProdutoController {
     @Operation(summary = "Atualizar estoque do produto")
     @PreAuthorize("isAuthenticated()")
     @PatchMapping("/{idProduto}/estoque")
-    @CacheEvict(value = {"produtos", "produto"}, allEntries = true)
     public ResponseEntity<Long> atualizarEstoque(@PathVariable("idProduto") UUID idProduto,
                                                   @RequestParam Long quantity) {
         Long estoqueAtualizado = atualizarEstoque.atualizarEstoque(idProduto, quantity);
@@ -109,7 +104,6 @@ public class ProdutoController {
     @Operation(summary = "Deletar produto")
     @PreAuthorize("isAuthenticated()")
     @DeleteMapping("/{idProduto}")
-    @CacheEvict(value = {"produtos", "produto"}, allEntries = true)
     public ResponseEntity<Void> deletar(@PathVariable("idProduto") UUID idProduto) {
         deletarProduto.deletar(idProduto);
         return ResponseEntity.noContent().build();

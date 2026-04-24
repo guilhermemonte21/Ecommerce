@@ -4,6 +4,7 @@ import com.github.guilhermemonte21.Ecommerce.Modules.Produtos.Domain.Entity.Prod
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -11,6 +12,8 @@ public interface ProdutoGateway {
     Produtos salvar(Produtos produtos);
 
     Optional<Produtos> getById(UUID id);
+
+    List<Produtos> findAllByIds(List<UUID> ids);
 
     Optional<Produtos> getByIdComLock(UUID id);
 

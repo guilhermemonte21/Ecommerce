@@ -1,0 +1,41 @@
+package com.github.guilhermemonte21.Ecommerce.Shared.Domain.Event;
+
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
+import java.time.OffsetDateTime;
+import java.util.UUID;
+
+public class PedidoCriadoEvent implements DomainEvent {
+
+    private final UUID pedidoId;
+    private final UUID compradorId;
+    private final OffsetDateTime occurredOn;
+
+    @JsonCreator
+    public PedidoCriadoEvent(
+            @JsonProperty("pedidoId") UUID pedidoId,
+            @JsonProperty("compradorId") UUID compradorId) {
+        this.pedidoId = pedidoId;
+        this.compradorId = compradorId;
+        this.occurredOn = OffsetDateTime.now();
+    }
+
+    public UUID getPedidoId() {
+        return pedidoId;
+    }
+
+    public UUID getCompradorId() {
+        return compradorId;
+    }
+
+    @Override
+    public String eventType() {
+        return "pedido.criado";
+    }
+
+    @Override
+    public OffsetDateTime occurredOn() {
+        return occurredOn;
+    }
+}

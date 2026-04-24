@@ -1,7 +1,7 @@
 package com.github.guilhermemonte21.Ecommerce.Modules.Notificacoes.Infra.Event.Consumer;
 
 import com.github.guilhermemonte21.Ecommerce.Modules.Notificacoes.Application.UseCase.EnviarEmailNotificacao;
-import com.github.guilhermemonte21.Ecommerce.Modules.Pagamento.Domain.Event.PagamentoConcluidoEvent;
+import com.github.guilhermemonte21.Ecommerce.Shared.Domain.Event.PagamentoConcluidoEvent;
 import com.github.guilhermemonte21.Ecommerce.Modules.Pedidos.Application.Gateway.PedidoGateway;
 import com.github.guilhermemonte21.Ecommerce.Modules.Pedidos.Domain.Entity.Pedidos;
 import com.github.guilhermemonte21.Ecommerce.Modules.Usuarios.Application.Gateway.UsuarioGateway;

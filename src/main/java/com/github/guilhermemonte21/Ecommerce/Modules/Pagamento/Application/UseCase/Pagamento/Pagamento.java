@@ -8,8 +8,8 @@ import com.github.guilhermemonte21.Ecommerce.Modules.Usuarios.Application.Gatewa
 import com.github.guilhermemonte21.Ecommerce.Shared.Application.Port.EventPublisher;
 import com.github.guilhermemonte21.Ecommerce.Modules.Pedidos.Domain.Entity.Pedidos;
 import com.github.guilhermemonte21.Ecommerce.Modules.Pedidos.Domain.Enum.StatusPedido;
-import com.github.guilhermemonte21.Ecommerce.Modules.Pagamento.Domain.Event.PagamentoConcluidoEvent;
-import com.github.guilhermemonte21.Ecommerce.Modules.Pedidos.Domain.Event.PedidoCanceladoEvent;
+import com.github.guilhermemonte21.Ecommerce.Shared.Domain.Event.PagamentoConcluidoEvent;
+import com.github.guilhermemonte21.Ecommerce.Shared.Domain.Event.PedidoCanceladoEvent;
 import com.github.guilhermemonte21.Ecommerce.Modules.Usuarios.Domain.Entity.UsuarioAutenticado;
 
 import org.slf4j.Logger;
@@ -66,6 +66,8 @@ public class Pagamento implements IPagamento {
         });
 
         eventPublisher.publish(new PedidoCanceladoEvent(idPedido, "Falha no processo de pagamento", produtos));
+        pedido.cancelar();
+        pedidoGateway.save(pedido);
         return false;
     }
 
@@ -94,5 +96,7 @@ public class Pagamento implements IPagamento {
         });
 
         eventPublisher.publish(new PedidoCanceladoEvent(idPedido, "Cancelado pelo usuário", produtos));
+        pedido.cancelar();
+        pedidoGateway.save(pedido);
     }
 }

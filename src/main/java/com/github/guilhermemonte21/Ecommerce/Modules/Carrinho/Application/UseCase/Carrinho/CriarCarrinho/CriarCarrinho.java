@@ -14,7 +14,12 @@ import com.github.guilhermemonte21.Ecommerce.Modules.Produtos.Application.Gatewa
 import com.github.guilhermemonte21.Ecommerce.Shared.Application.Exceptions.ProdutoNotFoundException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
+import java.util.Map;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 public class CriarCarrinho implements ICriarCarrinho {
 
@@ -33,6 +38,7 @@ public class CriarCarrinho implements ICriarCarrinho {
         this.produtoGateway = produtoGateway;
     }
 
+    @Transactional
     @Override
     public CarrinhoResponse criar(CreateCarrinhoRequest carrinho) {
         UsuarioAutenticado user = authGateway.get();
@@ -49,10 +55,19 @@ public class CriarCarrinho implements ICriarCarrinho {
             carDomain.limpar();
         }
 
-        if (carrinho.getProdutosIds() != null) {
-            for (UUID pId : carrinho.getProdutosIds()) {
-                Produtos p = produtoGateway.getById(pId)
-                        .orElseThrow(() -> new ProdutoNotFoundException(pId));
+        if (carrinho.getProdutosIds() != null && !carrinho.getProdutosIds().isEmpty()) {
+            List<UUID> productIds = carrinho.getProdutosIds();
+            List<Produtos> produtosList = produtoGateway.findAllByIds(productIds);
+
+            if (produtosList.size() != productIds.stream().distinct().count()) {
+                throw new ProdutoNotFoundException(null); // Simplificado para o exemplo
+            }
+
+            Map<UUID, Produtos> produtosMap = produtosList.stream()
+                    .collect(Collectors.toMap(Produtos::getId, p -> p));
+
+            for (UUID pId : productIds) {
+                Produtos p = produtosMap.get(pId);
 
                 if (p.getEstoque() <= 0) {
                     throw new EstoqueInsuficienteException(p.getNomeProduto());

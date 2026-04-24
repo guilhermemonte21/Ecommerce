@@ -2,29 +2,37 @@ package com.github.guilhermemonte21.Ecommerce.Shared.Infra.Gateway;
 
 import com.github.guilhermemonte21.Ecommerce.Shared.Application.Gateway.IdempotencyGateway;
 import com.github.guilhermemonte21.Ecommerce.Shared.Domain.Entity.IdempotencyRecord;
-import com.github.guilhermemonte21.Ecommerce.Shared.Infra.Mappers.IdempotencyRecordMapper;
-import com.github.guilhermemonte21.Ecommerce.Shared.Infra.Persistence.Entity.Data.IdempotencyRecordEntity;
-import com.github.guilhermemonte21.Ecommerce.Shared.Infra.Persistence.JpaRepository.JpaIdempotencyRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.stereotype.Component;
 
 import java.util.Optional;
+import java.util.concurrent.TimeUnit;
 
 @RequiredArgsConstructor
-@org.springframework.transaction.annotation.Transactional
 public class IdempotencyGatewayImpl implements IdempotencyGateway {
 
-    private final JpaIdempotencyRepository repository;
-    private final IdempotencyRecordMapper mapper;
+    private final RedisTemplate<String, Object> redisTemplate;
+    private static final String REDIS_PREFIX = "idempotency:";
+    private static final long TTL_HOURS = 24;
 
     @Override
     public Optional<IdempotencyRecord> findByKey(String key) {
-        return repository.findByIdempotencyKey(key).map(mapper::toDomain);
+        Object record = redisTemplate.opsForValue().get(REDIS_PREFIX + key);
+        if (record instanceof IdempotencyRecord idempotencyRecord) {
+            return Optional.of(idempotencyRecord);
+        }
+        return Optional.empty();
     }
 
     @Override
     public IdempotencyRecord save(IdempotencyRecord record) {
-        IdempotencyRecordEntity entity = mapper.toEntity(record);
-        IdempotencyRecordEntity saved = repository.save(entity);
-        return mapper.toDomain(saved);
+        redisTemplate.opsForValue().set(
+                REDIS_PREFIX + record.getIdempotencyKey(),
+                record,
+                TTL_HOURS,
+                TimeUnit.HOURS
+        );
+        return record;
     }
 }

@@ -7,6 +7,7 @@ import com.github.guilhermemonte21.Ecommerce.Modules.Usuarios.Infra.Persistence.
 import com.github.guilhermemonte21.Ecommerce.Modules.Usuarios.Infra.Persistence.JpaRepository.JpaUsuarioRepository;
 import org.springframework.stereotype.Component;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -31,6 +32,13 @@ public class UsuarioRepositoryImpl implements UsuarioGateway {
     @Override
     public Optional<Usuarios> getById(UUID id) {
         return jpaRepo.findById(id).map(mapper::toDomain);
+    }
+
+    @Override
+    public List<Usuarios> findAllByIds(List<UUID> ids) {
+        return jpaRepo.findAllById(ids).stream()
+                .map(mapper::toDomain)
+                .toList();
     }
 
     @Override

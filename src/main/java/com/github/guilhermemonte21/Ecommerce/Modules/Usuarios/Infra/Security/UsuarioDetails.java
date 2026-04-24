@@ -1,4 +1,4 @@
-package com.github.guilhermemonte21.Ecommerce.Shared.Infra.Config;
+package com.github.guilhermemonte21.Ecommerce.Modules.Usuarios.Infra.Security;
 
 import com.github.guilhermemonte21.Ecommerce.Modules.Usuarios.Infra.Persistence.Entity.Data.UsuariosEntity;
 import org.springframework.security.core.GrantedAuthority;
