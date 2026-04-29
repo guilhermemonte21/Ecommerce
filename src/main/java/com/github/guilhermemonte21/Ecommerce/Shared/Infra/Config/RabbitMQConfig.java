@@ -25,6 +25,7 @@ public class RabbitMQConfig {
     public static final String RK_PEDIDO_CRIADO = "pedido.criado";
     public static final String RK_PAGAMENTO_CONCLUIDO = "pagamento.concluido";
     public static final String RK_PEDIDO_CANCELADO = "pedido.cancelado";
+    public static final String RK_PRODUTO_ALTERADO = "produto.alterado";
 
     public static final String QUEUE_LIMPAR_CARRINHO = "pedido.criado.limpar-carrinho";
     public static final String QUEUE_CONFIRMAR_PAGAMENTO = "pagamento.concluido.atualizar-pedido";
@@ -32,6 +33,8 @@ public class RabbitMQConfig {
     public static final String QUEUE_LIMPAR_CARRINHO_DLQ = "pedido.criado.limpar-carrinho.dlq";
     public static final String QUEUE_CONFIRMAR_PAGAMENTO_DLQ = "pagamento.concluido.atualizar-pedido.dlq";
     public static final String QUEUE_ROLLBACK_ESTOQUE_DLQ = "pedido.cancelado.rollback-estoque.dlq";
+    public static final String QUEUE_SYNC_ELASTIC = "produto.alterado.sync-elastic";
+    public static final String QUEUE_SYNC_ELASTIC_DLQ = "produto.alterado.sync-elastic.dlq";
 
     public static final String QUEUE_NOTIF_PEDIDO_CRIADO = "pedido.criado.notificacao";
     public static final String QUEUE_NOTIF_PAGAMENTO_CONCLUIDO = "pagamento.concluido.notificacao";
@@ -92,6 +95,16 @@ public class RabbitMQConfig {
     }
 
     @Bean
+    public Queue syncElasticQueue() {
+        return buildQueueWithDlx(QUEUE_SYNC_ELASTIC, QUEUE_SYNC_ELASTIC_DLQ);
+    }
+
+    @Bean
+    public Queue syncElasticDlq() {
+        return buildDlq(QUEUE_SYNC_ELASTIC_DLQ);
+    }
+
+    @Bean
     public Queue notifPedidoCriadoQueue() {
         return buildQueueWithDlx(QUEUE_NOTIF_PEDIDO_CRIADO, QUEUE_NOTIF_PEDIDO_CRIADO_DLQ);
     }
@@ -143,6 +156,13 @@ public class RabbitMQConfig {
     }
 
     @Bean
+    public Binding bindingSyncElastic(Queue syncElasticQueue, TopicExchange eventsExchange) {
+        return BindingBuilder.bind(syncElasticQueue)
+                .to(eventsExchange)
+                .with(RK_PRODUTO_ALTERADO);
+    }
+
+    @Bean
     public Binding bindingNotifPedidoCriado(Queue notifPedidoCriadoQueue, TopicExchange eventsExchange) {
         return BindingBuilder.bind(notifPedidoCriadoQueue)
                 .to(eventsExchange)
@@ -182,6 +202,13 @@ public class RabbitMQConfig {
         return BindingBuilder.bind(rollbackEstoqueDlq)
                 .to(deadLetterExchange)
                 .with(QUEUE_ROLLBACK_ESTOQUE_DLQ);
+    }
+
+    @Bean
+    public Binding bindingSyncElasticDlq(Queue syncElasticDlq, DirectExchange deadLetterExchange) {
+        return BindingBuilder.bind(syncElasticDlq)
+                .to(deadLetterExchange)
+                .with(QUEUE_SYNC_ELASTIC_DLQ);
     }
 
     @Bean

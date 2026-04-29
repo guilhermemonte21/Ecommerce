@@ -20,4 +20,6 @@ public interface ProdutoGateway {
     void delete(Produtos produtos);
 
     Page<Produtos> findAll(Pageable pageable);
+
+    List<Produtos> saveAll(List<Produtos> produtos);
 }

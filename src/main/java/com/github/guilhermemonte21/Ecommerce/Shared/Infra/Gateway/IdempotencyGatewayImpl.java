@@ -4,7 +4,6 @@ import com.github.guilhermemonte21.Ecommerce.Shared.Application.Gateway.Idempote
 import com.github.guilhermemonte21.Ecommerce.Shared.Domain.Entity.IdempotencyRecord;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.redis.core.RedisTemplate;
-import org.springframework.stereotype.Component;
 
 import java.util.Optional;
 import java.util.concurrent.TimeUnit;
@@ -31,8 +30,7 @@ public class IdempotencyGatewayImpl implements IdempotencyGateway {
                 REDIS_PREFIX + record.getIdempotencyKey(),
                 record,
                 TTL_HOURS,
-                TimeUnit.HOURS
-        );
+                TimeUnit.HOURS);
         return record;
     }
 }

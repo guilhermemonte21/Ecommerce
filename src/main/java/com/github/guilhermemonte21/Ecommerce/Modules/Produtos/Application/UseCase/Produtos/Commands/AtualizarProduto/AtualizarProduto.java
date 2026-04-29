@@ -1,4 +1,4 @@
-package com.github.guilhermemonte21.Ecommerce.Modules.Produtos.Application.UseCase.Produtos.AtualizarProduto;
+package com.github.guilhermemonte21.Ecommerce.Modules.Produtos.Application.UseCase.Produtos.Commands.AtualizarProduto;
 
 import com.github.guilhermemonte21.Ecommerce.Modules.Produtos.Application.DTO.Produtos.CreateProdutoRequest;
 import com.github.guilhermemonte21.Ecommerce.Modules.Produtos.Application.DTO.Produtos.ProdutoResponse;
@@ -8,11 +8,15 @@ import com.github.guilhermemonte21.Ecommerce.Shared.Application.Exceptions.Usuar
 import com.github.guilhermemonte21.Ecommerce.Modules.Produtos.Application.Gateway.ProdutoGateway;
 import com.github.guilhermemonte21.Ecommerce.Modules.Usuarios.Application.Gateway.UsuarioAutenticadoGateway;
 import com.github.guilhermemonte21.Ecommerce.Modules.Produtos.Application.Mappers.ProdutoMapperApl;
+import com.github.guilhermemonte21.Ecommerce.Shared.Application.Port.EventPublisher;
+import com.github.guilhermemonte21.Ecommerce.Shared.Domain.Event.ProdutoAlteradoEvent;
 import com.github.guilhermemonte21.Ecommerce.Modules.Produtos.Domain.Entity.Produtos;
 import com.github.guilhermemonte21.Ecommerce.Modules.Usuarios.Domain.Entity.UsuarioAutenticado;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.time.OffsetDateTime;
 
 import java.util.UUID;
 
@@ -23,12 +27,14 @@ public class AtualizarProduto implements IAtualizarProduto {
     private final ProdutoGateway gateway;
     private final ProdutoMapperApl mapperApl;
     private final UsuarioAutenticadoGateway authGateway;
+    private final EventPublisher eventPublisher;
 
     public AtualizarProduto(ProdutoGateway gateway, ProdutoMapperApl mapperApl,
-            UsuarioAutenticadoGateway authGateway) {
+                            UsuarioAutenticadoGateway authGateway, EventPublisher eventPublisher) {
         this.gateway = gateway;
         this.mapperApl = mapperApl;
         this.authGateway = authGateway;
+        this.eventPublisher = eventPublisher;
     }
 
     @Override
@@ -51,6 +57,19 @@ public class AtualizarProduto implements IAtualizarProduto {
 
         Produtos salvo = gateway.salvar(prodById);
         log.info("Produto atualizado: id={}", idProduto);
+
+        ProdutoAlteradoEvent event = ProdutoAlteradoEvent.builder()
+                .id(salvo.getId())
+                .nomeProduto(salvo.getNomeProduto())
+                .vendedorId(salvo.getVendedorId())
+                .descricao(salvo.getDescricao())
+                .preco(salvo.getPreco())
+                .estoque(salvo.getEstoque())
+                .tipoAlteracao("ATUALIZADO")
+                .occurredOn(OffsetDateTime.now())
+                .build();
+        eventPublisher.publish(event);
+
         return mapperApl.toResponse(salvo);
     }
 }

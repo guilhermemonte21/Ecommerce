@@ -1,4 +1,4 @@
-package com.github.guilhermemonte21.Ecommerce.Modules.Produtos.Application.UseCase.Produtos.RegistrarProduto;
+package com.github.guilhermemonte21.Ecommerce.Modules.Produtos.Application.UseCase.Produtos.Commands.RegistrarProduto;
 
 import com.github.guilhermemonte21.Ecommerce.Shared.Infra.Config.CacheNames;
 import com.github.guilhermemonte21.Ecommerce.Modules.Produtos.Application.DTO.Produtos.ProdutoResponse;

@@ -14,6 +14,7 @@ import com.github.guilhermemonte21.Ecommerce.Modules.Produtos.Domain.Entity.Prod
 import com.github.guilhermemonte21.Ecommerce.Modules.Pedidos.Domain.Entity.Pedidos;
 import com.github.guilhermemonte21.Ecommerce.Modules.Pedidos.Domain.Entity.PedidoDoVendedor;
 import com.github.guilhermemonte21.Ecommerce.Modules.Usuarios.Domain.Entity.UsuarioAutenticado;
+import com.github.guilhermemonte21.Ecommerce.Modules.Usuarios.Domain.Entity.Usuarios;
 import com.github.guilhermemonte21.Ecommerce.Modules.Pedidos.Domain.Enum.StatusPedido;
 import com.github.guilhermemonte21.Ecommerce.Shared.Domain.Event.PedidoCriadoEvent;
 import com.github.guilhermemonte21.Ecommerce.Modules.Carrinho.Domain.Entity.CarrinhoItem;
@@ -24,6 +25,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.math.BigDecimal;
 import java.time.OffsetDateTime;
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class CriarPedido implements ICriarPedido {
 
@@ -86,9 +88,10 @@ public class CriarPedido implements ICriarPedido {
             }
 
             produtoComLock.setEstoque(produtoComLock.getEstoque() - quantidade);
-            produtoGateway.salvar(produtoComLock);
             productDetails.put(idProduto, produtoComLock);
         }
+        List<Produtos> updatedProducts = new ArrayList<>(productDetails.values());
+        produtoGateway.saveAll(updatedProducts);
         Pedidos pedido = new Pedidos();
         pedido.setCompradorId(user.getUser().getId());
 
@@ -104,19 +107,20 @@ public class CriarPedido implements ICriarPedido {
         List<PedidoDoVendedor> orderItems = new ArrayList<>();
         for (CarrinhoItem item : cart.getItens()) {
             Produtos dbProduct = productDetails.get(item.getProdutoId());
-            UUID vendedorId = dbProduct.getVendedorId();
+            UUID sellerId = dbProduct.getVendedorId();
 
-            PedidoDoVendedor pedidoItem = new PedidoDoVendedor();
-            pedidoItem.setVendedorId(vendedorId);
-            pedidoItem.setPedido(pedido);
-            pedidoItem.setProdutoId(item.getProdutoId());
-            pedidoItem.setNomeProduto(dbProduct.getNomeProduto());
-            pedidoItem.setPrecoUnitario(dbProduct.getPreco());
-            pedidoItem.setQuantidade(item.getQuantidade());
-            pedidoItem.setValor(dbProduct.getPreco().multiply(BigDecimal.valueOf(item.getQuantidade())));
-            pedidoItem.setStatus(StatusPedido.PENDENTE);
+            PedidoDoVendedor pedidoItem = PedidoDoVendedor.builder()
+                    .vendedorId(sellerId)
+                    .pedido(pedido)
+                    .produtoId(item.getProdutoId())
+                    .nomeProduto(dbProduct.getNomeProduto())
+                    .precoUnitario(dbProduct.getPreco())
+                    .quantidade(item.getQuantidade())
+                    .valor(dbProduct.getPreco().multiply(BigDecimal.valueOf(item.getQuantidade())))
+                    .status(StatusPedido.PENDENTE)
 
-            pedidoItem.setStripeAccountId(sellerStripeAccounts.get(vendedorId));
+                    .stripeAccountId(sellerStripeAccounts.get(sellerId))
+                    .build();
 
             orderItems.add(pedidoItem);
         }

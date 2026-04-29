@@ -1,4 +1,4 @@
-package com.github.guilhermemonte21.Ecommerce.Modules.Produtos.Application.UseCase.Produtos.AtualizarEstoque;
+package com.github.guilhermemonte21.Ecommerce.Modules.Produtos.Application.UseCase.Produtos.Commands.AtualizarEstoque;
 
 import com.github.guilhermemonte21.Ecommerce.Shared.Application.Exceptions.AcessoNegadoException;
 import com.github.guilhermemonte21.Ecommerce.Shared.Application.Exceptions.ProdutoNotFoundException;
@@ -6,10 +6,14 @@ import com.github.guilhermemonte21.Ecommerce.Shared.Application.Exceptions.Quant
 import com.github.guilhermemonte21.Ecommerce.Shared.Application.Exceptions.UsuarioInativoException;
 import com.github.guilhermemonte21.Ecommerce.Modules.Produtos.Application.Gateway.ProdutoGateway;
 import com.github.guilhermemonte21.Ecommerce.Modules.Usuarios.Application.Gateway.UsuarioAutenticadoGateway;
+import com.github.guilhermemonte21.Ecommerce.Shared.Application.Port.EventPublisher;
+import com.github.guilhermemonte21.Ecommerce.Shared.Domain.Event.ProdutoAlteradoEvent;
 import com.github.guilhermemonte21.Ecommerce.Modules.Produtos.Domain.Entity.Produtos;
 import com.github.guilhermemonte21.Ecommerce.Modules.Usuarios.Domain.Entity.UsuarioAutenticado;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.time.OffsetDateTime;
 
 import java.util.UUID;
 
@@ -19,10 +23,12 @@ public class AtualizarEstoque implements IAtualizarEstoque {
 
     private final ProdutoGateway gateway;
     private final UsuarioAutenticadoGateway authGateway;
+    private final EventPublisher eventPublisher;
 
-    public AtualizarEstoque(ProdutoGateway gateway, UsuarioAutenticadoGateway authGateway) {
+    public AtualizarEstoque(ProdutoGateway gateway, UsuarioAutenticadoGateway authGateway, EventPublisher eventPublisher) {
         this.gateway = gateway;
         this.authGateway = authGateway;
+        this.eventPublisher = eventPublisher;
     }
 
     @Override
@@ -44,6 +50,19 @@ public class AtualizarEstoque implements IAtualizarEstoque {
         produto.atualizarEstoque(quantity);
         gateway.salvar(produto);
         log.info("Estoque atualizado: produtoId={}, novoEstoque={}", idProduto, produto.getEstoque());
+
+        ProdutoAlteradoEvent event = ProdutoAlteradoEvent.builder()
+                .id(produto.getId())
+                .nomeProduto(produto.getNomeProduto())
+                .vendedorId(produto.getVendedorId())
+                .descricao(produto.getDescricao())
+                .preco(produto.getPreco())
+                .estoque(produto.getEstoque())
+                .tipoAlteracao("ATUALIZADO")
+                .occurredOn(OffsetDateTime.now())
+                .build();
+        eventPublisher.publish(event);
+
         return produto.getEstoque();
     }
 }

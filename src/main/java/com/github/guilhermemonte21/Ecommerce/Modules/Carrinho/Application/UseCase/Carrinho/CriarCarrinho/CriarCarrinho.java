@@ -60,7 +60,7 @@ public class CriarCarrinho implements ICriarCarrinho {
             List<Produtos> produtosList = produtoGateway.findAllByIds(productIds);
 
             if (produtosList.size() != productIds.stream().distinct().count()) {
-                throw new ProdutoNotFoundException(null); // Simplificado para o exemplo
+                throw new ProdutoNotFoundException(null);
             }
 
             Map<UUID, Produtos> produtosMap = produtosList.stream()

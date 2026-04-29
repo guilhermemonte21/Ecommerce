@@ -1,4 +1,4 @@
-package com.github.guilhermemonte21.Ecommerce.Modules.Produtos.Application.UseCase.Produtos.AtualizarProduto;
+package com.github.guilhermemonte21.Ecommerce.Modules.Produtos.Application.UseCase.Produtos.Commands.AtualizarProduto;
 
 import com.github.guilhermemonte21.Ecommerce.Shared.Infra.Config.CacheNames;
 import com.github.guilhermemonte21.Ecommerce.Modules.Produtos.Application.DTO.Produtos.CreateProdutoRequest;

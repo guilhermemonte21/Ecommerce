@@ -3,12 +3,12 @@ package com.github.guilhermemonte21.Ecommerce.Modules.Produtos.API.Controller;
 import com.github.guilhermemonte21.Ecommerce.Shared.API.Idempotency.Idempotent;
 import com.github.guilhermemonte21.Ecommerce.Modules.Produtos.Application.DTO.Produtos.CreateProdutoRequest;
 import com.github.guilhermemonte21.Ecommerce.Modules.Produtos.Application.DTO.Produtos.ProdutoResponse;
-import com.github.guilhermemonte21.Ecommerce.Modules.Produtos.Application.UseCase.Produtos.AtualizarEstoque.IAtualizarEstoque;
-import com.github.guilhermemonte21.Ecommerce.Modules.Produtos.Application.UseCase.Produtos.AtualizarProduto.IAtualizarProduto;
-import com.github.guilhermemonte21.Ecommerce.Modules.Produtos.Application.UseCase.Produtos.BuscarTodosOsProdutos.IBuscarTodosOsProdutos;
-import com.github.guilhermemonte21.Ecommerce.Modules.Produtos.Application.UseCase.Produtos.DeletarProduto.IDeletarProduto;
-import com.github.guilhermemonte21.Ecommerce.Modules.Produtos.Application.UseCase.Produtos.GetProdutoById.IGetProdutoById;
-import com.github.guilhermemonte21.Ecommerce.Modules.Produtos.Application.UseCase.Produtos.RegistrarProduto.IRegistrarProduto;
+import com.github.guilhermemonte21.Ecommerce.Modules.Produtos.Application.UseCase.Produtos.Commands.AtualizarEstoque.IAtualizarEstoque;
+import com.github.guilhermemonte21.Ecommerce.Modules.Produtos.Application.UseCase.Produtos.Commands.AtualizarProduto.IAtualizarProduto;
+import com.github.guilhermemonte21.Ecommerce.Modules.Produtos.Application.UseCase.Produtos.Queries.BuscarTodosOsProdutos.IBuscarTodosOsProdutos;
+import com.github.guilhermemonte21.Ecommerce.Modules.Produtos.Application.UseCase.Produtos.Commands.DeletarProduto.IDeletarProduto;
+import com.github.guilhermemonte21.Ecommerce.Modules.Produtos.Application.UseCase.Produtos.Queries.GetProdutoById.IGetProdutoById;
+import com.github.guilhermemonte21.Ecommerce.Modules.Produtos.Application.UseCase.Produtos.Commands.RegistrarProduto.IRegistrarProduto;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.enums.ParameterIn;
@@ -20,8 +20,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
-import org.springframework.cache.annotation.CacheEvict;
-import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -44,8 +42,8 @@ public class ProdutoController {
     private final IDeletarProduto deletarProduto;
 
     public ProdutoController(IRegistrarProduto registrarProduto, IAtualizarEstoque atualizarEstoque,
-                             IGetProdutoById getProdutoById, IBuscarTodosOsProdutos buscarTodosOsProdutos,
-                             IAtualizarProduto atualizarProduto, IDeletarProduto deletarProduto) {
+            IGetProdutoById getProdutoById, IBuscarTodosOsProdutos buscarTodosOsProdutos,
+            IAtualizarProduto atualizarProduto, IDeletarProduto deletarProduto) {
         this.registrarProduto = registrarProduto;
         this.atualizarEstoque = atualizarEstoque;
         this.getProdutoById = getProdutoById;
@@ -87,7 +85,7 @@ public class ProdutoController {
     @PreAuthorize("isAuthenticated()")
     @PutMapping("/{idProduto}")
     public ResponseEntity<ProdutoResponse> atualizar(@PathVariable("idProduto") UUID idProduto,
-                                                      @RequestBody @Valid CreateProdutoRequest request) {
+            @RequestBody @Valid CreateProdutoRequest request) {
         ProdutoResponse response = atualizarProduto.atualizar(idProduto, request);
         return ResponseEntity.ok(response);
     }
@@ -96,7 +94,7 @@ public class ProdutoController {
     @PreAuthorize("isAuthenticated()")
     @PatchMapping("/{idProduto}/estoque")
     public ResponseEntity<Long> atualizarEstoque(@PathVariable("idProduto") UUID idProduto,
-                                                  @RequestParam Long quantity) {
+            @RequestParam Long quantity) {
         Long estoqueAtualizado = atualizarEstoque.atualizarEstoque(idProduto, quantity);
         return ResponseEntity.ok(estoqueAtualizado);
     }

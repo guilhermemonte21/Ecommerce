@@ -6,11 +6,11 @@ import java.util.List;
 import java.util.UUID;
 
 public record PedidoResponse(
-        UUID idPedido,
-        UUID compradorId,
-        List<UUID> itens,
-        String enderecoDeEntrega,
-        BigDecimal preco,
-        String status,
-        OffsetDateTime criadoEm) {
+                UUID idPedido,
+                UUID compradorId,
+                List<UUID> itens,
+                String enderecoDeEntrega,
+                BigDecimal preco,
+                String status,
+                OffsetDateTime criadoEm) {
 }

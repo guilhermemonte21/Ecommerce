@@ -1,14 +1,18 @@
-package com.github.guilhermemonte21.Ecommerce.Modules.Produtos.Application.UseCase.Produtos.DeletarProduto;
+package com.github.guilhermemonte21.Ecommerce.Modules.Produtos.Application.UseCase.Produtos.Commands.DeletarProduto;
 
 import com.github.guilhermemonte21.Ecommerce.Shared.Application.Exceptions.AcessoNegadoException;
 import com.github.guilhermemonte21.Ecommerce.Shared.Application.Exceptions.ProdutoNotFoundException;
 import com.github.guilhermemonte21.Ecommerce.Shared.Application.Exceptions.UsuarioInativoException;
 import com.github.guilhermemonte21.Ecommerce.Modules.Produtos.Application.Gateway.ProdutoGateway;
 import com.github.guilhermemonte21.Ecommerce.Modules.Usuarios.Application.Gateway.UsuarioAutenticadoGateway;
+import com.github.guilhermemonte21.Ecommerce.Shared.Application.Port.EventPublisher;
+import com.github.guilhermemonte21.Ecommerce.Shared.Domain.Event.ProdutoAlteradoEvent;
 import com.github.guilhermemonte21.Ecommerce.Modules.Produtos.Domain.Entity.Produtos;
 import com.github.guilhermemonte21.Ecommerce.Modules.Usuarios.Domain.Entity.UsuarioAutenticado;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.time.OffsetDateTime;
 
 import java.util.UUID;
 
@@ -18,10 +22,12 @@ public class DeletarProduto implements IDeletarProduto {
 
     private final ProdutoGateway gateway;
     private final UsuarioAutenticadoGateway authGateway;
+    private final EventPublisher eventPublisher;
 
-    public DeletarProduto(ProdutoGateway gateway, UsuarioAutenticadoGateway authGateway) {
+    public DeletarProduto(ProdutoGateway gateway, UsuarioAutenticadoGateway authGateway, EventPublisher eventPublisher) {
         this.gateway = gateway;
         this.authGateway = authGateway;
+        this.eventPublisher = eventPublisher;
     }
 
     @Override
@@ -37,5 +43,12 @@ public class DeletarProduto implements IDeletarProduto {
         }
         gateway.delete(produtoById);
         log.info("Produto deletado: id={}", id);
+
+        ProdutoAlteradoEvent event = ProdutoAlteradoEvent.builder()
+                .id(id)
+                .tipoAlteracao("DELETADO")
+                .occurredOn(OffsetDateTime.now())
+                .build();
+        eventPublisher.publish(event);
     }
 }

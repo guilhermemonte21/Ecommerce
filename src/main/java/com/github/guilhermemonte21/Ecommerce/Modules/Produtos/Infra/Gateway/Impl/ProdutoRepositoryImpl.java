@@ -54,11 +54,23 @@ public class ProdutoRepositoryImpl implements ProdutoGateway {
 
     @Override
     public Page<Produtos> findAll(Pageable pageable) {
-        return jpaProdutosRepo.findAll(pageable).map(mapper::toDomain);
+        Pageable p = pageable != null ? pageable : Pageable.unpaged();
+        return jpaProdutosRepo.findAll(p).map(mapper::toDomain);
     }
 
     @Override
     public Optional<Produtos> getByIdComLock(UUID id) {
         return jpaProdutosRepo.findByIdWithLock(id).map(mapper::toDomain);
     }
+    @Override
+    public List<Produtos> saveAll(List<Produtos> produtos) {
+        List<ProdutosEntity> produtosEntity = produtos.stream()
+                .map(mapper::toEntity)
+                .toList();
+        List<ProdutosEntity> salvos = jpaProdutosRepo.saveAll(produtosEntity);
+        return salvos.stream()
+                .map(mapper::toDomain)
+                .toList();
+    }
+
 }
