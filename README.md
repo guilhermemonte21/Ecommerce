@@ -27,7 +27,7 @@ O diferencial não está apenas nas tecnologias — está nas **decisões de des
 
 ## Arquitetura
 
-O projeto é estruturado como um **Monolito Modular** (via Spring Modulith), combinando a organização de um microserviço com a simplicidade operacional de um monólito. Internamente, cada módulo segue a **Clean Architecture + DDD**, e o fluxo de dados usa o padrão **CQRS**.
+O projeto é estruturado como um **Monolito Modular** (via Spring Modulith), combinando a organização de um microserviço com a simplicidade operacional de um monólito.
 
 ```
 ┌─────────────────────────────────────────────────────────────┐
