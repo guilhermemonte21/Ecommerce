@@ -32,7 +32,7 @@ public class CreateSellerAcount implements ICreateSellerAcount {
         Usuarios user = gateway.findByEmail(auth.getUser().getEmail())
                 .orElseThrow(() -> new com.github.guilhermemonte21.Ecommerce.Shared.Application.Exceptions.UsuarioNotFoundException(auth.getUser().getId()));
 
-        user.setTipoUsuario("Vendedor");
+        user.setTipoUsuario(com.github.guilhermemonte21.Ecommerce.Modules.Usuarios.Domain.Enum.TipoUsuario.VENDEDOR.getValue());
         user.setStripeAccountId(stripeAccountId);
 
         Usuarios salvo = gateway.salvar(user);

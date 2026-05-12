@@ -13,14 +13,20 @@ import com.github.guilhermemonte21.Ecommerce.Modules.Produtos.Application.Mapper
 import com.github.guilhermemonte21.Ecommerce.Modules.Produtos.Application.UseCase.Produtos.Commands.DeletarProduto.*;
 import com.github.guilhermemonte21.Ecommerce.Modules.Produtos.Application.UseCase.Produtos.Commands.AtualizarProduto.*;
 import com.github.guilhermemonte21.Ecommerce.Modules.Produtos.Application.UseCase.Produtos.Commands.RegistrarProduto.*;
+import com.github.guilhermemonte21.Ecommerce.Modules.Produtos.Application.Service.ProdutoAuthorizationService;
 
 @Configuration
 public class ProdutoModuleConfig {
 
 
     @Bean
+    public ProdutoAuthorizationService produtoAuthorizationService(UsuarioAutenticadoGateway auth) {
+        return new ProdutoAuthorizationService(auth);
+    }
+
+    @Bean
     public IRegistrarProduto registrarProduto(ProdutoGateway gateway, ProdutoMapperApl mapper,
-                                              UsuarioAutenticadoGateway auth, EventPublisher eventPublisher) {
+                                              ProdutoAuthorizationService auth, EventPublisher eventPublisher) {
         return new RegistrarProduto(gateway, mapper, auth, eventPublisher);
     }
 
@@ -35,18 +41,18 @@ public class ProdutoModuleConfig {
     }
 
     @Bean
-    public IDeletarProduto deletarProduto(ProdutoGateway gateway, UsuarioAutenticadoGateway auth, EventPublisher eventPublisher) {
+    public IDeletarProduto deletarProduto(ProdutoGateway gateway, ProdutoAuthorizationService auth, EventPublisher eventPublisher) {
         return new DeletarProduto(gateway, auth, eventPublisher);
     }
 
     @Bean
-    public IAtualizarEstoque atualizarEstoque(ProdutoGateway gateway, UsuarioAutenticadoGateway auth, EventPublisher eventPublisher) {
+    public IAtualizarEstoque atualizarEstoque(ProdutoGateway gateway, ProdutoAuthorizationService auth, EventPublisher eventPublisher) {
         return new AtualizarEstoque(gateway, auth, eventPublisher);
     }
 
     @Bean
     public IAtualizarProduto atualizarProduto(ProdutoGateway gateway, ProdutoMapperApl mapper,
-                                              UsuarioAutenticadoGateway auth, EventPublisher eventPublisher) {
+                                              ProdutoAuthorizationService auth, EventPublisher eventPublisher) {
         return new AtualizarProduto(gateway, mapper, auth, eventPublisher);
     }
 }

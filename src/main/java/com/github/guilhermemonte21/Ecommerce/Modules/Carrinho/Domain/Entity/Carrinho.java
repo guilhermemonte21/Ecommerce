@@ -28,12 +28,11 @@ public class Carrinho {
 
     public void adicionarItem(UUID produtoId, String nome, Long quantidade, BigDecimal precoUnitario) {
         this.itens.stream()
-            .filter(i -> i.getProdutoId().equals(produtoId))
-            .findFirst()
-            .ifPresentOrElse(
-                item -> item.setQuantidade(item.getQuantidade() + quantidade),
-                () -> this.itens.add(new CarrinhoItem(produtoId, nome, precoUnitario, quantidade))
-            );
+                .filter(i -> i.getProdutoId().equals(produtoId))
+                .findFirst()
+                .ifPresentOrElse(
+                        item -> item.setQuantidade(item.getQuantidade() + quantidade),
+                        () -> this.itens.add(new CarrinhoItem(produtoId, nome, precoUnitario, quantidade)));
 
         if (this.valorTotal == null) {
             this.valorTotal = BigDecimal.ZERO;
@@ -45,29 +44,41 @@ public class Carrinho {
 
     public void removerItem(UUID produtoId) {
         this.itens.stream()
-            .filter(i -> i.getProdutoId().equals(produtoId))
-            .findFirst()
-            .ifPresent(item -> {
-                BigDecimal precoItem = item.getPreco();
-                if (item.getQuantidade() > 1) {
-                    item.setQuantidade(item.getQuantidade() - 1);
-                } else {
-                    this.itens.remove(item);
-                }
-                
-                if (this.valorTotal != null) {
-                    this.valorTotal = this.valorTotal.subtract(precoItem);
-                    if (this.valorTotal.compareTo(BigDecimal.ZERO) < 0) {
-                        this.valorTotal = BigDecimal.ZERO;
+                .filter(i -> i.getProdutoId().equals(produtoId))
+                .findFirst()
+                .ifPresent(item -> {
+                    BigDecimal precoItem = item.getPreco();
+                    if (item.getQuantidade() > 1) {
+                        item.setQuantidade(item.getQuantidade() - 1);
+                    } else {
+                        this.itens.remove(item);
                     }
-                }
-                this.atualizadoAgora();
-            });
+
+                    if (this.valorTotal != null) {
+                        this.valorTotal = this.valorTotal.subtract(precoItem);
+                        if (this.valorTotal.compareTo(BigDecimal.ZERO) < 0) {
+                            this.valorTotal = BigDecimal.ZERO;
+                        }
+                    }
+                    this.atualizadoAgora();
+                });
     }
 
     public void limpar() {
         this.itens.clear();
         this.valorTotal = BigDecimal.ZERO;
         this.atualizadoAgora();
+    }
+
+    public void validarNaoVazia() {
+        if (this.itens == null || this.itens.isEmpty()) {
+            throw new com.github.guilhermemonte21.Ecommerce.Shared.Application.Exceptions.CarrinhoVazioException();
+        }
+    }
+
+    public java.util.Map<UUID, Long> agregarQuantidadesPorProduto() {
+        java.util.Map<UUID, Long> quantidades = new java.util.HashMap<>();
+        this.itens.forEach(item -> quantidades.merge(item.getProdutoId(), item.getQuantidade(), Long::sum));
+        return quantidades;
     }
 }

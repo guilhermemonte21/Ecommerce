@@ -3,5 +3,5 @@ package com.github.guilhermemonte21.Ecommerce.Modules.Pedidos.Application.UseCas
 import java.util.UUID;
 
 public interface IChangePedidoStatus {
-    void ChangePedidosStatus(UUID IdPedido);
+    void mudarStatus(UUID idPedido);
 }

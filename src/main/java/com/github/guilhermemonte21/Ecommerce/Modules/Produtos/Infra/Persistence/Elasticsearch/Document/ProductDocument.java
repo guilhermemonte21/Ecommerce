@@ -21,9 +21,8 @@ public class ProductDocument {
     @Id
     private UUID id;
 
-    @Field(type = FieldType.Text, analyzer = "portuguese", searchAnalyzer = "portuguese")
     @MultiField(
-            mainField = @Field(type = FieldType.Text, analyzer = "portuguese"),
+            mainField = @Field(type = FieldType.Text, analyzer = "portuguese", searchAnalyzer = "portuguese"),
             otherFields = {
                     @InnerField(suffix = "keyword", type = FieldType.Keyword),
                     @InnerField(suffix = "suggest", type = FieldType.Text)
@@ -34,15 +33,18 @@ public class ProductDocument {
     @Field(type = FieldType.Keyword)
     private UUID vendedorId;
 
+    @Field(type = FieldType.Text)
+    private String vendedorNome;
+
     @Field(type = FieldType.Text, analyzer = "portuguese")
     private String descricao;
 
     @Field(type = FieldType.Double)
     private BigDecimal preco;
 
-    @Field(type = FieldType.Integer)
-    private Integer estoque;
+    @Field(type = FieldType.Long)
+    private Long estoque;
 
-    @Field(type = FieldType.Date, format = DateFormat.date_hour_minute_second_millis)
+    @Field(type = FieldType.Date, format = DateFormat.epoch_millis, pattern = "uuuu-MM-dd'T'HH:mm:ss.SSSZ")
     private java.time.Instant createdAt;
 }

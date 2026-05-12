@@ -1,15 +1,14 @@
 package com.github.guilhermemonte21.Ecommerce.Modules.Notificacoes.Infra.Event.Consumer;
-
+ 
 import com.github.guilhermemonte21.Ecommerce.Modules.Notificacoes.Application.UseCase.EnviarEmailNotificacao;
 import com.github.guilhermemonte21.Ecommerce.Shared.Domain.Event.PagamentoConcluidoEvent;
-import com.github.guilhermemonte21.Ecommerce.Modules.Pedidos.Application.Gateway.PedidoGateway;
-import com.github.guilhermemonte21.Ecommerce.Modules.Pedidos.Domain.Entity.Pedidos;
-import com.github.guilhermemonte21.Ecommerce.Modules.Usuarios.Application.Gateway.UsuarioGateway;
-import com.github.guilhermemonte21.Ecommerce.Modules.Usuarios.Domain.Entity.Usuarios;
 import com.github.guilhermemonte21.Ecommerce.Shared.Infra.Config.RabbitMQConfig;
+import com.rabbitmq.client.Channel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
+import org.springframework.amqp.support.AmqpHeaders;
+import org.springframework.messaging.handler.annotation.Header;
 import org.springframework.stereotype.Component;
 
 import java.util.HashMap;
@@ -21,46 +20,31 @@ public class NotificacaoPagamentoConsumer {
     private static final Logger log = LoggerFactory.getLogger(NotificacaoPagamentoConsumer.class);
 
     private final EnviarEmailNotificacao enviarEmailNotificacao;
-    private final UsuarioGateway usuarioGateway;
-    private final PedidoGateway pedidoGateway;
 
-    public NotificacaoPagamentoConsumer(EnviarEmailNotificacao enviarEmailNotificacao,
-                                      UsuarioGateway usuarioGateway,
-                                      PedidoGateway pedidoGateway) {
+    public NotificacaoPagamentoConsumer(EnviarEmailNotificacao enviarEmailNotificacao) {
         this.enviarEmailNotificacao = enviarEmailNotificacao;
-        this.usuarioGateway = usuarioGateway;
-        this.pedidoGateway = pedidoGateway;
     }
 
     @RabbitListener(queues = RabbitMQConfig.QUEUE_NOTIF_PAGAMENTO_CONCLUIDO)
-    public void onPagamentoConcluido(PagamentoConcluidoEvent event) {
+    public void onPagamentoConcluido(PagamentoConcluidoEvent event, Channel channel, @Header(AmqpHeaders.DELIVERY_TAG) long tag) throws java.io.IOException {
         log.info("Recebido PagamentoConcluidoEvent para notificação: pedidoId={}", event.getPedidoId());
 
-        Pedidos pedido = pedidoGateway.getById(event.getPedidoId())
-                .orElse(null);
+        try {
+            Map<String, Object> variables = new HashMap<>();
+            variables.put("nome", event.getNomeComprador());
+            variables.put("pedidoId", event.getPedidoId());
 
-        if (pedido == null) {
-            log.error("Pedido {} não encontrado para enviar notificação de pagamento", event.getPedidoId());
-            return;
+            enviarEmailNotificacao.enviar(
+                    event.getEmailComprador(),
+                    "Pagamento Confirmado! Pedido #" + event.getPedidoId().toString().substring(0, 8),
+                    "pagamento-confirmado",
+                    variables
+            );
+
+            channel.basicAck(tag, false);
+        } catch (Exception e) {
+            log.error("Erro ao processar notificação de pagamento concluído {}: {}", event.getPedidoId(), e.getMessage());
+            channel.basicNack(tag, false, false);
         }
-
-        Usuarios usuario = usuarioGateway.getById(pedido.getCompradorId())
-                .orElse(null);
-
-        if (usuario == null) {
-            log.error("Usuário {} não encontrado para enviar notificação de pagamento", pedido.getCompradorId());
-            return;
-        }
-
-        Map<String, Object> variables = new HashMap<>();
-        variables.put("nome", usuario.getNome());
-        variables.put("pedidoId", pedido.getId());
-
-        enviarEmailNotificacao.enviar(
-                usuario.getEmail(),
-                "Pagamento Confirmado! Pedido #" + pedido.getId().toString().substring(0, 8),
-                "pagamento-confirmado",
-                variables
-        );
     }
 }

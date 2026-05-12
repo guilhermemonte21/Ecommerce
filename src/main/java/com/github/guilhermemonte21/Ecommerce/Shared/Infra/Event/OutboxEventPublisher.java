@@ -13,15 +13,15 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 @Component
-public class RabbitMQEventPublisher implements EventPublisher {
+public class OutboxEventPublisher implements EventPublisher {
 
-    private static final Logger log = LoggerFactory.getLogger(RabbitMQEventPublisher.class);
+    private static final Logger log = LoggerFactory.getLogger(OutboxEventPublisher.class);
 
     private final JpaOutboxEventRepository outboxRepository;
     private final ObjectMapper objectMapper;
     private final Tracer tracer;
 
-    public RabbitMQEventPublisher(JpaOutboxEventRepository outboxRepository,
+    public OutboxEventPublisher(JpaOutboxEventRepository outboxRepository,
             ObjectMapper objectMapper,
             Tracer tracer) {
         this.outboxRepository = outboxRepository;

@@ -2,15 +2,13 @@ package com.github.guilhermemonte21.Ecommerce.Modules.Carrinho.Application.UseCa
 
 import com.github.guilhermemonte21.Ecommerce.Modules.Carrinho.Application.DTO.Carrinho.CreateCarrinhoDTO.CreateCarrinhoRequest;
 import com.github.guilhermemonte21.Ecommerce.Modules.Carrinho.Application.DTO.Carrinho.CarrinhoResponse;
-import com.github.guilhermemonte21.Ecommerce.Shared.Application.Exceptions.EstoqueInsuficienteException;
-import com.github.guilhermemonte21.Ecommerce.Shared.Application.Exceptions.UsuarioInativoException;
 import com.github.guilhermemonte21.Ecommerce.Modules.Carrinho.Application.Gateway.CarrinhoGateway;
-import com.github.guilhermemonte21.Ecommerce.Modules.Usuarios.Application.Gateway.UsuarioAutenticadoGateway;
 import com.github.guilhermemonte21.Ecommerce.Modules.Carrinho.Application.Mappers.CarrinhoMapperApl;
+import com.github.guilhermemonte21.Ecommerce.Modules.Carrinho.Application.Service.CarrinhoAuthorizationService;
 import com.github.guilhermemonte21.Ecommerce.Modules.Carrinho.Domain.Entity.Carrinho;
+import com.github.guilhermemonte21.Ecommerce.Modules.Produtos.Application.Gateway.ProdutoBatchGateway;
 import com.github.guilhermemonte21.Ecommerce.Modules.Produtos.Domain.Entity.Produtos;
 import com.github.guilhermemonte21.Ecommerce.Modules.Usuarios.Domain.Entity.UsuarioAutenticado;
-import com.github.guilhermemonte21.Ecommerce.Modules.Produtos.Application.Gateway.ProdutoGateway;
 import com.github.guilhermemonte21.Ecommerce.Shared.Application.Exceptions.ProdutoNotFoundException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -27,24 +25,22 @@ public class CriarCarrinho implements ICriarCarrinho {
 
     private final CarrinhoGateway gateway;
     private final CarrinhoMapperApl mapper;
-    private final UsuarioAutenticadoGateway authGateway;
-    private final ProdutoGateway produtoGateway;
+    private final CarrinhoAuthorizationService authorizationService;
+    private final ProdutoBatchGateway produtoGateway;
 
-    public CriarCarrinho(CarrinhoGateway gateway, CarrinhoMapperApl mapper, UsuarioAutenticadoGateway authGateway,
-            ProdutoGateway produtoGateway) {
+    public CriarCarrinho(CarrinhoGateway gateway, CarrinhoMapperApl mapper, 
+                         CarrinhoAuthorizationService authorizationService,
+                         ProdutoBatchGateway produtoGateway) {
         this.gateway = gateway;
         this.mapper = mapper;
-        this.authGateway = authGateway;
+        this.authorizationService = authorizationService;
         this.produtoGateway = produtoGateway;
     }
 
     @Transactional
     @Override
     public CarrinhoResponse criar(CreateCarrinhoRequest carrinho) {
-        UsuarioAutenticado user = authGateway.get();
-        if (Boolean.FALSE.equals(user.getUser().getAtivo())) {
-            throw new UsuarioInativoException();
-        }
+        UsuarioAutenticado user = authorizationService.validarAtivo();
 
         Carrinho carDomain = gateway.getByDono(user.getUser().getId());
 
@@ -68,11 +64,6 @@ public class CriarCarrinho implements ICriarCarrinho {
 
             for (UUID pId : productIds) {
                 Produtos p = produtosMap.get(pId);
-
-                if (p.getEstoque() <= 0) {
-                    throw new EstoqueInsuficienteException(p.getNomeProduto());
-                }
-
                 carDomain.adicionarItem(p.getId(), p.getNomeProduto(), 1L, p.getPreco());
             }
         }

@@ -48,8 +48,8 @@ public class ProdutoRepositoryImpl implements ProdutoGateway {
 
     @Override
     public void delete(Produtos produtos) {
-        ProdutosEntity produtosEntity = mapper.toEntity(produtos);
-        jpaProdutosRepo.delete(produtosEntity);
+        ProdutosEntity prodMapped = mapper.toEntity(produtos);
+        jpaProdutosRepo.delete(prodMapped);
     }
 
     @Override

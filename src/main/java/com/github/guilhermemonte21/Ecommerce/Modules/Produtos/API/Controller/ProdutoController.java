@@ -68,7 +68,7 @@ public class ProdutoController {
     public ResponseEntity<Page<ProdutoResponse>> findAll(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "20") int size,
-            @RequestParam(defaultValue = "nomeProduto") String sortBy) {
+            @RequestParam(defaultValue = "nomeProduto.keyword") String sortBy) {
         Pageable pageable = PageRequest.of(page, size, Sort.by(sortBy));
         Page<ProdutoResponse> result = buscarTodosOsProdutos.findAll(pageable);
         return ResponseEntity.ok(result);

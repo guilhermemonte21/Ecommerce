@@ -22,6 +22,7 @@ public class ProdutoAlteradoEvent implements DomainEvent {
     private BigDecimal preco;
     private Long estoque;
     private String tipoAlteracao;
+    private String vendedorNome;
     private OffsetDateTime occurredOn;
 
     @Override
@@ -32,5 +33,41 @@ public class ProdutoAlteradoEvent implements DomainEvent {
     @Override
     public OffsetDateTime occurredOn() {
         return occurredOn;
+    }
+
+    public static ProdutoAlteradoEvent criado(com.github.guilhermemonte21.Ecommerce.Modules.Produtos.Domain.Entity.Produtos produto, String vendedorNome) {
+        return ProdutoAlteradoEvent.builder()
+                .id(produto.getId())
+                .nomeProduto(produto.getNomeProduto())
+                .vendedorId(produto.getVendedorId())
+                .vendedorNome(vendedorNome)
+                .descricao(produto.getDescricao())
+                .preco(produto.getPreco())
+                .estoque(produto.getEstoque())
+                .tipoAlteracao(com.github.guilhermemonte21.Ecommerce.Shared.Domain.Enum.TipoAlteracaoProduto.CRIADO.name())
+                .occurredOn(OffsetDateTime.now())
+                .build();
+    }
+
+    public static ProdutoAlteradoEvent atualizado(com.github.guilhermemonte21.Ecommerce.Modules.Produtos.Domain.Entity.Produtos produto, String vendedorNome) {
+        return ProdutoAlteradoEvent.builder()
+                .id(produto.getId())
+                .nomeProduto(produto.getNomeProduto())
+                .vendedorId(produto.getVendedorId())
+                .vendedorNome(vendedorNome)
+                .descricao(produto.getDescricao())
+                .preco(produto.getPreco())
+                .estoque(produto.getEstoque())
+                .tipoAlteracao(com.github.guilhermemonte21.Ecommerce.Shared.Domain.Enum.TipoAlteracaoProduto.ATUALIZADO.name())
+                .occurredOn(OffsetDateTime.now())
+                .build();
+    }
+
+    public static ProdutoAlteradoEvent deletado(UUID id) {
+        return ProdutoAlteradoEvent.builder()
+                .id(id)
+                .tipoAlteracao(com.github.guilhermemonte21.Ecommerce.Shared.Domain.Enum.TipoAlteracaoProduto.DELETADO.name())
+                .occurredOn(OffsetDateTime.now())
+                .build();
     }
 }

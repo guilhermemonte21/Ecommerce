@@ -6,9 +6,12 @@ import com.github.guilhermemonte21.Ecommerce.Modules.Pedidos.Domain.Entity.Pedid
 import com.github.guilhermemonte21.Ecommerce.Modules.Pedidos.Domain.Enum.StatusPedido;
 import com.github.guilhermemonte21.Ecommerce.Shared.Domain.Event.PagamentoConcluidoEvent;
 import com.github.guilhermemonte21.Ecommerce.Shared.Infra.Config.RabbitMQConfig;
+import com.rabbitmq.client.Channel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
+import org.springframework.amqp.support.AmqpHeaders;
+import org.springframework.messaging.handler.annotation.Header;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -25,21 +28,31 @@ public class ConfirmarPagamentoConsumer {
 
     @RabbitListener(queues = RabbitMQConfig.QUEUE_CONFIRMAR_PAGAMENTO)
     @Transactional
-    public void onPagamentoConcluido(PagamentoConcluidoEvent event) {
+    public void onPagamentoConcluido(PagamentoConcluidoEvent event, Channel channel, @Header(AmqpHeaders.DELIVERY_TAG) long tag) throws java.io.IOException {
         log.info("Recebido PagamentoConcluidoEvent: pedidoId={}", event.getPedidoId());
 
-        Pedidos pedido = pedidoGateway.getById(event.getPedidoId())
-                .orElseThrow(() -> new PedidoNotFoundException(event.getPedidoId()));
+        try {
+            Pedidos pedido = pedidoGateway.getById(event.getPedidoId())
+                    .orElseThrow(() -> new PedidoNotFoundException(event.getPedidoId()));
 
-        if (pedido.getStatus() == StatusPedido.APROVADO) {
-            log.warn("Pedido {} já estava com status APROVADO. Mensagem duplicada ignorada.",
-                    event.getPedidoId());
-            return;
+            if (pedido.getStatus() == StatusPedido.APROVADO) {
+                log.warn("Pedido {} já estava com status APROVADO. Mensagem duplicada ignorada.",
+                        event.getPedidoId());
+                channel.basicAck(tag, false);
+                return;
+            }
+
+            pedido.confirmarPagamento();
+            pedidoGateway.save(pedido);
+
+            log.info("Pedido {} atualizado para APROVADO com sucesso.", event.getPedidoId());
+            channel.basicAck(tag, false);
+        } catch (PedidoNotFoundException e) {
+            log.error("Pedido {} não encontrado para confirmar pagamento", event.getPedidoId());
+            channel.basicAck(tag, false);
+        } catch (Exception e) {
+            log.error("Erro ao processar confirmação de pagamento para o pedido {}: {}", event.getPedidoId(), e.getMessage());
+            channel.basicNack(tag, false, false);
         }
-
-        pedido.confirmarPagamento();
-        pedidoGateway.save(pedido);
-
-        log.info("Pedido {} atualizado para APROVADO com sucesso.", event.getPedidoId());
     }
 }

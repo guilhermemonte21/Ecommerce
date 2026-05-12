@@ -44,4 +44,10 @@ public class OutboxEventEntity {
 
     @Column(name = "span_id")
     private String spanId;
+
+    @Column(name = "retry_count", nullable = false)
+    private int retryCount = 0;
+
+    @Column(name = "dead", nullable = false)
+    private boolean dead = false;
 }

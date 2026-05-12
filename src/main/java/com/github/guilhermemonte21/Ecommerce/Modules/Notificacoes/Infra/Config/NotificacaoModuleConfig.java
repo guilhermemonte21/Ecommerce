@@ -23,25 +23,19 @@ public class NotificacaoModuleConfig {
 
     @Bean
     public NotificacaoPedidoCriadoConsumer notificacaoPedidoCriadoConsumer(
-            EnviarEmailNotificacao enviarEmailNotificacao,
-            UsuarioGateway usuarioGateway,
-            PedidoGateway pedidoGateway) {
-        return new NotificacaoPedidoCriadoConsumer(enviarEmailNotificacao, usuarioGateway, pedidoGateway);
+            EnviarEmailNotificacao enviarEmailNotificacao) {
+        return new NotificacaoPedidoCriadoConsumer(enviarEmailNotificacao);
     }
 
     @Bean
     public NotificacaoPagamentoConsumer notificacaoPagamentoConsumer(
-            EnviarEmailNotificacao enviarEmailNotificacao,
-            UsuarioGateway usuarioGateway,
-            PedidoGateway pedidoGateway) {
-        return new NotificacaoPagamentoConsumer(enviarEmailNotificacao, usuarioGateway, pedidoGateway);
+            EnviarEmailNotificacao enviarEmailNotificacao) {
+        return new NotificacaoPagamentoConsumer(enviarEmailNotificacao);
     }
     @Bean
     public NotificacaoPedidoCanceladoConsumer notificacaoPedidoCanceladoConsumer(
-            EnviarEmailNotificacao enviarEmailNotificacao,
-            UsuarioGateway usuarioGateway,
-            PedidoGateway pedidoGateway) {
-        return new NotificacaoPedidoCanceladoConsumer(enviarEmailNotificacao, usuarioGateway, pedidoGateway);
+            EnviarEmailNotificacao enviarEmailNotificacao) {
+        return new NotificacaoPedidoCanceladoConsumer(enviarEmailNotificacao);
     }
 
     @Bean

@@ -1,7 +1,5 @@
 package com.github.guilhermemonte21.Ecommerce.Modules.Produtos.Domain.Entity;
 
-
-
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -48,5 +46,25 @@ public class Produtos {
             this.estoque = 0L;
         }
         this.estoque += quantity;
+    }
+
+    public void reservarEstoque(Long quantidade) {
+        if (this.estoque == null || this.estoque < quantidade) {
+            throw new com.github.guilhermemonte21.Ecommerce.Shared.Application.Exceptions.EstoqueInsuficienteException(
+                    this.nomeProduto);
+        }
+        this.estoque -= quantidade;
+    }
+
+    public void aplicarAtualizacao(String nomeProduto, String descricao,
+            java.math.BigDecimal preco, Long estoque) {
+        this.nomeProduto = nomeProduto;
+        this.descricao = descricao;
+        this.preco = preco;
+        this.estoque = estoque;
+    }
+
+    public boolean pertenceA(UUID usuarioId) {
+        return this.vendedorId != null && this.vendedorId.equals(usuarioId);
     }
 }

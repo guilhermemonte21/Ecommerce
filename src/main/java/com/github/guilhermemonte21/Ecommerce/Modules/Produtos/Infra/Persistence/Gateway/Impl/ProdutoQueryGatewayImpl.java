@@ -36,6 +36,6 @@ public class ProdutoQueryGatewayImpl implements IProdutoQueryGateway {
 
     @Override
     public Page<ProdutoResponse> search(String query, Pageable pageable) {
-        return repository.findAll(pageable).map(mapper::toResponse);
+        return repository.findByNomeProdutoContainingIgnoreCase(query, pageable).map(mapper::toResponse);
     }
 }

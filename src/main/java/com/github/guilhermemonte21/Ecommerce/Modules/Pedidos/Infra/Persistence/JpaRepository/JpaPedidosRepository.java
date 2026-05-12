@@ -14,11 +14,11 @@ public interface  JpaPedidosRepository extends JpaRepository<PedidosEntity, UUID
 
     List<PedidosEntity> findByCompradorId(@Param("id") UUID id);
 
-    @Query("""
-    SELECT p FROM PedidosEntity p
-    LEFT JOIN FETCH p.pedidos
-    WHERE p.status = :status
-    AND p.criadoEm < :threshold
-    """)
-    List<PedidosEntity> findByStatusAndCriadoEmBefore(StatusPedido status, OffsetDateTime threshold);
+    @Query(value = """
+    SELECT * FROM pedidos
+    WHERE status_pedido = :status
+    AND criado_em < :threshold
+    FOR UPDATE SKIP LOCKED
+    """, nativeQuery = true)
+    List<PedidosEntity> findByStatusAndCriadoEmBefore(@Param("status") String status, @Param("threshold") OffsetDateTime threshold);
 }

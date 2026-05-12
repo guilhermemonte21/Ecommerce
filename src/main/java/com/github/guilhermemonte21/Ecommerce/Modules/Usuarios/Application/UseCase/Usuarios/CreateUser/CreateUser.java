@@ -32,7 +32,7 @@ public class CreateUser implements ICreateUser {
         Usuarios user = mapperApl.requestToDomain(newUser);
         user.setSenha(encoder.encode(newUser.senha()));
         user.setAtivo(true);
-        user.setTipoUsuario("Comprador");
+        user.setTipoUsuario(com.github.guilhermemonte21.Ecommerce.Modules.Usuarios.Domain.Enum.TipoUsuario.COMPRADOR.getValue());
 
         Usuarios salvo = gateway.salvar(user);
         log.info("Usuário criado com sucesso: id={}, email={}", salvo.getId(), salvo.getEmail());

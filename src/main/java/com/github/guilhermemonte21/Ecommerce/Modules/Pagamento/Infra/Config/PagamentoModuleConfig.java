@@ -7,13 +7,16 @@ import com.github.guilhermemonte21.Ecommerce.Modules.Usuarios.Application.Gatewa
 import com.github.guilhermemonte21.Ecommerce.Shared.Application.Port.EventPublisher;
 import com.github.guilhermemonte21.Ecommerce.Modules.Pagamento.Application.UseCase.Pagamento.*;
 import com.github.guilhermemonte21.Ecommerce.Modules.Pedidos.Application.Gateway.*;
+import com.github.guilhermemonte21.Ecommerce.Modules.Usuarios.Application.Gateway.UsuarioGateway;
+import com.github.guilhermemonte21.Ecommerce.Modules.Pedidos.Application.Service.PedidoAuthorizationService;
 
 @Configuration
 public class PagamentoModuleConfig {
 
     @Bean
     IPagamento pagamento(PedidoGateway pedidoGateway, PagamentoGateway pagamentoGateway,
-            EventPublisher eventPublisher, UsuarioAutenticadoGateway authGateway) {
-        return new Pagamento(pedidoGateway, pagamentoGateway, eventPublisher, authGateway);
+            EventPublisher eventPublisher, PedidoAuthorizationService authGateway,
+            UsuarioGateway usuarioGateway) {
+        return new Pagamento(pedidoGateway, pagamentoGateway, eventPublisher, authGateway, usuarioGateway);
     }
 }

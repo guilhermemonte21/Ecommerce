@@ -55,7 +55,9 @@ public class PedidoRepositoryImpl implements PedidoGateway {
         com.github.guilhermemonte21.Ecommerce.Modules.Pedidos.Infra.Persistence.Entity.Enum.StatusPedido entityStatus = 
                 com.github.guilhermemonte21.Ecommerce.Modules.Pedidos.Infra.Persistence.Entity.Enum.StatusPedido.valueOf(status.name());
 
-        return jpaPedidosRepository.findByStatusAndCriadoEmBefore(entityStatus, threshold)
+        String statusString = entityStatus.name();
+
+        return jpaPedidosRepository.findByStatusAndCriadoEmBefore(statusString, threshold)
                 .stream()
                 .map(pedidosMapper::toDomain)
                 .toList();

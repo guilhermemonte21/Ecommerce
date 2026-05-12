@@ -1,5 +1,6 @@
 package com.github.guilhermemonte21.Ecommerce.Modules.Pedidos.API.Controller;
 
+import com.github.guilhermemonte21.Ecommerce.Modules.Pedidos.Application.DTO.Pedidos.CriarPedidoRequest;
 import com.github.guilhermemonte21.Ecommerce.Modules.Pedidos.Application.DTO.Pedidos.PedidoDoVendedorResponse;
 import com.github.guilhermemonte21.Ecommerce.Modules.Pedidos.Application.DTO.Pedidos.PedidoResponse;
 import com.github.guilhermemonte21.Ecommerce.Modules.Pedidos.Application.UseCase.Pedidos.CriarPedido.ICriarPedido;
@@ -17,6 +18,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.enums.ParameterIn;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
@@ -57,17 +59,17 @@ public class PedidoController {
     @PostMapping
     @RateLimiter(name = "checkoutRateLimiter", fallbackMethod = "fallbackRateLimit")
     @Bulkhead(name = "checkoutBulkhead", fallbackMethod = "fallbackBulkhead")
-    public ResponseEntity<PedidoResponse> criarPedido(@RequestBody String endereco) {
-        PedidoResponse newPedido = criarPedido.criarPedido(endereco);
+    public ResponseEntity<PedidoResponse> criarPedido(@Valid @RequestBody CriarPedidoRequest request) {
+        PedidoResponse newPedido = criarPedido.criarPedido(request);
         return ResponseEntity.status(HttpStatus.CREATED).body(newPedido);
     }
 
-    public ResponseEntity<PedidoResponse> fallbackRateLimit(String endereco, RequestNotPermitted e) {
+    public ResponseEntity<PedidoResponse> fallbackRateLimit(CriarPedidoRequest request, RequestNotPermitted e) {
         log.warn("Rate limit atingido no checkout: {}", e.getMessage());
         return ResponseEntity.status(HttpStatus.TOO_MANY_REQUESTS).build();
     }
 
-    public ResponseEntity<PedidoResponse> fallbackBulkhead(String endereco, BulkheadFullException e) {
+    public ResponseEntity<PedidoResponse> fallbackBulkhead(CriarPedidoRequest request, BulkheadFullException e) {
         log.warn("Bulkhead cheio no checkout: {}", e.getMessage());
         return ResponseEntity.status(HttpStatus.SERVICE_UNAVAILABLE).build();
     }
@@ -83,10 +85,10 @@ public class PedidoController {
 
     @Operation(summary = "Mudar status do pedido")
     @PreAuthorize("isAuthenticated()")
-    @PatchMapping("/{idPedido}/status")
-    public ResponseEntity<Void> changeStatus(@PathVariable("idPedido") UUID idPedido) {
-        changePedidoStatus.ChangePedidosStatus(idPedido);
-        return ResponseEntity.ok().build();
+    @PostMapping("/{idPedido}/sync-status")
+    public ResponseEntity<Void> syncStatus(@PathVariable UUID idPedido) {
+        changePedidoStatus.mudarStatus(idPedido);
+        return ResponseEntity.noContent().build();
     }
 
     @Operation(summary = "Buscar pedido por ID")

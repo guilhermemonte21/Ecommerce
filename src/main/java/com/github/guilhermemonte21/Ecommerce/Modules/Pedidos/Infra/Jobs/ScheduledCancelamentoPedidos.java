@@ -1,22 +1,22 @@
 package com.github.guilhermemonte21.Ecommerce.Modules.Pedidos.Infra.Jobs;
 
 import com.github.guilhermemonte21.Ecommerce.Modules.Pedidos.Application.Gateway.PedidoGateway;
-import com.github.guilhermemonte21.Ecommerce.Modules.Pedidos.Domain.Entity.PedidoDoVendedor;
 import com.github.guilhermemonte21.Ecommerce.Modules.Pedidos.Domain.Entity.Pedidos;
 import com.github.guilhermemonte21.Ecommerce.Modules.Pedidos.Domain.Enum.StatusPedido;
 import com.github.guilhermemonte21.Ecommerce.Shared.Domain.Event.PedidoCanceladoEvent;
+import com.github.guilhermemonte21.Ecommerce.Shared.Domain.Enum.MotivoCancelamentoPedido;
 import com.github.guilhermemonte21.Ecommerce.Shared.Application.Port.EventPublisher;
+import com.github.guilhermemonte21.Ecommerce.Modules.Usuarios.Application.Gateway.UsuarioGateway;
+import com.github.guilhermemonte21.Ecommerce.Modules.Usuarios.Domain.Entity.Usuarios;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.OffsetDateTime;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.UUID;
 
 @Component
 public class ScheduledCancelamentoPedidos {
@@ -25,16 +25,21 @@ public class ScheduledCancelamentoPedidos {
 
     private final PedidoGateway pedidoGateway;
     private final EventPublisher eventPublisher;
+    private final UsuarioGateway usuarioGateway;
 
-    public ScheduledCancelamentoPedidos(PedidoGateway pedidoGateway, EventPublisher eventPublisher) {
+    @Value("${app.pedidos.cancelamento.timeout-minutes:10}")
+    private int timeoutMinutes;
+
+    public ScheduledCancelamentoPedidos(PedidoGateway pedidoGateway, EventPublisher eventPublisher, UsuarioGateway usuarioGateway) {
         this.pedidoGateway = pedidoGateway;
         this.eventPublisher = eventPublisher;
+        this.usuarioGateway = usuarioGateway;
     }
 
-    @Scheduled(fixedRate = 120000)
+    @Scheduled(fixedRateString = "${app.pedidos.cancelamento.rate-ms:120000}")
     @Transactional
     public void cancelarPedidosExpirados() {
-        OffsetDateTime threshold = OffsetDateTime.now().minusMinutes(10);
+        OffsetDateTime threshold = OffsetDateTime.now().minusMinutes(timeoutMinutes);
         log.info("Iniciando varredura de pedidos PENDENTES criados antes de {}", threshold);
 
         List<Pedidos> pedidosAtrasados = pedidoGateway.getPedidosByStatusAndCriadoEmBefore(StatusPedido.PENDENTE,
@@ -49,16 +54,14 @@ public class ScheduledCancelamentoPedidos {
 
         for (Pedidos pedido : pedidosAtrasados) {
             try {
+                Usuarios comprador = usuarioGateway.getById(pedido.getCompradorId()).orElse(null);
 
-                Map<UUID, Long> produtosParaRollback = new HashMap<>();
-                for (PedidoDoVendedor item : pedido.getItens()) {
-                    produtosParaRollback.merge(item.getProdutoId(), item.getQuantidade(), Long::sum);
-                }
-
-                eventPublisher.publish(new PedidoCanceladoEvent(
+                eventPublisher.publish(PedidoCanceladoEvent.por(
                         pedido.getId(),
-                        "Timeout: Pagamento não realizado em tempo hábil",
-                        produtosParaRollback));
+                        MotivoCancelamentoPedido.TIMEOUT_PAGAMENTO,
+                        comprador != null ? comprador.getNome() : "Cliente",
+                        comprador != null ? comprador.getEmail() : "",
+                        pedido.coletarItensParaRollback()));
 
                 pedido.cancelar();
                 pedidoGateway.save(pedido);

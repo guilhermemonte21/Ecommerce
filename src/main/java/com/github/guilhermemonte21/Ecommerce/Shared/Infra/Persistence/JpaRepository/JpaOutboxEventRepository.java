@@ -12,6 +12,6 @@ import java.util.UUID;
 @Repository
 public interface JpaOutboxEventRepository extends JpaRepository<OutboxEventEntity, UUID> {
 
-    @Query("SELECT o FROM OutboxEventEntity o WHERE o.processed = false ORDER BY o.occurredOn ASC")
+    @Query(value = "SELECT * FROM outbox_events WHERE processed = false AND dead = false ORDER BY occurred_on ASC FOR UPDATE SKIP LOCKED", nativeQuery = true)
     List<OutboxEventEntity> findUnprocessedEvents(Pageable pageable);
 }

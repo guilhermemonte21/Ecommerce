@@ -10,6 +10,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.amqp.core.Message;
 import org.springframework.amqp.core.MessageProperties;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
@@ -27,6 +28,12 @@ public class OutboxRelayJob {
     private final RabbitTemplate rabbitTemplate;
     private final Tracer tracer;
 
+    @Value("${app.outbox.relay.batch-size:50}")
+    private int batchSize;
+
+    @Value("${app.outbox.relay.max-retries:5}")
+    private int maxRetries;
+
     public OutboxRelayJob(JpaOutboxEventRepository repository,
             RabbitTemplate rabbitTemplate,
             Tracer tracer) {
@@ -35,10 +42,10 @@ public class OutboxRelayJob {
         this.tracer = tracer;
     }
 
-    @Scheduled(fixedDelayString = "3000")
+    @Scheduled(fixedDelayString = "${app.outbox.relay.delay-ms:3000}")
     @Transactional
     public void processOutbox() {
-        List<OutboxEventEntity> pendingEvents = repository.findUnprocessedEvents(PageRequest.of(0, 50));
+        List<OutboxEventEntity> pendingEvents = repository.findUnprocessedEvents(PageRequest.of(0, batchSize));
 
         if (pendingEvents.isEmpty()) {
             return;
@@ -78,7 +85,15 @@ public class OutboxRelayJob {
             } catch (Exception e) {
                 relaySpan.error(e);
                 log.error("Erro inesperado ao enviar evento ID {} - será tentado novamente.", entity.getId(), e);
+                
+                entity.setRetryCount(entity.getRetryCount() + 1);
                 entity.setErrorMessage(e.getMessage());
+                
+                if (entity.getRetryCount() >= maxRetries) {
+                    entity.setDead(true);
+                    log.error("Evento ID {} atingiu o limite de {} tentativas e foi marcado como DEAD.", entity.getId(), maxRetries);
+                }
+                
                 repository.save(entity);
             } finally {
                 relaySpan.end();

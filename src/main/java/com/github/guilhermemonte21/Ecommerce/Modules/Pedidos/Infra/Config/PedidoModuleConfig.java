@@ -13,13 +13,19 @@ import com.github.guilhermemonte21.Ecommerce.Modules.Pedidos.Application.UseCase
 import com.github.guilhermemonte21.Ecommerce.Modules.Pedidos.Application.UseCase.Pedidos.GetItensByPedido.*;
 import com.github.guilhermemonte21.Ecommerce.Modules.Pedidos.Application.Mappers.*;
 import com.github.guilhermemonte21.Ecommerce.Modules.Pedidos.Application.UseCase.Pedidos.GetPedidosByComprador.*;
+import com.github.guilhermemonte21.Ecommerce.Modules.Pedidos.Application.Service.PedidoAuthorizationService;
 
 @Configuration
 public class PedidoModuleConfig {
 
 
     @Bean
-    public IChangePedidoStatus changePedidoStatus(PedidoGateway gateway, UsuarioAutenticadoGateway authGateway) {
+    public PedidoAuthorizationService pedidoAuthorizationService(UsuarioAutenticadoGateway auth) {
+        return new PedidoAuthorizationService(auth);
+    }
+
+    @Bean
+    public IChangePedidoStatus changePedidoStatus(PedidoGateway gateway, PedidoAuthorizationService authGateway) {
         return new ChangePedidoStatus(gateway, authGateway);
     }
 

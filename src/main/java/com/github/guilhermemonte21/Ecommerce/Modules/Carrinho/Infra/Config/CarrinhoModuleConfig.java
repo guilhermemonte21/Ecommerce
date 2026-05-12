@@ -11,23 +11,29 @@ import com.github.guilhermemonte21.Ecommerce.Modules.Carrinho.Application.UseCas
 import com.github.guilhermemonte21.Ecommerce.Modules.Carrinho.Application.UseCase.Carrinho.GetCarrinhoById.*;
 import com.github.guilhermemonte21.Ecommerce.Modules.Carrinho.Application.UseCase.Carrinho.RemoverItemDoCarrinho.*;
 import com.github.guilhermemonte21.Ecommerce.Modules.Carrinho.Application.UseCase.Carrinho.CriarCarrinho.*;
+import com.github.guilhermemonte21.Ecommerce.Modules.Carrinho.Application.Service.CarrinhoAuthorizationService;
 
 @Configuration
 public class CarrinhoModuleConfig {
 
     @Bean
+    public CarrinhoAuthorizationService carrinhoAuthorizationService(UsuarioAutenticadoGateway auth) {
+        return new CarrinhoAuthorizationService(auth);
+    }
+
+    @Bean
     ICriarCarrinho criarCarrinho(CarrinhoGateway gateway, CarrinhoMapperApl mapper,
-            UsuarioAutenticadoGateway auth, ProdutoGateway produtoGateway) {
+            CarrinhoAuthorizationService auth, ProdutoBatchGateway produtoGateway) {
         return new CriarCarrinho(gateway, mapper, auth, produtoGateway);
     }
 
     @Bean
-    IRemoverItemDoCarrinho removerItemDoCarrinho(CarrinhoGateway gateway, UsuarioAutenticadoGateway auth) {
+    IRemoverItemDoCarrinho removerItemDoCarrinho(CarrinhoGateway gateway, CarrinhoAuthorizationService auth) {
         return new RemoverItemDoCarrinho(gateway, auth);
     }
 
     @Bean
-    ILimparCarrinho limparCarrinho(CarrinhoGateway gateway, UsuarioAutenticadoGateway auth) {
+    ILimparCarrinho limparCarrinho(CarrinhoGateway gateway, CarrinhoAuthorizationService auth) {
         return new LimparCarrinho(gateway, auth);
     }
 
@@ -38,8 +44,8 @@ public class CarrinhoModuleConfig {
     }
 
     @Bean
-    IAddItemAoCarrinho addItemAoCarrinho(CarrinhoGateway gateway, ProdutoGateway produtoGateway,
-            CarrinhoMapperApl mapper, UsuarioAutenticadoGateway auth) {
+    IAddItemAoCarrinho addItemAoCarrinho(CarrinhoGateway gateway, ProdutoCommandGateway produtoGateway,
+            CarrinhoMapperApl mapper, CarrinhoAuthorizationService auth) {
         return new AddItemAoCarrinho(gateway, produtoGateway, mapper, auth);
     }
 }

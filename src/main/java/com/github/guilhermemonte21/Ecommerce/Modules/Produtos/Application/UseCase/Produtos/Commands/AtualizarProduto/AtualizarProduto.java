@@ -2,21 +2,18 @@ package com.github.guilhermemonte21.Ecommerce.Modules.Produtos.Application.UseCa
 
 import com.github.guilhermemonte21.Ecommerce.Modules.Produtos.Application.DTO.Produtos.CreateProdutoRequest;
 import com.github.guilhermemonte21.Ecommerce.Modules.Produtos.Application.DTO.Produtos.ProdutoResponse;
-import com.github.guilhermemonte21.Ecommerce.Shared.Application.Exceptions.AcessoNegadoException;
-import com.github.guilhermemonte21.Ecommerce.Shared.Application.Exceptions.ProdutoNotFoundException;
-import com.github.guilhermemonte21.Ecommerce.Shared.Application.Exceptions.UsuarioInativoException;
+import com.github.guilhermemonte21.Ecommerce.Modules.Produtos.Application.Gateway.ProdutoCommandGateway;
 import com.github.guilhermemonte21.Ecommerce.Modules.Produtos.Application.Gateway.ProdutoGateway;
-import com.github.guilhermemonte21.Ecommerce.Modules.Usuarios.Application.Gateway.UsuarioAutenticadoGateway;
 import com.github.guilhermemonte21.Ecommerce.Modules.Produtos.Application.Mappers.ProdutoMapperApl;
-import com.github.guilhermemonte21.Ecommerce.Shared.Application.Port.EventPublisher;
-import com.github.guilhermemonte21.Ecommerce.Shared.Domain.Event.ProdutoAlteradoEvent;
+import com.github.guilhermemonte21.Ecommerce.Modules.Produtos.Application.Service.ProdutoAuthorizationService;
 import com.github.guilhermemonte21.Ecommerce.Modules.Produtos.Domain.Entity.Produtos;
 import com.github.guilhermemonte21.Ecommerce.Modules.Usuarios.Domain.Entity.UsuarioAutenticado;
+import com.github.guilhermemonte21.Ecommerce.Shared.Application.Exceptions.ProdutoNotFoundException;
+import com.github.guilhermemonte21.Ecommerce.Shared.Application.Port.EventPublisher;
+import com.github.guilhermemonte21.Ecommerce.Shared.Domain.Event.ProdutoAlteradoEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.time.OffsetDateTime;
 
 import java.util.UUID;
 
@@ -24,52 +21,35 @@ public class AtualizarProduto implements IAtualizarProduto {
 
     private static final Logger log = LoggerFactory.getLogger(AtualizarProduto.class);
 
-    private final ProdutoGateway gateway;
+    private final ProdutoCommandGateway gateway;
     private final ProdutoMapperApl mapperApl;
-    private final UsuarioAutenticadoGateway authGateway;
+    private final ProdutoAuthorizationService authorizationService;
     private final EventPublisher eventPublisher;
 
-    public AtualizarProduto(ProdutoGateway gateway, ProdutoMapperApl mapperApl,
-                            UsuarioAutenticadoGateway authGateway, EventPublisher eventPublisher) {
+    public AtualizarProduto(ProdutoCommandGateway gateway, ProdutoMapperApl mapperApl,
+            ProdutoAuthorizationService authorizationService, EventPublisher eventPublisher) {
         this.gateway = gateway;
         this.mapperApl = mapperApl;
-        this.authGateway = authGateway;
+        this.authorizationService = authorizationService;
         this.eventPublisher = eventPublisher;
     }
 
     @Override
     @Transactional
-    public ProdutoResponse atualizar(UUID idProduto, CreateProdutoRequest produtos) {
-        Produtos prodById = gateway.getById(idProduto)
+    public ProdutoResponse atualizar(UUID idProduto, CreateProdutoRequest request) {
+        Produtos produto = gateway.getById(idProduto)
                 .orElseThrow(() -> new ProdutoNotFoundException(idProduto));
-        UsuarioAutenticado user = authGateway.get();
-        if (!user.getUser().getId().equals(prodById.getVendedorId())) {
-            throw new AcessoNegadoException();
-        }
-        if (Boolean.FALSE.equals(user.getUser().getAtivo())) {
-            throw new UsuarioInativoException();
-        }
 
-        prodById.setNomeProduto(produtos.nomeProduto());
-        prodById.setDescricao(produtos.descricao());
-        prodById.setPreco(produtos.preco());
-        prodById.setEstoque(produtos.estoque());
+        UsuarioAutenticado user = authorizationService.validarProprietario(produto.getVendedorId());
+        String vendedorNome = user.getUser().getNome();
 
-        Produtos salvo = gateway.salvar(prodById);
+        produto.aplicarAtualizacao(request.nomeProduto(), request.descricao(), request.preco(), request.estoque());
+
+        Produtos salvo = gateway.salvar(produto);
         log.info("Produto atualizado: id={}", idProduto);
 
-        ProdutoAlteradoEvent event = ProdutoAlteradoEvent.builder()
-                .id(salvo.getId())
-                .nomeProduto(salvo.getNomeProduto())
-                .vendedorId(salvo.getVendedorId())
-                .descricao(salvo.getDescricao())
-                .preco(salvo.getPreco())
-                .estoque(salvo.getEstoque())
-                .tipoAlteracao("ATUALIZADO")
-                .occurredOn(OffsetDateTime.now())
-                .build();
-        eventPublisher.publish(event);
+        eventPublisher.publish(ProdutoAlteradoEvent.atualizado(salvo, vendedorNome));
 
-        return mapperApl.toResponse(salvo);
+        return mapperApl.toResponse(salvo, vendedorNome);
     }
 }

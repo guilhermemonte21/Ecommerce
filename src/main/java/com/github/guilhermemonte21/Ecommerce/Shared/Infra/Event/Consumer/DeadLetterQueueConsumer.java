@@ -2,10 +2,13 @@ package com.github.guilhermemonte21.Ecommerce.Shared.Infra.Event.Consumer;
 
 import com.github.guilhermemonte21.Ecommerce.Shared.Application.Port.AlertGateway;
 import com.github.guilhermemonte21.Ecommerce.Shared.Infra.Config.RabbitMQConfig;
+import com.rabbitmq.client.Channel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.amqp.core.Message;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
+import org.springframework.amqp.support.AmqpHeaders;
+import org.springframework.messaging.handler.annotation.Header;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -27,7 +30,7 @@ public class DeadLetterQueueConsumer {
             RabbitMQConfig.QUEUE_NOTIF_PAGAMENTO_CONCLUIDO_DLQ,
             RabbitMQConfig.QUEUE_NOTIF_PEDIDO_CANCELADO_DLQ
     })
-    public void processFailedEvents(Message failedMessage) {
+    public void processFailedEvents(Message failedMessage, Channel channel, @Header(AmqpHeaders.DELIVERY_TAG) long tag) throws java.io.IOException {
         String queue = failedMessage.getMessageProperties().getConsumerQueue();
         String body = new String(failedMessage.getBody());
 
@@ -41,6 +44,8 @@ public class DeadLetterQueueConsumer {
             );
         } catch (Exception e) {
             log.error("FALHA AO ENVIAR ALERTA DE DLQ: {}. A mensagem permanecerá em log para auditoria.", e.getMessage());
+        } finally {
+            channel.basicAck(tag, false);
         }
     }
 }

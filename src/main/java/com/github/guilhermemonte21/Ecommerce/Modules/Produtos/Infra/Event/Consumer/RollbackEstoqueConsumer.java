@@ -4,10 +4,13 @@ import com.github.guilhermemonte21.Ecommerce.Modules.Produtos.Application.Gatewa
 import com.github.guilhermemonte21.Ecommerce.Shared.Infra.Config.CacheNames;
 import com.github.guilhermemonte21.Ecommerce.Shared.Domain.Event.PedidoCanceladoEvent;
 import com.github.guilhermemonte21.Ecommerce.Shared.Infra.Config.RabbitMQConfig;
+import com.rabbitmq.client.Channel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
+import org.springframework.amqp.support.AmqpHeaders;
 import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.messaging.handler.annotation.Header;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -19,41 +22,47 @@ public class RollbackEstoqueConsumer {
 
     private static final Logger log = LoggerFactory.getLogger(RollbackEstoqueConsumer.class);
 
-    private final ProdutoGateway produtoGateway;
+    private final com.github.guilhermemonte21.Ecommerce.Modules.Produtos.Application.Gateway.ProdutoCommandGateway produtoGateway;
 
-    public RollbackEstoqueConsumer(ProdutoGateway produtoGateway) {
+    public RollbackEstoqueConsumer(com.github.guilhermemonte21.Ecommerce.Modules.Produtos.Application.Gateway.ProdutoCommandGateway produtoGateway) {
         this.produtoGateway = produtoGateway;
     }
 
     @CacheEvict(value = {CacheNames.PRODUTOS, CacheNames.PRODUTO}, allEntries = true)
     @RabbitListener(queues = RabbitMQConfig.QUEUE_ROLLBACK_ESTOQUE)
     @Transactional
-    public void onPedidoCancelado(PedidoCanceladoEvent event) {
+    public void onPedidoCancelado(PedidoCanceladoEvent event, Channel channel, @Header(AmqpHeaders.DELIVERY_TAG) long tag) throws java.io.IOException {
         log.info("Recebido PedidoCanceladoEvent: pedidoId={}, motivo='{}'",
                 event.getPedidoId(), event.getMotivo());
 
-        Map<UUID, Long> produtosParaRollback = event.getProdutosParaRollback();
+        try {
+            Map<UUID, Long> produtosParaRollback = event.getProdutosParaRollback();
 
-        if (produtosParaRollback == null || produtosParaRollback.isEmpty()) {
-            log.warn("PedidoCanceladoEvent para pedido {} não contém dados de produto para rollback. " +
-                     "O evento foi gerado por cancelamento manual/scheduler. Nenhuma ação de estoque executada.",
-                    event.getPedidoId());
-            return;
+            if (produtosParaRollback == null || produtosParaRollback.isEmpty()) {
+                log.warn("PedidoCanceladoEvent para pedido {} não contém dados de produto para rollback. " +
+                        "O evento foi gerado por cancelamento manual/scheduler. Nenhuma ação de estoque executada.",
+                        event.getPedidoId());
+                channel.basicAck(tag, false);
+                return;
+            }
+
+            for (Map.Entry<UUID, Long> entry : produtosParaRollback.entrySet()) {
+                UUID produtoId = entry.getKey();
+                Long quantidade = entry.getValue();
+                produtoGateway.getByIdComLock(produtoId).ifPresentOrElse(produto -> {
+                    produto.atualizarEstoque(quantidade);
+                    produtoGateway.salvar(produto);
+                    log.info("Estoque do produto '{}' (id={}) revertido em {} unidade(s).",
+                            produto.getNomeProduto(), produtoId, quantidade);
+                }, () -> log.warn("Produto {} não encontrado durante rollback de estoque do pedido {}.",
+                        produtoId, event.getPedidoId()));
+            }
+
+            log.info("Rollback de estoque concluído para o pedido {}.", event.getPedidoId());
+            channel.basicAck(tag, false);
+        } catch (Exception e) {
+            log.error("Erro ao realizar rollback de estoque do pedido {}: {}", event.getPedidoId(), e.getMessage());
+            channel.basicNack(tag, false, false);
         }
-
-
-        for (Map.Entry<UUID, Long> entry : produtosParaRollback.entrySet()) {
-            UUID produtoId = entry.getKey();
-            Long quantidade = entry.getValue();
-            produtoGateway.getByIdComLock(produtoId).ifPresentOrElse(produto -> {
-                produto.atualizarEstoque(quantidade);
-                produtoGateway.salvar(produto);
-                log.info("Estoque do produto '{}' (id={}) revertido em {} unidade(s).",
-                        produto.getNomeProduto(), produtoId, quantidade);
-            }, () -> log.warn("Produto {} não encontrado durante rollback de estoque do pedido {}.",
-                    produtoId, event.getPedidoId()));
-        }
-
-        log.info("Rollback de estoque concluído para o pedido {}.", event.getPedidoId());
     }
 }
